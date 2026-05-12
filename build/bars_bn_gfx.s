@@ -1,0 +1,39 @@
+
+@{{BLOCK(bars_bn_gfx)
+
+@=======================================================================
+@
+@	bars_bn_gfx, 64x8@4, 
+@	+ palette 16 entries, not compressed
+@	+ 8 tiles Metatiled by 4x1 not compressed
+@	Total size: 32 + 256 = 288
+@
+@	Time-stamp: 2026-04-30, 21:15:11
+@	Exported by Cearn's GBA Image Transmogrifier, v0.9.2
+@	( http://www.coranac.com/projects/#grit )
+@
+@=======================================================================
+
+	.section .rodata
+	.align	2
+	.global bars_bn_gfxTiles		@ 256 unsigned chars
+	.hidden bars_bn_gfxTiles
+bars_bn_gfxTiles:
+	.word 0xDDDDDDDD,0xDDDDDDDD,0xCCCCCCCD,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+	.word 0xDDDDDDDD,0xDDDDDDDD,0xCCCCCCCC,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+	.word 0xDDDDDDDD,0xDDDDDDDD,0xCCCCCCCC,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+	.word 0xDDDDDDDD,0xCDDDDDDD,0xCCCCCCCC,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+	.word 0x66666DDD,0x66666666,0x88888886,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+	.word 0x66666666,0x66666666,0x88888888,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+	.word 0x66666666,0x66666666,0x88888888,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+	.word 0x66666666,0x86666666,0x88888888,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000
+
+	.section .rodata
+	.align	2
+	.global bars_bn_gfxPal		@ 32 unsigned chars
+	.hidden bars_bn_gfxPal
+bars_bn_gfxPal:
+	.hword 0x781E,0x4530,0x0C42,0x3277,0x1930,0x2192,0x0CBC,0x2A15
+	.hword 0x1085,0x0421,0x18A5,0x210A,0x2D4C,0x4700,0x0000,0x0000
+
+@}}BLOCK(bars_bn_gfx)
