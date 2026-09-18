@@ -1,7 +1,6 @@
 #include "collision.h"
 #include "dog.h"
 #include "game_constants.h"
-#include "bn_core.h"
 #include "bn_math.h"
 
 bool check_collision(const bn::sprite_ptr& s1, const bn::sprite_ptr& s2)

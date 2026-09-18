@@ -55,7 +55,6 @@ human.o: /home/kids/gba/butano-master/examples/dog/src/human.cpp \
  /home/kids/gba/butano-master/butano/include/bn_power_of_two.h \
  /home/kids/gba/butano-master/butano/include/bn_utf8_character.h \
  /home/kids/gba/butano-master/butano/include/bn_string_view.h \
- /home/kids/gba/butano-master/butano/include/bn_vector.h \
  /home/kids/gba/butano-master/butano/include/bn_string_view.h \
  /home/kids/gba/butano-master/butano/include/bn_random.h \
  /home/kids/gba/butano-master/butano/include/bn_math.h \
@@ -121,7 +120,6 @@ human.o: /home/kids/gba/butano-master/examples/dog/src/human.cpp \
 /home/kids/gba/butano-master/butano/include/bn_power_of_two.h:
 /home/kids/gba/butano-master/butano/include/bn_utf8_character.h:
 /home/kids/gba/butano-master/butano/include/bn_string_view.h:
-/home/kids/gba/butano-master/butano/include/bn_vector.h:
 /home/kids/gba/butano-master/butano/include/bn_string_view.h:
 /home/kids/gba/butano-master/butano/include/bn_random.h:
 /home/kids/gba/butano-master/butano/include/bn_math.h:

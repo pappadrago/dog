@@ -7,7 +7,7 @@
 
 extern bn::random random1Instance;
 
-enemy::enemy(ball* _ball_ptr, bau* _bau_ptr) : _ball(_ball_ptr), _bau(_bau_ptr)
+enemy::enemy(ball* _ball_ptr, bau* _bau_ptr, dog* _dog_ptr) : _ball(_ball_ptr), _bau(_bau_ptr), _dog(_dog_ptr)
 {
     player = bn::sprite_items::cat.create_sprite(chr_x - HALF_SCREEN_W, chr_y - CHR_FLOOR + CHR_FLOOR_HEIGHT, 0);
     player->set_bg_priority(2);
@@ -54,7 +54,7 @@ void enemy::update()
                 ticks2jump = 120 + random1Instance.get_int(120);
         }
 
-        if (chr_vx >  max_vx) chr_vx =  max_vx;
+        if (chr_vx > max_vx) chr_vx = max_vx;
         if (chr_vx < -max_vx) chr_vx = -max_vx;
     }
 
@@ -80,7 +80,7 @@ void enemy::update()
 
         if (chr_y >= CHR_FLOOR)
         {
-            chr_y  = CHR_FLOOR;
+            chr_y = CHR_FLOOR;
             chr_vy = 0;
             jumping = false;
             actionJump->reset();

@@ -65,7 +65,21 @@ helper_dog.o: \
  /home/kids/gba/butano-master/butano/include/bn_reciprocal_lut.h \
  /home/kids/gba/butano-master/butano/include/bn_rule_of_three_approximation.h \
  /home/kids/gba/butano-master/butano/hw/3rd_party/maxmod/include/maxmod.h \
- /home/kids/gba/butano-master/butano/hw/3rd_party/maxmod/include/mm_types.h
+ /home/kids/gba/butano-master/butano/hw/3rd_party/maxmod/include/mm_types.h \
+ /home/kids/gba/butano-master/examples/dog/include/game_context.h \
+ /home/kids/gba/butano-master/butano/include/bn_random.h \
+ /home/kids/gba/butano-master/butano/include/bn_math.h \
+ /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h \
+ /home/kids/gba/butano-master/butano/include/bn_sprite_text_generator.h \
+ /home/kids/gba/butano-master/butano/include/bn_camera_ptr.h \
+ /home/kids/gba/butano-master/butano/include/bn_sprite_font.h \
+ /home/kids/gba/butano-master/butano/include/bn_sprite_item.h \
+ /home/kids/gba/butano-master/butano/include/bn_utf8_characters_map_ref.h \
+ /home/kids/gba/butano-master/butano/include/bn_power_of_two.h \
+ /home/kids/gba/butano-master/butano/include/bn_utf8_character.h \
+ /home/kids/gba/butano-master/butano/include/bn_string_view.h \
+ /home/kids/gba/butano-master/examples/dog/include/bau.h \
+ /home/kids/gba/butano-master/examples/dog/include/dog.h
 /home/kids/gba/butano-master/examples/dog/include/helper_dog.h:
 /home/kids/gba/butano-master/butano/include/bn_optional.h:
 /home/kids/gba/butano-master/butano/include/bn_assert.h:
@@ -132,3 +146,17 @@ helper_dog.o: \
 /home/kids/gba/butano-master/butano/include/bn_rule_of_three_approximation.h:
 /home/kids/gba/butano-master/butano/hw/3rd_party/maxmod/include/maxmod.h:
 /home/kids/gba/butano-master/butano/hw/3rd_party/maxmod/include/mm_types.h:
+/home/kids/gba/butano-master/examples/dog/include/game_context.h:
+/home/kids/gba/butano-master/butano/include/bn_random.h:
+/home/kids/gba/butano-master/butano/include/bn_math.h:
+/home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h:
+/home/kids/gba/butano-master/butano/include/bn_sprite_text_generator.h:
+/home/kids/gba/butano-master/butano/include/bn_camera_ptr.h:
+/home/kids/gba/butano-master/butano/include/bn_sprite_font.h:
+/home/kids/gba/butano-master/butano/include/bn_sprite_item.h:
+/home/kids/gba/butano-master/butano/include/bn_utf8_characters_map_ref.h:
+/home/kids/gba/butano-master/butano/include/bn_power_of_two.h:
+/home/kids/gba/butano-master/butano/include/bn_utf8_character.h:
+/home/kids/gba/butano-master/butano/include/bn_string_view.h:
+/home/kids/gba/butano-master/examples/dog/include/bau.h:
+/home/kids/gba/butano-master/examples/dog/include/dog.h:

@@ -8,6 +8,7 @@
 
 class ball;
 class bau;
+class dog;
 
 class enemy
 {
@@ -30,12 +31,13 @@ public:
 
     ball* _ball;
     bau*  _bau;
+ dog* _dog;
 
     bn::fixed target_x;
     int ticks2jump = 0, ticks2hit = 0;
     int status = 0;
 
-    enemy(ball* ball, bau* bau);
+    enemy(ball* ball, bau* bau, dog* dog);
 
     void do_spawn();
     void update();

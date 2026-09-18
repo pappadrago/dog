@@ -5,6 +5,8 @@
 #include "bn_fixed.h"
 #include "game_constants.h"
 
+struct GameContext;  // forward declaration per evitare include circolare
+
 class bau
 {
 public:
@@ -16,6 +18,8 @@ public:
     int ticks = 0;
     bn::fixed dim = bn::fixed(.1);
 
-    bau();
+    GameContext* ctx = nullptr;
+
+    explicit bau(GameContext* ctx = nullptr);
     void update();
 };

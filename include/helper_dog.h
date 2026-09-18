@@ -9,6 +9,7 @@
 #include "bn_camera_ptr.h"
 #include "game_constants.h"
 
+struct GameContext;  // forward declaration
 class ball;
 class human;
 class enemy;
@@ -16,10 +17,10 @@ class enemy;
 class helper_dog
 {
 public:
-    static constexpr int NONE       = -1;
+    static constexpr int NONE = -1;
     static constexpr int GO_TO_BALL = 0;
     static constexpr int CARRY_BALL = 1;
-    static constexpr int DONE       = 2;
+    static constexpr int DONE = 2;
 
     bn::optional<bn::sprite_ptr>               player;
     bn::optional<bn::sprite_animate_action<5>> actionStand;
@@ -31,28 +32,23 @@ public:
     bn::fixed chr_vx = 0;
     bn::fixed chr_vy = 0;
 
-    int  dir     = DIR_RIGHT;
+    int  dir = DIR_RIGHT;
     bool walking = false;
     bool jumping = false;
-    bool active  = false;
-    int  state   = NONE;
+    bool active = false;
+    int  state = NONE;
     int  invincibile = 0;
 
-    static constexpr bn::fixed GROUND_ACCEL    = bn::fixed(0.15);
-    static constexpr bn::fixed GROUND_FRICTION  = bn::fixed(0.08);
-    static constexpr bn::fixed AIR_ACCEL        = bn::fixed(0.06);
-    static constexpr bn::fixed AIR_FRICTION     = bn::fixed(0.02);
-    static constexpr bn::fixed MAX_VX           = bn::fixed(2.0);
-    static constexpr bn::fixed AIR_MAX_VX       = bn::fixed(2.0);
-    static constexpr bn::fixed HELP_JUMP_VY     = bn::fixed(-4.0);
+    static constexpr bn::fixed GROUND_ACCEL = bn::fixed(0.15);
+    static constexpr bn::fixed GROUND_FRICTION = bn::fixed(0.08);
+    static constexpr bn::fixed AIR_ACCEL = bn::fixed(0.06);
+    static constexpr bn::fixed AIR_FRICTION = bn::fixed(0.02);
+    static constexpr bn::fixed MAX_VX = bn::fixed(2.0);
+    static constexpr bn::fixed AIR_MAX_VX = bn::fixed(2.0);
+    static constexpr bn::fixed HELP_JUMP_VY = bn::fixed(-4.0);
 
-    ball*   ball_ptr;
-    human*  human_ptr;
-    bn::vector<enemy, MAX_ENEMIES>& enemies;
-    bn::camera_ptr* camera;
-
-    helper_dog(int player_skin, ball* _ball, human* _human,
-               bn::vector<enemy, MAX_ENEMIES>& _enemies, bn::camera_ptr* _camera);
+    GameContext* ctx;
+    helper_dog(GameContext* ctx);
 
     void spawn(bn::fixed start_x);
     void despawn();

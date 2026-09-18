@@ -54,10 +54,6 @@ collision.o: /home/kids/gba/butano-master/examples/dog/src/collision.cpp \
  /home/kids/gba/butano-master/butano/include/bn_fixed.h \
  /home/kids/gba/butano-master/butano/include/bn_vector.h \
  /home/kids/gba/butano-master/examples/dog/include/game_constants.h \
- /home/kids/gba/butano-master/butano/include/bn_core.h \
- /home/kids/gba/butano-master/butano/include/bn_string_view.h \
- /home/kids/gba/butano-master/butano/include/bn_vblank_callback_type.h \
- /home/kids/gba/butano-master/butano/include/bn_core_update_callback_type.h \
  /home/kids/gba/butano-master/butano/include/bn_math.h \
  /home/kids/gba/butano-master/butano/include/bn_sin_lut.h \
  /home/kids/gba/butano-master/butano/include/bn_reciprocal_lut.h \
@@ -117,10 +113,6 @@ collision.o: /home/kids/gba/butano-master/examples/dog/src/collision.cpp \
 /home/kids/gba/butano-master/butano/include/bn_fixed.h:
 /home/kids/gba/butano-master/butano/include/bn_vector.h:
 /home/kids/gba/butano-master/examples/dog/include/game_constants.h:
-/home/kids/gba/butano-master/butano/include/bn_core.h:
-/home/kids/gba/butano-master/butano/include/bn_string_view.h:
-/home/kids/gba/butano-master/butano/include/bn_vblank_callback_type.h:
-/home/kids/gba/butano-master/butano/include/bn_core_update_callback_type.h:
 /home/kids/gba/butano-master/butano/include/bn_math.h:
 /home/kids/gba/butano-master/butano/include/bn_sin_lut.h:
 /home/kids/gba/butano-master/butano/include/bn_reciprocal_lut.h:

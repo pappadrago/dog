@@ -166,11 +166,12 @@ void dog::update()
         {
             bn::sound_items::coin.play(bn::fixed(0.5));
             ball_ptr->pickedup = true;
+            ball_ptr->pickedup_by_helper = false;
         }
     }
 
     // --- Consegna palla a human ---
-    if (ball_ptr->pickedup && !ball_ptr->inHand)
+    if (ball_ptr->pickedup && !ball_ptr->pickedup_by_helper&&!ball_ptr->inHand)
     {
         ball_ptr->chr_x = chr_x + bn::fixed(14.0).multiplication(dir);
         ball_ptr->chr_y = chr_y - 8;

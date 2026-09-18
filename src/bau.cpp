@@ -1,7 +1,8 @@
 #include "bau.h"
+#include "game_context.h"
 #include "bn_sprite_items_bau.h"
 
-bau::bau()
+bau::bau(GameContext* _ctx) : ctx(_ctx)
 {
     sprite = bn::sprite_items::bau.create_sprite(0, 0, 0);
     sprite->set_visible(false);

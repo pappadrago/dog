@@ -18,6 +18,7 @@ public:
     bn::fixed chr_vx = 0;
 
     bool rolling = false, pickedup = false, inHand = false;
+    bool pickedup_by_helper = false;
     int  dir = 1;
     bn::fixed max_vx = bn::fixed(2.0);
     bn::fixed angle  = bn::fixed(0);

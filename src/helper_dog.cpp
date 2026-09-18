@@ -6,17 +6,16 @@
 #include "bn_sprite_items_fox.h"
 #include "bn_math.h"
 #include "maxmod.h"
+#include "game_context.h"
 
-helper_dog::helper_dog(int, ball* _ball, human* _human,
-                        bn::vector<enemy, MAX_ENEMIES>& _enemies,
-                        bn::camera_ptr* _camera)
-    : ball_ptr(_ball), human_ptr(_human), enemies(_enemies), camera(_camera)
+helper_dog::helper_dog(GameContext*    _ctx)
+    : ctx(_ctx)
 {
     dog_item = bn::sprite_items::fox;
     player = dog_item->create_sprite(
         chr_x - HALF_SCREEN_W, chr_y - CHR_FLOOR + CHR_FLOOR_HEIGHT, 0);
     player->set_bg_priority(2);
-    player->set_camera(*camera);
+    
     actionStand = bn::create_sprite_animate_action_forever(
         *player, 5, dog_item->tiles_item(), 0, 1, 2, 3, 4);
     actionWalk = bn::create_sprite_animate_action_forever(
@@ -28,6 +27,7 @@ void helper_dog::spawn(bn::fixed start_x)
 {
     chr_x = start_x; chr_y = CHR_FLOOR;
     chr_vx = 0; chr_vy = 0;
+    player->set_camera(ctx->camera);
     dir = DIR_RIGHT; jumping = false; walking = false;
     active = true; state = GO_TO_BALL; invincibile = 0;
     mmSetModuleTempo(1536);
@@ -61,15 +61,15 @@ void helper_dog::move_toward(bn::fixed target_x)
 void helper_dog::try_jump_over_enemies()
 {
     if (jumping) return;
-    for (const enemy& e : enemies)
+    for (const enemy& e : ctx->enemies)
     {
         bn::fixed dist = e.chr_x - chr_x;
         bool in_front = (dir == DIR_RIGHT && dist > 0 && dist < 48) ||
-                        (dir == DIR_LEFT  && dist < 0 && dist > -48);
+            (dir == DIR_LEFT && dist < 0 && dist > -48);
         if (in_front)
         {
             if (e.dir != dir) { jumping = true; chr_vy = HELP_JUMP_VY; chr_vx = MAX_VX; walking = false; break; }
-            else              { walking = false; chr_vx -= GROUND_FRICTION; if (chr_vx < 0) chr_vx = 0; }
+            else { walking = false; chr_vx -= GROUND_FRICTION; if (chr_vx < 0) chr_vx = 0; }
         }
     }
 }
@@ -93,7 +93,7 @@ void helper_dog::apply_physics()
 bool helper_dog::check_enemy_collisions()
 {
     if (invincibile > 0) { invincibile--; return false; }
-    for (enemy& e : enemies)
+    for (enemy& e : ctx->enemies)
     {
         if (e.ticks2hit > 0) continue;
         bool hit = check_collision_16(*e.player, *player);
@@ -104,12 +104,12 @@ bool helper_dog::check_enemy_collisions()
             e.dir = (e.chr_x < chr_x) ? DIR_LEFT : DIR_RIGHT;
             e.chr_vy = bn::fixed(-1.5); e.chr_vx = bn::fixed(1.5);
             e.jumping = true; e.ticks2hit = 60;
-            if (ball_ptr->pickedup)
+            if (ctx->the_ball.pickedup)
             {
-                ball_ptr->pickedup = false;
-                ball_ptr->chr_vx   = bn::fixed(dir).multiplication(bn::fixed(-2.0));
-                ball_ptr->chr_vy   = JUMP_VY;
-                ball_ptr->rolling  = true;
+                ctx->the_ball.pickedup = false;
+                ctx->the_ball.chr_vx = bn::fixed(dir).multiplication(bn::fixed(-2.0));
+                ctx->the_ball.chr_vy = JUMP_VY;
+                ctx->the_ball.rolling = true;
                 return true;
             }
         }
@@ -119,7 +119,7 @@ bool helper_dog::check_enemy_collisions()
 
 void helper_dog::update_animations()
 {
-    if (jumping) ;
+    if (jumping);
     else if (walking) actionWalk->update();
     else              actionStand->update();
 }
@@ -131,25 +131,27 @@ bool helper_dog::update()
     switch (state)
     {
     case GO_TO_BALL:
-        move_toward(ball_ptr->chr_x);
+        move_toward(ctx->the_ball.chr_x);
         try_jump_over_enemies();
-        if (bn::abs(chr_x - ball_ptr->chr_x) < 16 && !ball_ptr->pickedup)
-            { ball_ptr->pickedup = true; state = CARRY_BALL; }
+        if (bn::abs(chr_x - ctx->the_ball.chr_x) < 16 && !ctx->the_ball.pickedup)
+        {
+            ctx->the_ball.pickedup = true; 
+            ctx->the_ball.pickedup_by_helper = true;
+            state = CARRY_BALL;
+        }
         if (lost_ball) state = GO_TO_BALL;
         break;
     case CARRY_BALL:
         if (lost_ball) { state = GO_TO_BALL; break; }
-        move_toward(human_ptr->chr_x);
+        move_toward(ctx->the_human.chr_x);
         try_jump_over_enemies();
-        ball_ptr->chr_x = chr_x;
-        ball_ptr->chr_y = chr_y - 16;
-        ball_ptr->player->set_x(chr_x - HALF_SCREEN_W);
-        ball_ptr->player->set_y(chr_y - CHR_FLOOR + CHR_FLOOR_HEIGHT - 16);
-        if (bn::abs(chr_x - human_ptr->chr_x) < 24)
+        ctx->the_ball.chr_x = chr_x + bn::fixed(20.0).multiplication(dir);
+        ctx->the_ball.chr_y = chr_y - 8;
+        if (bn::abs(chr_x - ctx->the_human.chr_x) < 24)
         {
-            ball_ptr->pickedup = false;
-            ball_ptr->chr_x    = human_ptr->chr_x;
-            ball_ptr->chr_y    = human_ptr->chr_y - 16;
+            ctx->the_ball.pickedup = false;
+            ctx->the_ball.chr_x = ctx->the_human.chr_x;
+            ctx->the_ball.chr_y = ctx->the_human.chr_y - 16;
             state = DONE;
             mmSetModuleTempo(1024);
             return true;
