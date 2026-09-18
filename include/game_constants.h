@@ -7,7 +7,10 @@
 #define DIR_LEFT -1
 
 // Schermo
-#define HALF_SCREEN_W 120
+#define SCREEN_W bn::fixed(240)
+#define SCREEN_H bn::fixed(160)
+#define HALF_SCREEN_W bn::fixed(120)
+#define HALF_SCREEN_H bn::fixed(80)
 
 // Costanti fisiche
 #define JUMP_VY       bn::fixed(-2.7)
@@ -18,10 +21,6 @@
 #define FRICTION_AIR   bn::fixed(-.02)
 #define MAX_FALL       bn::fixed(5.5)
 
-// Pavimento / layout
-#define CHR_FLOOR        bn::fixed(224)
-#define CHR_FLOOR_HEIGHT bn::fixed(32)
-
 // Vita
 #define MAX_LIFE 100
 
@@ -29,7 +28,7 @@
 #define MAX_ENEMY_BULLETS 16
 #define MAX_BULLETS       8
 #define MAX_ENEMY_BOMBS   4
-#define MAX_ENEMIES       12
+#define MAX_ENEMIES       16
 #define MAX_BONUSES       3
 
 // Cooldown

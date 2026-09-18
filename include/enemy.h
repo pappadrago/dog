@@ -5,40 +5,29 @@
 #include "bn_sprite_animate_actions.h"
 #include "bn_fixed.h"
 #include "game_constants.h"
+#include "obj.h"
 
 class ball;
 class bau;
 class dog;
 
-class enemy
+class enemy : public live_obj
 {
 public:
-    bn::optional<bn::sprite_ptr>               player;
-    bn::optional<bn::sprite_animate_action<4>> actionStand;
-    bn::optional<bn::sprite_animate_action<8>> actionJump;
-    bn::optional<bn::sprite_animate_action<8>> actionWalk;
+    
+    bn::optional<bn::sprite_ptr>               weaponSprite;
 
-    bn::fixed chr_y  = CHR_FLOOR;
-    bn::fixed chr_x  = 40;
-    bn::fixed chr_vy = bn::fixed(0);
-    bn::fixed chr_vx = 0;
+    bn::fixed wx_base, wy_base;
+    bn::fixed weapon_time = bn::fixed(120.0);
+    int weaponDir ;
+    int weaponTicks;
 
-    bool jumping = false, walking = false;
-    int  dir = 1;
-
-    bn::fixed max_vx = bn::fixed(1.2);
-    bn::fixed life   = MAX_LIFE;
-
-    ball* _ball;
-    bau*  _bau;
- dog* _dog;
-
-    bn::fixed target_x;
-    int ticks2jump = 0, ticks2hit = 0;
-    int status = 0;
-
-    enemy(ball* ball, bau* bau, dog* dog);
+    enemy();
 
     void do_spawn();
-    void update();
+    virtual void update();
+    virtual ~enemy() = default;  // distruttore virtual obbligatorio
+    void do_powerup();
+    void bounce(int _dir);
 };
+

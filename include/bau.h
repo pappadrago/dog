@@ -5,21 +5,18 @@
 #include "bn_fixed.h"
 #include "game_constants.h"
 
-struct GameContext;  // forward declaration per evitare include circolare
-
 class bau
 {
 public:
     bn::optional<bn::sprite_ptr> sprite;
     bn::fixed chr_x;
-    bn::fixed chr_y = CHR_FLOOR - 40;
+    bn::fixed chr_y;
 
     int value = -1;
     int ticks = 0;
-    bn::fixed dim = bn::fixed(.1);
 
-    GameContext* ctx = nullptr;
+    bau();
 
-    explicit bau(GameContext* ctx = nullptr);
+    void do_spawn();
     void update();
 };

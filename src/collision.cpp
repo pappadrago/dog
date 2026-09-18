@@ -22,8 +22,8 @@ bool check_collision(const bn::sprite_ptr& s1, const bn::sprite_ptr& s2)
 
 bool check_collision_ball_dog(const bn::sprite_ptr& ball, const dog& _dog)
 {
-    bn::fixed dog_x  = _dog.player->x();
-    bn::fixed dog_y  = _dog.player->y() + 6;
+    bn::fixed dog_x  = _dog.sprite->x();
+    bn::fixed dog_y  = _dog.sprite->y() + 6;
     bn::fixed dog_hw = 8;
     bn::fixed dog_hh = 13;
     bn::fixed ball_hw = 4;
@@ -35,8 +35,8 @@ bool check_collision_ball_dog(const bn::sprite_ptr& ball, const dog& _dog)
 
 bool check_collision_16(const bn::sprite_ptr& ball, const dog& _dog)
 {
-    bn::fixed dog_x  = _dog.player->x();
-    bn::fixed dog_y  = _dog.player->y() + 6;
+    bn::fixed dog_x  = _dog.sprite->x();
+    bn::fixed dog_y  = _dog.sprite->y() + 6;
     bn::fixed dog_hw = 8;
     bn::fixed dog_hh = 13;
     bn::fixed ball_hw = 6;

@@ -1,110 +1,158 @@
+#include "globals.h"
 #include "enemy.h"
-#include "ball.h"
 #include "bau.h"
+#include "dog.h"
 #include "bn_random.h"
-#include "bn_sprite_items_cat.h"
+#include "bn_sprite_items_weapons.h"
+#include "bn_sprite_items_enemies.h"
+#include "bn_sprite_items_enemies2.h"
 #include "bn_math.h"
+#include "bn_log.h"
 
-extern bn::random random1Instance;
-
-enemy::enemy(ball* _ball_ptr, bau* _bau_ptr, dog* _dog_ptr) : _ball(_ball_ptr), _bau(_bau_ptr), _dog(_dog_ptr)
+enemy::enemy()
 {
-    player = bn::sprite_items::cat.create_sprite(chr_x - HALF_SCREEN_W, chr_y - CHR_FLOOR + CHR_FLOOR_HEIGHT, 0);
-    player->set_bg_priority(2);
+    if (g_rng.get_bool() || true)
+    {
 
-    actionStand = bn::create_sprite_animate_action_forever(
-        *player, 6, bn::sprite_items::cat.tiles_item(), 0, 1, 2, 3);
-    actionJump = bn::create_sprite_animate_action_once(
-        *player, 4, bn::sprite_items::cat.tiles_item(), 12, 13, 14, 15, 16, 17, 18, 19);
-    actionWalk = bn::create_sprite_animate_action_forever(
-        *player, 3, bn::sprite_items::cat.tiles_item(), 4, 5, 6, 7, 8, 9, 10, 11);
+        int N = g_rng.get_int(10) * 3;
 
-    chr_x = 260;
+        sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 3, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+
+        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, g_rng.get_int(10));
+        weaponSprite->set_bg_priority(1);
+        weaponSprite->set_camera(g_camera);
+    }
+    else {
+        {
+
+            int N = g_rng.get_int(10) * 3;
+
+            sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
+            actionStand = bn::create_sprite_animate_action_forever(
+                *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
+            actionWalk = bn::create_sprite_animate_action_forever(
+                *sprite, 3, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+        }
+    }
+    sprite->set_bg_priority(1);
+    sprite->set_camera(g_camera);
+
     do_spawn();
+    box_dim = bn::fixed(8);
+    box_halfdim = bn::fixed(4);
 }
+
+
+void enemy::do_powerup()
+{
+    max_vx += bn::fixed(0.2);
+}
+
 
 void enemy::do_spawn()
 {
-    target_x = 60 + 16 + random1Instance.get_int(12) * 80;
-    walking = true;
+    chr_y = 512 - 200;
+    chr_x = g_rng.get_int(MAP_W);
+    dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;
+    ticks2action = 120 + 60 * g_rng.get_int(5);
 }
 
 void enemy::update()
 {
-    if (!jumping)
-    {
-        if (chr_x < target_x - bn::fixed(2.0))
-        {
-            dir = DIR_RIGHT;
-            walking = true;
-            chr_vx += bn::fixed(.1);
-        }
-        else if (chr_x > target_x + bn::fixed(2.0))
-        {
-            dir = DIR_LEFT;
-            walking = true;
-            chr_vx += bn::fixed(-.1);
-        }
-        else if (walking)
-        {
-            chr_x = target_x;
-            walking = false;
-            chr_vx = 0;
-            if (ticks2jump == 0 && !jumping)
-                ticks2jump = 120 + random1Instance.get_int(120);
-        }
+    chr_vx += bn::fixed(0.05).multiplication(dir);
+    chr_x += cap(chr_vx, max_vx);
+    apply_map();
+    apply_gravity();
 
-        if (chr_vx > max_vx) chr_vx = max_vx;
-        if (chr_vx < -max_vx) chr_vx = -max_vx;
+    if (weaponSprite && weaponTicks > 0) {
+
+        bn::fixed delta = weapon_time - weaponTicks;
+        delta = delta.division(weapon_time);
+
+        weaponSprite->set_rotation_angle_safe(bn::fixed(14.0).multiplication(weaponDir).multiplication(weaponTicks));
+        weaponSprite->set_x(
+            wx_base - HALF_SCREEN_W +
+            bn::fixed(8.0).multiplication(weaponDir) +
+            SCREEN_W.multiplication(delta).multiplication(weaponDir));
+        weaponSprite->set_y(
+            wy_base - HALF_SCREEN_H + bn::degrees_lut_sin_safe(weaponTicks << 3).multiplication(bn::fixed(10.0))
+        );
     }
 
-    chr_x += chr_vx;
 
-    if (ticks2hit > 0) ticks2hit--;
 
-    if (ticks2jump > 0)
+    if (invulnerability > 0) invulnerability--;
+    if (weaponTicks > 0) weaponTicks--;
+
+    if (ticks2action > 0)
     {
-        ticks2jump--;
-        if (ticks2jump == 0)
+        ticks2action--;
+        if (ticks2action == 0)
         {
-            jumping = true;
-            chr_vy = JUMP_VY;
-        }
-    }
 
-    if (jumping)
-    {
-        chr_vy += GRAVITY;
-        if (chr_vy > MAX_FALL) chr_vy = MAX_FALL;
-        chr_y += chr_vy;
+            dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;
+            chr_vx = bn::fixed(0);
+            ticks2action = 120 + 60 * g_rng.get_int(5);
+            if (weaponSprite && weaponTicks == 0) {
+                wx_base = chr_x;
+                wy_base = chr_y;
+                weaponTicks = weapon_time.integer();
+                weaponDir = (g_dog->chr_x > chr_x ? DIR_RIGHT : DIR_LEFT);
+                ticks2action = weaponTicks;
+            }
+            if (g_rng.get_bool()) {
+                chr_vy = bn::fixed(-4.0);
+                max_vx = g_rng.get_fixed(bn::fixed(2.0)) + bn::fixed(1.0);
+            }
 
-        if (chr_y >= CHR_FLOOR)
-        {
-            chr_y = CHR_FLOOR;
-            chr_vy = 0;
-            jumping = false;
-            actionJump->reset();
-            if (ticks2hit == 0)
-                do_spawn();
+
         }
     }
 
-    player->set_x(chr_x - HALF_SCREEN_W);
-    player->set_y(chr_y - CHR_FLOOR + CHR_FLOOR_HEIGHT + 8);
-    player->set_horizontal_flip(dir == DIR_LEFT);
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_LEFT);
 
-    if (jumping)
-    {
-        if (!actionJump->done())
-            actionJump->update();
+    if (weaponSprite && weaponTicks == 0) {
+        weaponSprite->set_x(chr_x - HALF_SCREEN_W + bn::fixed(8.0).multiplication(dir));
+        weaponSprite->set_y(chr_y - HALF_SCREEN_H);
+        weaponSprite->set_horizontal_flip(dir == DIR_LEFT);
     }
-    else if (walking)
-        actionWalk->update();
-    else
+    if (onGround && chr_vx.integer() == 0)
         actionStand->update();
-
-    if (ticks2hit > 0)
-        player->set_visible(ticks2hit % 2);
     else
-        player->set_visible(true);
+        actionWalk->update();
+
+    if (invulnerability > 0)
+        sprite->set_visible(invulnerability % 2);
+    else
+        sprite->set_visible(true);
+
+    if (weaponTicks > 0 && weaponTicks < 30)
+        weaponSprite->set_visible(weaponTicks % 2);
+    else
+        weaponSprite->set_visible(true);
 }
+
+void enemy::bounce(int _dir)
+{
+    dir = _dir;
+    chr_vy = bn::fixed(-2.0);
+
+
+    if (weaponTicks == 0) {
+        invulnerability = 60;
+        ticks2action = 240;
+        chr_vx = bn::fixed(2.0).multiplication(dir);
+    }
+    else {
+        weaponTicks = 0;
+        ticks2action = 30;
+    }
+}
+
+

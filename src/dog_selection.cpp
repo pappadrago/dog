@@ -9,6 +9,9 @@
 #include "bn_sprite_items_dog4.h"
 #include "bn_sprite_items_dog5.h"
 #include "bn_sprite_items_bau.h"
+#include "bn_regular_bg_ptr.h"
+#include "bn_regular_bg_items_cover.h"
+#include "globals.h"
 
 int dog_selection_screen(bn::sprite_text_generator& text_generator)
 {
@@ -31,17 +34,20 @@ int dog_selection_screen(bn::sprite_text_generator& text_generator)
         int x = START_X + i * SPACING;
         sprites[i] = items[i]->create_sprite(x, DOG_Y, 0);
         anims[i]   = bn::create_sprite_animate_action_forever(
-            *sprites[i], 5, items[i]->tiles_item(), 0, 1, 2, 3, 4);
+            *sprites[i], 5, items[i]->tiles_item(), (0+i)%5, (1+i)%5, (2+i)%5, (3+i)%5, (4+i)%5);
     }
 
     bn::sprite_ptr cursor = bn::sprite_items::bau.create_sprite(START_X, CURSOR_Y, 0);
 
     bn::vector<bn::sprite_ptr, 32> txt_sprites;
     text_generator.set_center_alignment();
-    text_generator.generate(0, 60, "SCEGLI IL TUO CANE!", txt_sprites);
+    text_generator.generate(0, 60, "SCEGLI IL TUO CANE e PREMI START", txt_sprites);
 
     int selected   = 0;
     int input_delay = 0;
+
+
+    bn::regular_bg_ptr bg0 = bn::regular_bg_items::cover.create_bg(0);
 
     while (true)
     {
@@ -59,6 +65,8 @@ int dog_selection_screen(bn::sprite_text_generator& text_generator)
             sprites[i]->set_y(i == selected ? DOG_Y - 9 : DOG_Y);
         }
         if (bn::keypad::start_pressed()) return selected;
+
+        g_rng.get_int();
         bn::core::update();
     }
 }

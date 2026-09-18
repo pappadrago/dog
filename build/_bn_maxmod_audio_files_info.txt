@@ -1,3 +1,5 @@
+audio/bau.wav
+1289747004.0
 audio/bomb.wav
 1688404522.0
 audio/coin.wav

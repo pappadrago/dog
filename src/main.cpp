@@ -9,130 +9,125 @@
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_regular_bg_items_bg_country.h"
 #include "bn_regular_bg_items_country.h"
-#include "bn_regular_bg_items_dayplatf.h"
+#include "bn_regular_bg_items_s1.h"
+#include "bn_regular_bg_items_s1fg.h"
 #include "common_variable_8x16_sprite_font.h"
+#include "bn_log.h"
 
+#include "globals.h"
 #include "game_constants.h"
 #include "hud.h"
-#include "ball.h"
 #include "bau.h"
 #include "enemy.h"
-#include "human.h"
+#include "item.h"
 #include "dog.h"
-#include "helper_dog.h"
 #include "dog_selection.h"
-#include "game_context.h"
+#include "game_timer.h"
 
-// Generatore casuale globale condiviso da tutte le classi
-bn::random random1Instance;
 
 int main()
 {
     bn::core::init();
 
-    bn::regular_bg_ptr bg0 = bn::regular_bg_items::bg_country.create_bg(0);
-    bn::regular_bg_ptr bg1 = bn::regular_bg_items::bg_country.create_bg(1);
-    bn::regular_bg_ptr bg3 = bn::regular_bg_items::dayplatf.create_bg(0);
+
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);
     update_text(0);
 
-    bn::music_items::qwak.play(0.25);
-
-    bg3.set_y(-32);
-    bg3.set_x(896 - HALF_SCREEN_W);
-
-    // bn::camera_ptr camera = bn::camera_ptr::create(0, 0);
-    // bg3.set_camera(camera);
+    //bn::music_items::qwak.play(0.25);
 
     int skin_selezionato = dog_selection_screen(text_generator);
 
-    GameContext ctx(text_generator, bg0, bg1, bg3, skin_selezionato);
+    bn::regular_bg_ptr bg0 = bn::regular_bg_items::bg_country.create_bg(0);
+    bn::regular_bg_ptr bg1 = bn::regular_bg_items::bg_country.create_bg(1);
+    bn::regular_bg_ptr foreground = bn::regular_bg_items::s1.create_bg(0);
+    bn::regular_bg_ptr foregroundfg = bn::regular_bg_items::s1fg.create_bg(0);
 
-    bg3.set_camera(ctx.camera);
-    const bn::regular_bg_map_item& bg3_map_item = bn::regular_bg_items::country.map_item();
+    foreground.set_x(-bn::fixed(MAP_W_2) - HALF_SCREEN_W);
+    foreground.set_y(0);
+
+    foregroundfg.set_x(-bn::fixed(MAP_W_2) - HALF_SCREEN_W);
+    foregroundfg.set_y(0);
+
+
+    foregroundfg.set_priority(0);
+    foreground.set_priority(2);
+    bg0.set_priority(3);
+    bg1.set_priority(3);
+
+
+    // Costruzione oggetti di gioco in ordine di dipendenza
+    g_camera.emplace(bn::camera_ptr::create(0, 0));
+    g_bau.emplace();
+    g_enemies.emplace();
+    g_items.emplace();
+    g_timer.emplace();
+    g_dog.emplace(skin_selezionato);
 
     while (true)
     {
-        // Reset stato palla tra un round e laltro
-        ctx.the_ball.pickedup = false;
-        ctx.the_ball.rolling = false;
-        ctx.the_ball.chr_y = 1000;
-
-        // --- Attendi START ---
-        while (true)
-        {
-            random1Instance.get_int(); // mantieni variabilita RNG
-            if (bn::keypad::start_released()) break;
-
-            update_text_schema(ctx.the_dog.schema);
-            if (ctx.the_dog.chr_x > 100) ctx.the_dog.chr_x = 100;
-
-            ctx.the_dog.update();
-            ctx.the_human.update();
-            bn::core::update();
-        }
-
         // --- Spawn o potenziamento nemici ---
-        if (ctx.the_dog.schema % 2 == 0)
-        {
-            enemy w(&ctx.the_ball, &ctx.the_bau, &ctx.the_dog);
-            w.player->set_camera(ctx.camera);
-            w.do_spawn();
-            ctx.enemies.push_back(bn::move(w));
-        }
-        else if (ctx.the_dog.schema % 2 == 1)
-        {
-            for (enemy& e : ctx.enemies)
-                e.max_vx += bn::fixed(0.2);
-        }
 
+        for (int i = 0; i < MAX_ENEMIES; ++i) {
+            enemy* new_enemy = new enemy();
+            g_enemies->push_back(new_enemy);
+            new_enemy->do_spawn();
+        }
+        for (int i = 0; i < 8; ++i) {
+            item* new_enemy = new item();
+            g_items->push_back(new_enemy);
+            new_enemy->do_spawn();
+        }
         update_text_clear();
-        ctx.the_human.ticks = 120;
 
         // --- Loop principale del round ---
-        while (true)
-        {
-            ctx.the_dog.update();
-            ctx.the_human.update();
-            ctx.the_ball.update();
-            ctx.the_bau.update();
+        bn::fixed max_cpu_usage;
 
-            if (ctx.the_helper.active)
-                ctx.the_helper.update();
+        while (true) {
 
-            if (bn::keypad::l_pressed() && !ctx.the_helper.active)
-                ctx.the_helper.spawn(ctx.the_dog.chr_x - 150);
+            g_dog->update();
+            g_bau->update();
 
-            for (enemy& e : ctx.enemies)
-                e.update();
+            for (enemy* e : *g_enemies)
+                e->update();
+            for (item* e : *g_items)
+                e->update();
 
-            // Legge tile mappa sotto il cane (per usi futuri)
-            int tx = ctx.the_dog.chr_x.division(8).integer();
-            int ty = (ctx.the_dog.chr_y - 32).division(8).integer();
-            bn::regular_bg_map_cell cella = bg3_map_item.cell(bn::point(tx, ty));
-            bn::regular_bg_map_cell_info cell_info(cella);
-            (void)cell_info;
 
             // Segue il cane con la camera
-            if (ctx.the_dog.chr_x > HALF_SCREEN_W && ctx.the_dog.chr_x < 1792 - HALF_SCREEN_W)
+            if (g_dog->chr_x > HALF_SCREEN_W && g_dog->chr_x < bn::fixed(MAP_W) - HALF_SCREEN_W)
             {
-                bn::fixed cam_x = ctx.the_dog.chr_x - HALF_SCREEN_W;
-                ctx.camera.set_x(cam_x);
+                bn::fixed cam_x = g_dog->chr_x - HALF_SCREEN_W;
+                g_camera->set_x(cam_x.integer());
                 bg0.set_x(cam_x * bn::fixed(-0.25));
                 bg1.set_x(cam_x * bn::fixed(-0.5));
+                foreground.set_x(cam_x * bn::fixed(-1.0) - bn::fixed(MAP_W_2) - HALF_SCREEN_W);
+                foregroundfg.set_x(foreground.x());
             }
+            if (g_dog->chr_y > HALF_SCREEN_H && g_dog->chr_y < bn::fixed(MAP_H) - HALF_SCREEN_H)
+            {
+                bn::fixed cam_y = g_dog->chr_y - HALF_SCREEN_H;
+                g_camera->set_y(cam_y.integer());
+                foreground.set_y(cam_y * bn::fixed(-1.0) - bn::fixed(MAP_H_2) - HALF_SCREEN_H);
+                foregroundfg.set_y(foreground.y());
+            }
+
 
             update_text_tick();
-            bn::core::update();
 
-            if (ctx.the_dog.palline_riportate == 3)
+            // 1. Aggiorna il timer
+            bool timer_scaduto = g_timer->update(text_generator);
+
+            // 2. Avviso visivo sotto i 10 secondi — lampeggio del testo
+            if (g_timer->active && g_timer->seconds_left() <= 10)
             {
-                ctx.the_dog.palline_riportate = 0;
-                ctx.the_dog.schema++;
-                break; // inizia round successivo
+                bool visibile = (g_timer->frames_left / 8) % 2 == 0;
+                for (auto& s : g_timer->text_sprites)
+                    s.set_visible(visibile);
             }
+
+            bn::core::update();
         }
     }
 }

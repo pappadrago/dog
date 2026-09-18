@@ -1,6 +1,6 @@
 common_stats.o: \
- /home/kids/gba/butano-master/examples/dog/../../common/src/common_stats.cpp \
- /home/kids/gba/butano-master/examples/dog/../../common/include/common_stats.h \
+ /home/kids/gba/butano-master/examples/prendilo/../../common/src/common_stats.cpp \
+ /home/kids/gba/butano-master/examples/prendilo/../../common/include/common_stats.h \
  /home/kids/gba/butano-master/butano/include/bn_vector.h \
  /home/kids/gba/butano-master/butano/include/bn_assert.h \
  /home/kids/gba/butano-master/butano/include/bn_config_assert.h \
@@ -59,7 +59,7 @@ common_stats.o: \
  /home/kids/gba/butano-master/butano/include/bn_utf8_characters_map_ref.h \
  /home/kids/gba/butano-master/butano/include/bn_power_of_two.h \
  /home/kids/gba/butano-master/butano/include/bn_utf8_character.h
-/home/kids/gba/butano-master/examples/dog/../../common/include/common_stats.h:
+/home/kids/gba/butano-master/examples/prendilo/../../common/include/common_stats.h:
 /home/kids/gba/butano-master/butano/include/bn_vector.h:
 /home/kids/gba/butano-master/butano/include/bn_assert.h:
 /home/kids/gba/butano-master/butano/include/bn_config_assert.h:
