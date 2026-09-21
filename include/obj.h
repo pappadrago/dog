@@ -42,12 +42,12 @@ public:
     int ticks2action = 0, invulnerability = 0;
     bn::fixed life = MAX_LIFE;
     bn::fixed max_vx = bn::fixed(2.0);
-    void apply_gravity();
+    void apply_gravity(int schema);
     void apply_friction();
-    void apply_map();
+    void apply_map(int schema);
 };
 
 
 // true se il punto (x, y) in coordinate mondo cade in un tile solido
 // (fuori mappa conta come solido)
-bool is_solid_at(bn::fixed x, bn::fixed y);
+bool is_solid_at(bn::fixed x, bn::fixed y,int schema);

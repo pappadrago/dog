@@ -42,6 +42,9 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
  /home/kids/gba/butano-master/butano/include/bn_music_item.h \
  /home/kids/gba/butano-master/butano/include/bn_bg_palettes.h \
  /home/kids/gba/butano-master/butano/include/bn_palette_effect_type.h \
+ /home/kids/gba/butano-master/butano/include/bn_sprite_palettes.h \
+ /home/kids/gba/butano-master/butano/include/bn_colors.h \
+ /home/kids/gba/butano-master/butano/include/bn_color.h \
  /home/kids/gba/butano-master/butano/include/bn_sprite_text_generator.h \
  /home/kids/gba/butano-master/butano/include/bn_vector.h \
  /home/kids/gba/butano-master/butano/include/bn_vector_fwd.h \
@@ -54,22 +57,18 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
  /home/kids/gba/butano-master/butano/include/bn_tile.h \
  /home/kids/gba/butano-master/butano/include/bn_compression_type.h \
  /home/kids/gba/butano-master/butano/include/bn_sprite_palette_item.h \
- /home/kids/gba/butano-master/butano/include/bn_color.h \
  /home/kids/gba/butano-master/butano/include/bn_utf8_characters_map_ref.h \
  /home/kids/gba/butano-master/butano/include/bn_power_of_two.h \
  /home/kids/gba/butano-master/butano/include/bn_utf8_character.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_cell_info.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_cell.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_bg_country.h \
+ /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_country.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_item.h \
  /home/kids/gba/butano-master/butano/include/bn_bg_palette_item.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_item.h \
  /home/kids/gba/butano-master/butano/include/bn_size.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_tiles_item.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_country.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1fg.h \
  /home/kids/gba/butano-master/examples/prendilo/../../common/include/common_variable_8x16_sprite_font.h \
  /home/kids/gba/butano-master/butano/include/bn_sprite_font.h \
  /home/kids/gba/butano-master/butano/include/bn_utf8_characters_map.h \
@@ -95,6 +94,8 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
  /home/kids/gba/butano-master/examples/prendilo/include/obj.h \
  /home/kids/gba/butano-master/examples/prendilo/include/bomb.h \
  /home/kids/gba/butano-master/examples/prendilo/include/item.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/door.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/schemi.h \
  /home/kids/gba/butano-master/examples/prendilo/include/dog.h \
  /home/kids/gba/butano-master/examples/prendilo/include/dog_selection.h \
  /home/kids/gba/butano-master/examples/prendilo/include/game_timer.h \
@@ -142,6 +143,9 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
 /home/kids/gba/butano-master/butano/include/bn_music_item.h:
 /home/kids/gba/butano-master/butano/include/bn_bg_palettes.h:
 /home/kids/gba/butano-master/butano/include/bn_palette_effect_type.h:
+/home/kids/gba/butano-master/butano/include/bn_sprite_palettes.h:
+/home/kids/gba/butano-master/butano/include/bn_colors.h:
+/home/kids/gba/butano-master/butano/include/bn_color.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_text_generator.h:
 /home/kids/gba/butano-master/butano/include/bn_vector.h:
 /home/kids/gba/butano-master/butano/include/bn_vector_fwd.h:
@@ -154,22 +158,18 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
 /home/kids/gba/butano-master/butano/include/bn_tile.h:
 /home/kids/gba/butano-master/butano/include/bn_compression_type.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_palette_item.h:
-/home/kids/gba/butano-master/butano/include/bn_color.h:
 /home/kids/gba/butano-master/butano/include/bn_utf8_characters_map_ref.h:
 /home/kids/gba/butano-master/butano/include/bn_power_of_two.h:
 /home/kids/gba/butano-master/butano/include/bn_utf8_character.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_cell_info.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_cell.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_bg_country.h:
+/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_country.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_item.h:
 /home/kids/gba/butano-master/butano/include/bn_bg_palette_item.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_item.h:
 /home/kids/gba/butano-master/butano/include/bn_size.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_tiles_item.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_country.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1fg.h:
 /home/kids/gba/butano-master/examples/prendilo/../../common/include/common_variable_8x16_sprite_font.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_font.h:
 /home/kids/gba/butano-master/butano/include/bn_utf8_characters_map.h:
@@ -195,6 +195,8 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
 /home/kids/gba/butano-master/examples/prendilo/include/obj.h:
 /home/kids/gba/butano-master/examples/prendilo/include/bomb.h:
 /home/kids/gba/butano-master/examples/prendilo/include/item.h:
+/home/kids/gba/butano-master/examples/prendilo/include/door.h:
+/home/kids/gba/butano-master/examples/prendilo/include/schemi.h:
 /home/kids/gba/butano-master/examples/prendilo/include/dog.h:
 /home/kids/gba/butano-master/examples/prendilo/include/dog_selection.h:
 /home/kids/gba/butano-master/examples/prendilo/include/game_timer.h:

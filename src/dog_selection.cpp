@@ -4,9 +4,7 @@
 #include "bn_array.h"
 #include "bn_sprite_animate_actions.h"
 #include "bn_sprite_items_dog.h"
-#include "bn_sprite_items_dog2.h"
-#include "bn_sprite_items_dog3.h"
-#include "bn_sprite_items_dog4.h"
+#include "bn_sprite_items_fox.h"
 #include "bn_sprite_items_dog5.h"
 #include "bn_sprite_items_bau.h"
 #include "bn_regular_bg_ptr.h"
@@ -15,7 +13,7 @@
 
 int dog_selection_screen(bn::sprite_text_generator& text_generator)
 {
-    static constexpr int NUM_DOGS = 5;
+    static constexpr int NUM_DOGS = 3;
     static constexpr int SPACING  = 40;
     static constexpr int START_X  = -100;
     static constexpr int DOG_Y    = 32;
@@ -25,8 +23,7 @@ int dog_selection_screen(bn::sprite_text_generator& text_generator)
     bn::array<bn::optional<bn::sprite_animate_action<5>>, NUM_DOGS> anims;
 
     const bn::sprite_item* items[NUM_DOGS] = {
-        &bn::sprite_items::dog, &bn::sprite_items::dog2, &bn::sprite_items::dog3,
-        &bn::sprite_items::dog4, &bn::sprite_items::dog5
+        &bn::sprite_items::dog, &bn::sprite_items::fox, &bn::sprite_items::dog5
     };
 
     for (int i = 0; i < NUM_DOGS; i++)

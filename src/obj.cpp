@@ -15,7 +15,7 @@
 #include "bn_sprite_items_dog5.h"
 #include "bn_sprite_items_bau.h"
 #include "bn_log.h"
-#include "s1.h"
+#include "schemi.h"
 
 void live_obj::apply_friction()
 {
@@ -33,10 +33,11 @@ void live_obj::apply_friction()
 
 }
 
-void live_obj::apply_gravity()
+void live_obj::apply_gravity(int schema)
 {
 
     // --- Fisica verticale ---
+    const collision_map_info& map = get_collision_map(schema);
     {
         chr_vy += GRAVITY;
         onGround = false;
@@ -49,13 +50,14 @@ void live_obj::apply_gravity()
 
         if (tx1 < 0) tx1 = 0;
         if (tx2 < 0) tx2 = 0;
-        if (tx1 > collision_map_columns - 1) tx1 = collision_map_columns - 1;
-        if (tx2 > collision_map_columns - 1) tx2 = collision_map_columns - 1;
+        if (tx1 > map.columns - 1) tx1 = map.columns - 1;
+        if (tx2 > map.columns - 1) tx2 = map.columns - 1;
+
 
         u_int16_t ty = ((chr_y + (chr_vy > 0 ? box_dim : bn::fixed(0.0))).division(16.0)).integer();
 
-        uint8_t tile_dwn1 = collision_map_s1[ty * collision_map_columns + tx1];
-        uint8_t tile_dwn2 = collision_map_s1[ty * collision_map_columns + tx2];
+        uint8_t tile_dwn1 = map.data[ty * map.columns + tx1];
+        uint8_t tile_dwn2 = map.data[ty * map.columns + tx2];
 
         if ((tile_dwn1 == 1 || tile_dwn2 == 1))
         {
@@ -72,20 +74,20 @@ void live_obj::apply_gravity()
 
 }
 
-void live_obj::apply_map() {
+void live_obj::apply_map(int schema) {
     // check se sbatto contro muro a sx o dx
+    const collision_map_info& map = get_collision_map(schema);
     {
         int tx = (chr_x.integer() + (chr_vx > 0 ? box_halfdim.integer() : -box_halfdim.integer())) >> 4;
 
         if (tx < 0) tx = 0;
-        if (tx > collision_map_columns - 1) tx = collision_map_columns - 1;
+        if (tx > map.columns - 1) tx = map.columns - 1;
 
         int ty1 = ((chr_y).integer() + box_halfdim.integer()) >> 4;
         int ty2 = ((chr_y).integer() - 0) >> 4;
 
-        uint8_t tile_side1 = collision_map_s1[ty1 * collision_map_columns + tx];
-        uint8_t tile_side2 = collision_map_s1[ty2 * collision_map_columns + tx];
-
+        uint8_t tile_side1 = map.data[ty1 * map.columns + tx];
+        uint8_t tile_side2 = map.data[ty2 * map.columns + tx];
         if ((tile_side1 == 1 || tile_side2 == 1))
         {
             chr_x -= chr_vx;
@@ -101,16 +103,18 @@ void live_obj::apply_map() {
 
 }
 
-bool is_solid_at(bn::fixed x, bn::fixed y)
+bool is_solid_at(bn::fixed x, bn::fixed y, int schema)
 {
+    const collision_map_info& map = get_collision_map(schema);
+
     if (x < 0 || y < 0)
         return true;
 
     int tx = x.integer() >> 4;
     int ty = y.integer() >> 4;
 
-    if (tx >= collision_map_columns || ty >= collision_map_rows)
+    if (tx >= map.columns || ty >= map.rows)
         return true;
 
-    return collision_map_s1[ty * collision_map_columns + tx] == 1;
+    return map.data[ty * map.columns + tx] == 1;
 }

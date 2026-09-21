@@ -35,7 +35,7 @@ void item::do_spawn()
 
 void item::update()
 {
-    apply_gravity();
+    apply_gravity(g_schema);
     chr_x += chr_vx;
     if (chr_vx > 0) {
         chr_vx += FRICTION;
@@ -48,7 +48,7 @@ void item::update()
     if (bn::abs(chr_vx) < bn::fixed(0.01)) {
         chr_vx = bn::fixed(0);
     }
-    apply_map();
+    apply_map(g_schema);
 
     ticks2action++;
 

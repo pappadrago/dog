@@ -10,11 +10,11 @@
 #include "bn_log.h"
 
 // Controlla i 4 angoli di una hitbox di 8x8 centrata sull'arma
-static bool weapon_hits_map(bn::fixed x, bn::fixed y)
+static bool weapon_hits_map(bn::fixed x, bn::fixed y, int schema)
 {
     static constexpr int R = 4;
-    return is_solid_at(x - R, y - R) || is_solid_at(x + R, y - R) ||
-        is_solid_at(x - R, y + R) || is_solid_at(x + R, y + R);
+    return is_solid_at(x - R, y - R, schema) || is_solid_at(x + R, y - R, schema) ||
+        is_solid_at(x - R, y + R, schema) || is_solid_at(x + R, y + R, schema);
 }
 
 enemy::enemy(u_int8_t _tipo, u_int8_t attr)
@@ -168,8 +168,8 @@ void enemy::update()
         chr_x += chr_vx;
     }
 
-    apply_map();
-    apply_gravity();
+    apply_map(g_schema);
+    apply_gravity(g_schema);
 
     if (weaponSprite && weaponTicks > 0) {
         // weapon attiva, devo muoverla
@@ -178,15 +178,17 @@ void enemy::update()
         wx_base += wpn_vx;
         wy_base += wpn_vy;
 
-        if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
-            weaponSprite->set_rotation_angle_safe(bn::fixed(weaponTicks).multiplication(bn::fixed(17)));
+        if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
+            bn::fixed angle = bn::fixed(weaponTicks * weaponDir * 4);
+            weaponSprite->set_rotation_angle_safe(angle);
+        }
 
         weaponSprite->set_x(wx_base - HALF_SCREEN_W);
         weaponSprite->set_y(wy_base - HALF_SCREEN_H);
         weaponSprite->set_horizontal_flip(weaponDir == DIR_LEFT);
 
         // collisione con la mappa: solo armi da lancio
-        if (tipo != TIPO_NEMICO_SPADACCINO_PATTUGLIATORE && weapon_hits_map(wx_base, wy_base)) {
+        if (tipo != TIPO_NEMICO_SPADACCINO_PATTUGLIATORE && weapon_hits_map(wx_base, wy_base, g_schema)) {
             //weaponTicks = 0;
             wpn_vx = 0;
             wpn_vy = 0;
@@ -272,7 +274,7 @@ void enemy::update()
                     chr_vx = bn::fixed(0);
                     max_vx = bn::fixed(0.8);
                     chr_accx = bn::fixed(0.15).multiplication(dir);
-                    break;                    
+                    break;
                 default:
                     break;
                 }
@@ -284,19 +286,21 @@ void enemy::update()
                 ticks2action = 60;
             }
             if (currentAction == ACTION_ATTACK && weaponSprite && weaponTicks == 0) {
-                wx_base = chr_x;
+                wx_base = chr_x + dir * bn::fixed(8);
                 wy_base = chr_y;
 
                 if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
                     weaponTicks = ticks2action;
+                    weaponDir = dir;
                 }
                 else {
                     // ARMA DA LANCIO
+                    weaponDir = (g_dog->chr_x > wx_base ? DIR_RIGHT : DIR_LEFT);
                     bn::fixed dx = g_dog->chr_x - wx_base;
                     bn::fixed dy = g_dog->chr_y - wy_base;
 
                     bn::fixed gittata = SCREEN_DG;
-                    weaponDir = (g_dog->chr_x > wx_base ? DIR_RIGHT : DIR_LEFT);
+
 
                     if (tipo == TIPO_NEMICO_ARCIERE_STATICO)
                         gittata = gittata.multiplication(1.5); // stessa durata maggior gittata -> più velocità

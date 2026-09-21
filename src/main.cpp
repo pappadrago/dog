@@ -4,13 +4,12 @@
 #include "bn_camera_ptr.h"
 #include "bn_music_items.h"
 #include "bn_bg_palettes.h"
+#include "bn_sprite_palettes.h"
+#include "bn_colors.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_regular_bg_ptr.h"
 #include "bn_regular_bg_map_cell_info.h"
-#include "bn_regular_bg_items_bg_country.h"
 #include "bn_regular_bg_items_country.h"
-#include "bn_regular_bg_items_s1.h"
-#include "bn_regular_bg_items_s1fg.h"
 #include "common_variable_8x16_sprite_font.h"
 #include "bn_log.h"
 
@@ -20,16 +19,70 @@
 #include "bau.h"
 #include "enemy.h"
 #include "item.h"
+#include "door.h"
 #include "dog.h"
 #include "dog_selection.h"
 #include "game_timer.h"
+#include "schemi.h"
 
+namespace
+{
+    // Dissolvenza verso il nero (true) o dal nero (false).
+    // Usa il fade delle palette: agisce su tutti gli sprite e gli sfondi,
+    // senza dover abilitare il blending oggetto per oggetto.
+    template<typename Step>
+    void fade_screen(bool to_black, Step&& step)
+    {
+        static constexpr int FRAMES = 20;
+
+        for (int i = 1; i <= FRAMES; ++i)
+        {
+            step();
+
+            bn::fixed intensity = to_black ? bn::fixed(i) / FRAMES
+                                           : bn::fixed(FRAMES - i) / FRAMES;
+
+            bn::bg_palettes::set_fade(bn::colors::black, intensity);
+            bn::sprite_palettes::set_fade(bn::colors::black, intensity);
+            bn::core::update();
+        }
+    }
+
+    // Versione a gioco fermo (usata per il fade-out)
+    void fade_screen(bool to_black)
+    {
+        fade_screen(to_black, []() {});
+    }
+
+    // Camera e parallasse: la posizione e' clampata ai bordi della mappa,
+    // cosi' funziona subito anche dopo un cambio schema.
+    void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
+                       bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg)
+    {
+        bn::fixed cam_x = g_dog->chr_x - HALF_SCREEN_W;
+        bn::fixed cam_y = g_dog->chr_y - HALF_SCREEN_H;
+
+        if (cam_x < 0) cam_x = 0;
+        if (cam_x > bn::fixed(MAP_W) - SCREEN_W) cam_x = bn::fixed(MAP_W) - SCREEN_W;
+        if (cam_y < 0) cam_y = 0;
+        if (cam_y > bn::fixed(MAP_H) - SCREEN_H) cam_y = bn::fixed(MAP_H) - SCREEN_H;
+
+        g_camera->set_x(cam_x.integer());
+        g_camera->set_y(cam_y.integer());
+
+        bg0.set_x(cam_x * bn::fixed(-0.25));
+        bg1.set_x(cam_x * bn::fixed(-0.5));
+
+        foreground.set_x(cam_x * bn::fixed(-1.0) - bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
+        foreground.set_y(cam_y * bn::fixed(-1.0) - bn::fixed(MAP_HALF_H) - HALF_SCREEN_H);
+        foregroundfg.set_x(foreground.x());
+        foregroundfg.set_y(foreground.y());
+    }
+}
 
 int main()
 {
     bn::core::init();
-
-
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);
@@ -39,24 +92,6 @@ int main()
 
     int skin_selezionato = dog_selection_screen(text_generator);
 
-    bn::regular_bg_ptr bg0 = bn::regular_bg_items::bg_country.create_bg(0);
-    bn::regular_bg_ptr bg1 = bn::regular_bg_items::bg_country.create_bg(1);
-    bn::regular_bg_ptr foreground = bn::regular_bg_items::s1.create_bg(0);
-    bn::regular_bg_ptr foregroundfg = bn::regular_bg_items::s1fg.create_bg(0);
-
-    foreground.set_x(-bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
-    foreground.set_y(0);
-
-    foregroundfg.set_x(-bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
-    foregroundfg.set_y(0);
-
-
-    foregroundfg.set_priority(0);
-    foreground.set_priority(2);
-    bg0.set_priority(3);
-    bg1.set_priority(3);
-
-
     // Costruzione oggetti di gioco in ordine di dipendenza
     g_camera.emplace(bn::camera_ptr::create(0, 0));
     g_bau.emplace();
@@ -65,18 +100,50 @@ int main()
     g_timer.emplace();
     g_dog.emplace(skin_selezionato);
 
+    g_schema = 1;
+    int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
+
     while (true)
     {
-        // --- Spawn o potenziamento nemici ---
+        // ------------------------------------------------------------
+        // Caricamento dello schema corrente
+        // ------------------------------------------------------------
+        // Sfondi dello schema: parallasse (bg0, bg1), livello tile e primo piano
+        bn::regular_bg_ptr bg0 = create_schema_bg0(g_schema);
+        bn::regular_bg_ptr bg1 = create_schema_bg1(g_schema);
+        bg0.set_priority(3);
+        bg1.set_priority(3);
 
-{
+        bn::regular_bg_ptr foreground   = create_schema_bg(g_schema);
+        bn::regular_bg_ptr foregroundfg = create_schema_fg(g_schema);
+        foregroundfg.set_priority(0);
+        foreground.set_priority(2);
+
+        // Porte dello schema
+        const door_list& dl = get_schema_doors(g_schema);
+        bn::vector<door*, MAX_DOORS> doors;
+        for (int i = 0; i < dl.count; ++i)
+            doors.push_back(new door(dl.data[i]));
+
+        // Il cane compare sopra la porta di arrivo
+        if (arrival_door >= 0 && arrival_door < dl.count)
+        {
+            g_dog->chr_x = bn::fixed(dl.data[arrival_door].x);
+            g_dog->chr_y = bn::fixed(dl.data[arrival_door].y);
+            g_dog->chr_vx = bn::fixed(0);
+            g_dog->chr_vy = bn::fixed(0);
+            g_dog->invulnerability = 60;   // i nemici nascono a caso: un attimo di respiro
+        }
+
+        // Spawn nemici e oggetti
+        {
             enemy* new_enemy = new enemy(TIPO_NEMICO_SPADACCINO_PATTUGLIATORE, ATTRIBUTO_NO);
             g_enemies->push_back(new_enemy);
             new_enemy->init();
         }
 
         for (int i = 0; i < 8; ++i) {
-            enemy* new_enemy = new enemy(i%7, ATTRIBUTO_AIM);
+            enemy* new_enemy = new enemy(i % 7, ATTRIBUTO_AIM);
             g_enemies->push_back(new_enemy);
             new_enemy->init();
         }
@@ -87,12 +154,16 @@ int main()
         }
         update_text_clear();
 
-        // --- Loop principale del round ---
-        bn::fixed max_cpu_usage;
+        update_camera(bg0, bg1, foreground, foregroundfg);
 
-        while (true) {
+        // ------------------------------------------------------------
+        // Loop dello schema: termina quando il cane usa una porta
+        // ------------------------------------------------------------
+        const door_info* used_door = nullptr;
 
-
+        // Un frame di gioco (senza bn::core::update)
+        auto game_step = [&]()
+        {
             g_dog->update();
             g_bau->update();
 
@@ -100,31 +171,19 @@ int main()
                 e->update();
             for (item* e : *g_items)
                 e->update();
+            for (door* d : doors)
+                if (d->update())
+                    used_door = &d->info();
 
-            // Segue il cane con la camera
-            if (g_dog->chr_x > HALF_SCREEN_W && g_dog->chr_x < bn::fixed(MAP_W) - HALF_SCREEN_W)
-            {
-                bn::fixed cam_x = g_dog->chr_x - HALF_SCREEN_W;
-                g_camera->set_x(cam_x.integer());
-                bg0.set_x(cam_x * bn::fixed(-0.25));
-                bg1.set_x(cam_x * bn::fixed(-0.5));
-                foreground.set_x(cam_x * bn::fixed(-1.0) - bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
-                foregroundfg.set_x(foreground.x());
-            }
-            if (g_dog->chr_y > HALF_SCREEN_H && g_dog->chr_y < bn::fixed(MAP_H) - HALF_SCREEN_H)
-            {
-                bn::fixed cam_y = g_dog->chr_y - HALF_SCREEN_H;
-                g_camera->set_y(cam_y.integer());
-                foreground.set_y(cam_y * bn::fixed(-1.0) - bn::fixed(MAP_HALF_H) - HALF_SCREEN_H);
-                foregroundfg.set_y(foreground.y());
-            }
+            update_camera(bg0, bg1, foreground, foregroundfg);
 
             update_text_tick();
 
             // 1. Aggiorna il timer
             bool timer_scaduto = g_timer->update(text_generator);
+            (void)timer_scaduto;
 
-            // 2. Avviso visivo sotto i 10 secondi — lampeggio del testo
+            // 2. Avviso visivo sotto i 10 secondi: lampeggio del testo
             if (g_timer->active && g_timer->seconds_left() <= 10)
             {
                 bool visibile = (g_timer->frames_left / 8) % 2 == 0;
@@ -132,7 +191,42 @@ int main()
                     s.set_visible(visibile);
             }
 
+        };
+
+        // Fade-in a gioco attivo: gli sprite prendono la posizione giusta
+        // (nel costruttore sono tutti creati nello stesso punto)
+        if (arrival_door >= 0)
+            fade_screen(false, game_step);
+
+        while (!used_door)
+        {
+            game_step();
             bn::core::update();
         }
+
+        // ------------------------------------------------------------
+        // Transizione verso lo schema di destinazione
+        // ------------------------------------------------------------
+        fade_screen(true);
+
+        for (enemy* e : *g_enemies)
+            delete e;
+        g_enemies->clear();
+
+        for (item* i : *g_items)
+            delete i;
+        g_items->clear();
+
+        for (door* d : doors)
+            delete d;
+        doors.clear();
+
+        // eventuale bau in volo
+        g_bau->ticks = 0;
+        g_bau->sprite->set_visible(false);
+
+        g_schema     = used_door->dest_schema;
+        arrival_door = used_door->dest_door;
+        // foreground e foregroundfg vengono distrutti a fine iterazione e ricreati sopra
     }
 }

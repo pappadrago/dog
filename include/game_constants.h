@@ -41,3 +41,6 @@
 #define BONUS_STATUS_HIDE  0
 #define BONUS_STATUS_SHOW  1
 #define BONUS_STATUS_SHINE 2
+
+
+#define MAX_DOORS 4 

@@ -9,12 +9,9 @@
 #include "bn_random.h"
 #include "bn_sound_items.h"
 #include "bn_sprite_items_dog.h"
-#include "bn_sprite_items_dog2.h"
-#include "bn_sprite_items_dog3.h"
-#include "bn_sprite_items_dog4.h"
+#include "bn_sprite_items_fox.h"
 #include "bn_sprite_items_dog5.h"
 #include "bn_sprite_items_bau.h"
-#include "s1.h"
 #include "bn_log.h"
 
 
@@ -23,10 +20,8 @@ dog::dog(int n)
     switch (n)
     {
     case 0: spriteItems = bn::sprite_items::dog;  break;
-    case 1: spriteItems = bn::sprite_items::dog2; break;
-    case 2: spriteItems = bn::sprite_items::dog3; break;
-    case 3: spriteItems = bn::sprite_items::dog4; break;
-    case 4: spriteItems = bn::sprite_items::dog5; break;
+    case 1: spriteItems = bn::sprite_items::fox; break;
+    case 2: spriteItems = bn::sprite_items::dog5; break;
     default: break;
     }
     sprite = spriteItems->create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
@@ -92,9 +87,8 @@ void dog::update()
         }
     }
 
-
     // --- Fisica verticale ---
-    apply_gravity();
+    apply_gravity(g_schema);
 
     if (bn::keypad::right_held()) {
         dir = DIR_RIGHT;
@@ -111,7 +105,7 @@ void dog::update()
     bn::fixed run = bn::keypad::l_held() ? bn::fixed(.5) : bn::fixed(.0);
     chr_vx = cap(chr_vx, max_vx + run);
     chr_x += chr_vx;
-    apply_map();
+    apply_map(g_schema);
 
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);
@@ -121,7 +115,7 @@ void dog::update()
     if (!onGround || chr_vx == 0)
         actionWalk->reset();
     if (!onGround)
-        sprite->set_tiles(spriteItems->tiles_item(), 9);
+        sprite->set_tiles(spriteItems->tiles_item(), 9+(chr_vy>0?1:0));
     else if (onGround && chr_vx != 0)
         actionWalk->update();
     else

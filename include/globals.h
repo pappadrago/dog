@@ -37,3 +37,7 @@ bn::fixed cap(bn::fixed val, bn::fixed max);
 
 #define MAP_HALF_W 768
 #define MAP_HALF_H 256
+
+
+extern int g_schema;
+

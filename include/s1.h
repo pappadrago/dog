@@ -1,9 +1,9 @@
 #pragma once
 
-constexpr uint8_t collision_map_columns = 96;
-constexpr uint8_t collision_map_rows = 32;
+constexpr uint8_t collision_map_columns_s1 = 96;
+constexpr uint8_t collision_map_rows_s1 = 32;
 
-constexpr uint8_t collision_map_s1[collision_map_columns * collision_map_rows] =
+constexpr uint8_t collision_map_s1[collision_map_columns_s1 * collision_map_rows_s1] =
 {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

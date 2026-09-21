@@ -16,6 +16,8 @@ bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
 bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 bn::optional<game_timer> g_timer;
 
+int g_schema = 1;
+
 bn::fixed cap(bn::fixed val, bn::fixed max) {
     if (val > max) val = max;
     if (val < -max) val = -max;

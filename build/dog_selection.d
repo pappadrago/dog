@@ -57,9 +57,7 @@ dog_selection.o: \
  /home/kids/gba/butano-master/butano/include/bn_sprite_animate_actions_fwd.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog.h \
  /home/kids/gba/butano-master/butano/include/bn_sprite_item.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog2.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog3.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog4.h \
+ /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_fox.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h \
@@ -138,9 +136,7 @@ dog_selection.o: \
 /home/kids/gba/butano-master/butano/include/bn_sprite_animate_actions_fwd.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_item.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog2.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog3.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog4.h:
+/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_fox.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h:
