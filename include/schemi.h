@@ -4,7 +4,7 @@
 #include "bn_regular_bg_ptr.h"
 
 // Numero di schemi disponibili: aumentare quando si aggiunge s2, s3...
-constexpr int NUM_SCHEMI = 1;
+constexpr int NUM_SCHEMI = 2;
 
 struct collision_map_info
 {

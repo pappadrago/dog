@@ -25,6 +25,7 @@ schemi.o: /home/kids/gba/butano-master/examples/prendilo/src/schemi.cpp \
  /home/kids/gba/butano-master/butano/include/bn_point.h \
  /home/kids/gba/butano-master/butano/include/bn_fixed_point_fwd.h \
  /home/kids/gba/butano-master/examples/prendilo/include/s1.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/s2.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_bg_s1.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_item.h \
  /home/kids/gba/butano-master/butano/include/bn_bg_palette_item.h \
@@ -41,8 +42,11 @@ schemi.o: /home/kids/gba/butano-master/examples/prendilo/src/schemi.cpp \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_cell.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_tiles_item.h \
  /home/kids/gba/butano-master/butano/include/bn_tile.h \
+ /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_bg_s2.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1fg.h
+ /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1fg.h \
+ /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s2.h \
+ /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s2fg.h
 /home/kids/gba/butano-master/examples/prendilo/include/schemi.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h:
 /home/kids/gba/butano-master/butano/include/bn_optional.h:
@@ -69,6 +73,7 @@ schemi.o: /home/kids/gba/butano-master/examples/prendilo/src/schemi.cpp \
 /home/kids/gba/butano-master/butano/include/bn_point.h:
 /home/kids/gba/butano-master/butano/include/bn_fixed_point_fwd.h:
 /home/kids/gba/butano-master/examples/prendilo/include/s1.h:
+/home/kids/gba/butano-master/examples/prendilo/include/s2.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_bg_s1.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_item.h:
 /home/kids/gba/butano-master/butano/include/bn_bg_palette_item.h:
@@ -85,5 +90,8 @@ schemi.o: /home/kids/gba/butano-master/examples/prendilo/src/schemi.cpp \
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_map_cell.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_tiles_item.h:
 /home/kids/gba/butano-master/butano/include/bn_tile.h:
+/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_bg_s2.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s1fg.h:
+/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s2.h:
+/home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_s2fg.h:
