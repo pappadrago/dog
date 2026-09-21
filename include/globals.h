@@ -35,5 +35,5 @@ bn::fixed cap(bn::fixed val, bn::fixed max);
 #define MAP_W 1536
 #define MAP_H 512
 
-#define MAP_W_2 768
-#define MAP_H_2 256
+#define MAP_HALF_W 768
+#define MAP_HALF_H 256

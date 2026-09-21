@@ -17,10 +17,6 @@
 #include "s1.h"
 #include "bn_log.h"
 
-static constexpr bn::fixed AIR_ACCEL = bn::fixed(0.06);
-static constexpr bn::fixed AIR_FRICTION = bn::fixed(0.02);
-static constexpr bn::fixed GROUND_ACCEL = bn::fixed(0.15);
-static constexpr bn::fixed GROUND_FRICTION = bn::fixed(0.08);
 
 dog::dog(int n)
 {
@@ -77,25 +73,21 @@ void dog::update()
                 *enem->sprite, *this);
             if (hit)
             {
-                dir = chr_x < enem->chr_x ? DIR_LEFT : DIR_RIGHT;
-                chr_vx = bn::fixed(2.0).multiplication(dir);
+                chr_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
                 chr_vy = bn::fixed(-2.0);
-                onGround = false;
                 invulnerability = 60;
-                enem->bounce(-dir);
+                if (enem->weaponSprite)
+                    enem->weaponTicks = 0;
             }
         }
-        for (item* enem : *g_items)
+        for (item* _item : *g_items)
         {
-            if (enem->invulnerability > 0) continue;
+            if (_item->invulnerability > 0) continue;
 
-            bool hit = check_collision_16(
-                *enem->sprite, *this);
+            bool hit = check_collision_16(*_item->sprite, *this);
             if (hit)
             {
-                dir = chr_x < enem->chr_x ? DIR_LEFT : DIR_RIGHT;
-
-                enem->bounce(-dir);
+                _item->bounce(chr_x < _item->chr_x ? DIR_RIGHT : DIR_LEFT);
             }
         }
     }
@@ -104,47 +96,18 @@ void dog::update()
     // --- Fisica verticale ---
     apply_gravity();
 
-    bn::fixed accel = bn::fixed(0.0);
-    bn::fixed friction = bn::fixed(0.0);
-
-    // --- Fisica orizzontale ---
-    if (onGround)
-    {
-        accel = GROUND_ACCEL;
-        friction = GROUND_FRICTION;
-    }
-    else
-    {
-        accel = AIR_ACCEL;
-        friction = AIR_FRICTION;
-    }
-
     if (bn::keypad::right_held()) {
         dir = DIR_RIGHT;
-        chr_vx += accel;
-        if (chr_vx > max_vx)
-            chr_vx = max_vx;
+        chr_vx += (onGround ? GROUND_ACCEL : AIR_ACCEL);
     }
     else if (bn::keypad::left_held()) {
         dir = DIR_LEFT;
-        chr_vx -= accel;
-        if (chr_vx < -max_vx)
-            chr_vx = -max_vx;
+        chr_vx -= (onGround ? GROUND_ACCEL : AIR_ACCEL);
     }
     else {
-        if (chr_vx > 0) {
-            chr_vx -= friction;
-            if (chr_vx < bn::fixed(0)) chr_vx = bn::fixed(0);
-        }
-        else if (chr_vx < 0) {
-            chr_vx += friction;
-            if (chr_vx > bn::fixed(0)) chr_vx = bn::fixed(0);
-        }
-        if (bn::abs(chr_vx) < bn::fixed(0.01)) {
-            chr_vx = bn::fixed(0);
-        }
+        apply_friction();
     }
-
+    chr_vx = cap(chr_vx, max_vx);
     chr_x += chr_vx;
     apply_map();
 

@@ -75,6 +75,9 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog4.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h \
+ /home/kids/gba/butano-master/butano/include/bn_log.h \
+ /home/kids/gba/butano-master/butano/include/bn_config_log.h \
+ /home/kids/gba/butano-master/butano/include/bn_log_backend.h \
  /home/kids/gba/butano-master/examples/prendilo/include/s1.h
 /home/kids/gba/butano-master/examples/prendilo/include/obj.h:
 /home/kids/gba/butano-master/butano/include/bn_optional.h:
@@ -152,4 +155,7 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog4.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h:
+/home/kids/gba/butano-master/butano/include/bn_log.h:
+/home/kids/gba/butano-master/butano/include/bn_config_log.h:
+/home/kids/gba/butano-master/butano/include/bn_log_backend.h:
 /home/kids/gba/butano-master/examples/prendilo/include/s1.h:

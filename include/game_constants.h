@@ -9,6 +9,9 @@
 // Schermo
 #define SCREEN_W bn::fixed(240)
 #define SCREEN_H bn::fixed(160)
+
+#define SCREEN_DG bn::fixed(288)
+
 #define HALF_SCREEN_W bn::fixed(120)
 #define HALF_SCREEN_H bn::fixed(80)
 

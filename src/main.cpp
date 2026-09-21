@@ -44,10 +44,10 @@ int main()
     bn::regular_bg_ptr foreground = bn::regular_bg_items::s1.create_bg(0);
     bn::regular_bg_ptr foregroundfg = bn::regular_bg_items::s1fg.create_bg(0);
 
-    foreground.set_x(-bn::fixed(MAP_W_2) - HALF_SCREEN_W);
+    foreground.set_x(-bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
     foreground.set_y(0);
 
-    foregroundfg.set_x(-bn::fixed(MAP_W_2) - HALF_SCREEN_W);
+    foregroundfg.set_x(-bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
     foregroundfg.set_y(0);
 
 
@@ -69,15 +69,21 @@ int main()
     {
         // --- Spawn o potenziamento nemici ---
 
-        for (int i = 0; i < MAX_ENEMIES; ++i) {
-            enemy* new_enemy = new enemy();
+{
+            enemy* new_enemy = new enemy(TIPO_NEMICO_SPADACCINO_PATTUGLIATORE, ATTRIBUTO_NO);
             g_enemies->push_back(new_enemy);
-            new_enemy->do_spawn();
+            new_enemy->init();
+        }
+
+        for (int i = 0; i < 8; ++i) {
+            enemy* new_enemy = new enemy(i%6, ATTRIBUTO_AIM);
+            g_enemies->push_back(new_enemy);
+            new_enemy->init();
         }
         for (int i = 0; i < 8; ++i) {
-            item* new_enemy = new item();
-            g_items->push_back(new_enemy);
-            new_enemy->do_spawn();
+            item* new_item = new item();
+            g_items->push_back(new_item);
+            new_item->do_spawn();
         }
         update_text_clear();
 
@@ -85,6 +91,7 @@ int main()
         bn::fixed max_cpu_usage;
 
         while (true) {
+
 
             g_dog->update();
             g_bau->update();
@@ -94,7 +101,6 @@ int main()
             for (item* e : *g_items)
                 e->update();
 
-
             // Segue il cane con la camera
             if (g_dog->chr_x > HALF_SCREEN_W && g_dog->chr_x < bn::fixed(MAP_W) - HALF_SCREEN_W)
             {
@@ -102,17 +108,16 @@ int main()
                 g_camera->set_x(cam_x.integer());
                 bg0.set_x(cam_x * bn::fixed(-0.25));
                 bg1.set_x(cam_x * bn::fixed(-0.5));
-                foreground.set_x(cam_x * bn::fixed(-1.0) - bn::fixed(MAP_W_2) - HALF_SCREEN_W);
+                foreground.set_x(cam_x * bn::fixed(-1.0) - bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
                 foregroundfg.set_x(foreground.x());
             }
             if (g_dog->chr_y > HALF_SCREEN_H && g_dog->chr_y < bn::fixed(MAP_H) - HALF_SCREEN_H)
             {
                 bn::fixed cam_y = g_dog->chr_y - HALF_SCREEN_H;
                 g_camera->set_y(cam_y.integer());
-                foreground.set_y(cam_y * bn::fixed(-1.0) - bn::fixed(MAP_H_2) - HALF_SCREEN_H);
+                foreground.set_y(cam_y * bn::fixed(-1.0) - bn::fixed(MAP_HALF_H) - HALF_SCREEN_H);
                 foregroundfg.set_y(foreground.y());
             }
-
 
             update_text_tick();
 
