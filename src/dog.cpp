@@ -107,7 +107,9 @@ void dog::update()
     else {
         apply_friction();
     }
-    chr_vx = cap(chr_vx, max_vx);
+
+    bn::fixed run = bn::keypad::l_held() ? bn::fixed(.5) : bn::fixed(.0);
+    chr_vx = cap(chr_vx, max_vx + run);
     chr_x += chr_vx;
     apply_map();
 

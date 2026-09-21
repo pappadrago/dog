@@ -57,6 +57,7 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
  /home/kids/gba/butano-master/examples/prendilo/include/dog.h \
  /home/kids/gba/butano-master/examples/prendilo/include/bau.h \
  /home/kids/gba/butano-master/examples/prendilo/include/enemy.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/bomb.h \
  /home/kids/gba/butano-master/examples/prendilo/include/collision.h \
  /home/kids/gba/butano-master/butano/include/bn_fixed_rect.h \
  /home/kids/gba/butano-master/butano/include/bn_rect.h \
@@ -137,6 +138,7 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
 /home/kids/gba/butano-master/examples/prendilo/include/dog.h:
 /home/kids/gba/butano-master/examples/prendilo/include/bau.h:
 /home/kids/gba/butano-master/examples/prendilo/include/enemy.h:
+/home/kids/gba/butano-master/examples/prendilo/include/bomb.h:
 /home/kids/gba/butano-master/examples/prendilo/include/collision.h:
 /home/kids/gba/butano-master/butano/include/bn_fixed_rect.h:
 /home/kids/gba/butano-master/butano/include/bn_rect.h:

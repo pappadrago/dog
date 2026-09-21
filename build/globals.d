@@ -56,6 +56,7 @@ globals.o: /home/kids/gba/butano-master/examples/prendilo/src/globals.cpp \
  /home/kids/gba/butano-master/butano/include/bn_sprite_shape_size.h \
  /home/kids/gba/butano-master/butano/include/bn_sprite_palette_item.h \
  /home/kids/gba/butano-master/butano/include/bn_color.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/bomb.h \
  /home/kids/gba/butano-master/examples/prendilo/include/item.h \
  /home/kids/gba/butano-master/examples/prendilo/include/dog.h \
  /home/kids/gba/butano-master/examples/prendilo/include/game_timer.h \
@@ -125,6 +126,7 @@ globals.o: /home/kids/gba/butano-master/examples/prendilo/src/globals.cpp \
 /home/kids/gba/butano-master/butano/include/bn_sprite_shape_size.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_palette_item.h:
 /home/kids/gba/butano-master/butano/include/bn_color.h:
+/home/kids/gba/butano-master/examples/prendilo/include/bomb.h:
 /home/kids/gba/butano-master/examples/prendilo/include/item.h:
 /home/kids/gba/butano-master/examples/prendilo/include/dog.h:
 /home/kids/gba/butano-master/examples/prendilo/include/game_timer.h:

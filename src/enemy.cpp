@@ -75,6 +75,19 @@ enemy::enemy(u_int8_t _tipo, u_int8_t attr)
         weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, 2);
 
         break;
+
+    case TIPO_NEMICO_BOMBAROLO:
+
+        N = 0 * 3;
+        sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 8, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+
+        // niente weaponSprite: l'arma è l'oggetto bomb
+        break;
+
     default:
         if (g_rng.get_bool() || true)
         {
@@ -140,6 +153,13 @@ void enemy::init()
 
 void enemy::update()
 {
+
+    if (bomba) {
+        bomba->update();
+        if (bomba->finished)
+            bomba.reset();
+    }
+
     apply_friction();
     // A: calcola le nuove posizioni di enemy e weapon (se c'è)
     {
@@ -191,7 +211,7 @@ void enemy::update()
             switch (currentAction)
             {
             case ACTION_STAND:
-                if (weaponSprite)
+                if (weaponSprite || tipo == TIPO_NEMICO_BOMBAROLO)
                     currentAction = ACTION_ATTACK;
                 else
                     currentAction = ACTION_MOVE;
@@ -247,13 +267,22 @@ void enemy::update()
                     max_vx = bn::fixed(1.0);
                     chr_accx = bn::fixed(0.2).multiplication(dir);
                     break;
+                case TIPO_NEMICO_BOMBAROLO:
+                    dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;
+                    chr_vx = bn::fixed(0);
+                    max_vx = bn::fixed(0.8);
+                    chr_accx = bn::fixed(0.15).multiplication(dir);
+                    break;                    
                 default:
                     break;
                 }
 
             }
 
-
+            if (currentAction == ACTION_ATTACK && tipo == TIPO_NEMICO_BOMBAROLO) {
+                throw_bomb();
+                ticks2action = 60;
+            }
             if (currentAction == ACTION_ATTACK && weaponSprite && weaponTicks == 0) {
                 wx_base = chr_x;
                 wy_base = chr_y;
@@ -332,5 +361,16 @@ void enemy::beHitByBark(int _dir)
     ticks2action = 120;
 }
 
+void enemy::throw_bomb()
+{
+    if (bomba) return;                       // una bomba alla volta per nemico
 
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
+
+    dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
+    bn::fixed vx = cap(dx.division(70), bn::fixed(2.5));
+
+    bomba.emplace(chr_x + bn::fixed(8).multiplication(dir), chr_y - 4, vx, bn::fixed(-4.0));
+}
 

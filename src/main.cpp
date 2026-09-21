@@ -76,7 +76,7 @@ int main()
         }
 
         for (int i = 0; i < 8; ++i) {
-            enemy* new_enemy = new enemy(i%6, ATTRIBUTO_AIM);
+            enemy* new_enemy = new enemy(i%7, ATTRIBUTO_AIM);
             g_enemies->push_back(new_enemy);
             new_enemy->init();
         }

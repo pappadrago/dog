@@ -6,6 +6,7 @@
 #include "bn_fixed.h"
 #include "game_constants.h"
 #include "obj.h"
+#include "bomb.h"
 
 class ball;
 class bau;
@@ -19,6 +20,8 @@ class dog;
 #define TIPO_NEMICO_ARCIERE_STATICO 3
 #define TIPO_NEMICO_BLOB_PATTUGLIATORE 4
 #define TIPO_NEMICO_SPADACCINO_PATTUGLIATORE 5
+#define TIPO_NEMICO_BOMBAROLO 6
+
 
 #define ATTRIBUTO_NO 0
 #define ATTRIBUTO_AIM 1
@@ -31,7 +34,9 @@ class dog;
 class enemy : public live_obj
 {
 public:
-    
+    bn::optional<bomb> bomba;   // creata al lancio, distrutta a esplosione finita
+    void throw_bomb();
+
     bn::optional<bn::sprite_ptr>               weaponSprite;
 
     bn::fixed wx_base = 0, wy_base = 0;
