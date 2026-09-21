@@ -11,6 +11,8 @@ class ball;
 class bau;
 class dog;
 
+#define WEAPON_FLICK_TIME 25
+
 #define TIPO_NEMICO_GENERICO 0
 #define TIPO_NEMICO_DRUIDO_DINAMICO 1
 #define TIPO_NEMICO_DRUIDO_STATICO 2
@@ -32,14 +34,14 @@ public:
     
     bn::optional<bn::sprite_ptr>               weaponSprite;
 
-    bn::fixed wx_base, wy_base;
-    bn::fixed wpn_vx, wpn_vy;
+    bn::fixed wx_base = 0, wy_base = 0;
+    bn::fixed wpn_vx = 0, wpn_vy = 0;
     bn::fixed weapon_time = bn::fixed(120.0);
-    int weaponDir ;
-    uint8_t tipo;
-    uint8_t attributo;
-    uint8_t currentAction;
-    uint16_t weaponTicks;
+    int weaponDir = DIR_RIGHT;
+    uint8_t tipo = 0;
+    uint8_t attributo = 0;
+    uint8_t currentAction = ACTION_STAND;
+    uint16_t weaponTicks = 0;
 
     enemy(u_int8_t tipo, u_int8_t attributo);
 

@@ -14,7 +14,7 @@ static bool weapon_hits_map(bn::fixed x, bn::fixed y)
 {
     static constexpr int R = 4;
     return is_solid_at(x - R, y - R) || is_solid_at(x + R, y - R) ||
-           is_solid_at(x - R, y + R) || is_solid_at(x + R, y + R);
+        is_solid_at(x - R, y + R) || is_solid_at(x + R, y + R);
 }
 
 enemy::enemy(u_int8_t _tipo, u_int8_t attr)
@@ -150,42 +150,27 @@ void enemy::update()
 
     apply_map();
     apply_gravity();
-/*
+
     if (weaponSprite && weaponTicks > 0) {
         // weapon attiva, devo muoverla
-        bn::fixed delta = weapon_time - weaponTicks;
-
-        if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
-            weaponSprite->set_rotation_angle_safe(bn::fixed(weaponTicks).multiplication(bn::fixed(17)));
-        weaponSprite->set_x(
-            wx_base - HALF_SCREEN_W +
-            bn::fixed(8 * weaponDir) +
-            wpn_vx.multiplication(delta));
-        weaponSprite->set_y(
-            wy_base - HALF_SCREEN_H +
-            wpn_vy.multiplication(delta)
-        );
-        weaponSprite->set_horizontal_flip(weaponDir == DIR_LEFT);
-    }
-    */
-       if (weaponSprite && weaponTicks > 0) {
-        // weapon attiva, devo muoverla
-        bn::fixed delta = weapon_time - weaponTicks;
 
         // posizione dell'arma in coordinate mondo
-        bn::fixed wx = wx_base + bn::fixed(8 * weaponDir) + wpn_vx.multiplication(delta);
-        bn::fixed wy = wy_base + wpn_vy.multiplication(delta);
+        wx_base += wpn_vx;
+        wy_base += wpn_vy;
 
         if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
             weaponSprite->set_rotation_angle_safe(bn::fixed(weaponTicks).multiplication(bn::fixed(17)));
 
-        weaponSprite->set_x(wx - HALF_SCREEN_W);
-        weaponSprite->set_y(wy - HALF_SCREEN_H);
+        weaponSprite->set_x(wx_base - HALF_SCREEN_W);
+        weaponSprite->set_y(wy_base - HALF_SCREEN_H);
         weaponSprite->set_horizontal_flip(weaponDir == DIR_LEFT);
 
         // collisione con la mappa: solo armi da lancio
-        if (tipo != TIPO_NEMICO_SPADACCINO_PATTUGLIATORE && weapon_hits_map(wx, wy))
-            weaponTicks = 0;
+        if (tipo != TIPO_NEMICO_SPADACCINO_PATTUGLIATORE && weapon_hits_map(wx_base, wy_base)) {
+            //weaponTicks = 0;
+            wpn_vx = 0;
+            wpn_vy = 0;
+        }
     }
 
     if (invulnerability > 0)
@@ -219,8 +204,6 @@ void enemy::update()
                 break;
             case ACTION_MOVE:
                 currentAction = ACTION_STAND;
-                ticks2action = 30;
-                chr_accx = bn::fixed(0);
                 break;
 
             default:
@@ -228,8 +211,8 @@ void enemy::update()
             }
 
             if (currentAction == ACTION_STAND) {
-
                 chr_accx = bn::fixed(0);
+                ticks2action = 30;
                 switch (tipo)
                 {
                 case TIPO_NEMICO_BLOB_PATTUGLIATORE:
@@ -237,7 +220,6 @@ void enemy::update()
                     chr_vy = bn::fixed(-2);
                     break;
                 default:
-                    ticks2action = 30;
                     break;
                 }
             }
@@ -330,7 +312,7 @@ void enemy::update()
         sprite->set_visible(true);
 
     if (weaponSprite) {
-        if (weaponTicks > 0 && weaponTicks < 25) {
+        if (weaponTicks > 0 && weaponTicks < WEAPON_FLICK_TIME) {
             weaponSprite->set_visible(weaponTicks % 2);
         }
         else {
