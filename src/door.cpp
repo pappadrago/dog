@@ -14,8 +14,6 @@ door::door(const door_info& info) :
     sprite = bn::sprite_items::doors.create_sprite(
         chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, DOOR_FRAME_CLOSED);
 
-    // Stessa priorita' del cane (2) ma z_order maggiore: la porta sta dietro di lui.
-    // Se la vedi davanti al cane, inverti il segno dello z_order.
     sprite->set_bg_priority(2);
     sprite->set_z_order(10);
     sprite->set_camera(g_camera);
@@ -27,14 +25,21 @@ bool door::update()
     bn::fixed dy = bn::abs(g_dog->chr_y - chr_y);
 
     bool dog_at_door = dx < DOOR_ENTER_HALF_W && dy < DOOR_ENTER_HALF_H;
+    bool apribile     = g_dog->porta_apribile();
 
-    // la porta si apre quando il cane e' davanti
-    if (dog_at_door != open)
+    int frame;
+    if (!apribile)
+        frame = DOOR_FRAME_LOCKED;
+    else if (dog_at_door)
+        frame = DOOR_FRAME_OPEN;
+    else
+        frame = DOOR_FRAME_CLOSED;
+
+    if (frame != current_frame)
     {
-        open = dog_at_door;
-        sprite->set_tiles(bn::sprite_items::doors.tiles_item(),
-                          open ? DOOR_FRAME_OPEN : DOOR_FRAME_CLOSED);
+        current_frame = frame;
+        sprite->set_tiles(bn::sprite_items::doors.tiles_item(), frame);
     }
 
-    return dog_at_door && g_dog->onGround && bn::keypad::up_pressed();
+    return dog_at_door && apribile && g_dog->onGround && bn::keypad::up_pressed();
 }

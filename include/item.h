@@ -44,7 +44,6 @@ public:
 
     explicit item(const item_def& def);
 
-    void do_spawn();
     virtual void update();
     virtual ~item() = default;
 

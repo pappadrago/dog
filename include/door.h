@@ -8,8 +8,10 @@
 
 #define DOOR_ENTER_HALF_W 12   // tolleranza orizzontale per entrare (px dal centro)
 #define DOOR_ENTER_HALF_H 16   // tolleranza verticale (px dal centro)
-#define DOOR_FRAME_CLOSED 0    // frame 0 dello sprite: porta chiusa
-#define DOOR_FRAME_OPEN   1    // frame 1: porta aperta (cane davanti)
+
+#define DOOR_FRAME_CLOSED 0    // porta apribile, cane non ancora davanti
+#define DOOR_FRAME_OPEN   1    // porta apribile, cane davanti (pronta a passare)
+#define DOOR_FRAME_LOCKED 2    // mancano chiavi: adatta l'indice al tuo spritesheet "doors"
 
 class door
 {
@@ -21,12 +23,12 @@ public:
     door(const door_info& info);
 
     // Da chiamare ogni frame. Ritorna true nel frame in cui il cane
-    // usa la porta (up premuto mentre e' a terra davanti alla porta).
+    // usa la porta (up premuto, a terra, davanti alla porta, con tutte le chiavi).
     bool update();
 
     const door_info& info() const { return *_info; }
 
 private:
     const door_info* _info;
-    bool open = false;
+    int current_frame = -1; // forza il primo aggiornamento del frame
 };

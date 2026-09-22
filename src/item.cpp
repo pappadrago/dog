@@ -7,7 +7,7 @@
 #include "bn_log.h"
 
 // Indici tile per tipo di oggetto: adatta agli indici reali dello spritesheet "items"
-static constexpr int TILE_CHIAVE = 30;
+static constexpr int TILE_CHIAVE = 31;
 static constexpr int TILE_ENERGIA = 11;
 static constexpr int TILE_POWERUP_BASE = 0; // + sotto_tipo (4 varianti consecutive)
 
@@ -40,13 +40,6 @@ item::item(const item_def& def)
     box_halfdim = bn::fixed(4);
 
     action = ACTION_MOVING;
-}
-
-void item::do_spawn()
-{
-    // Non più random: torna alla posizione fissa definita nella tabella dello schema.
-    chr_x = spawn_x;
-    chr_y = spawn_y;
 }
 
 void item::update()

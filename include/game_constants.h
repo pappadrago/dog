@@ -19,7 +19,6 @@
 #define JUMP_VY       bn::fixed(-2.7)
 #define DOUBLE_JUMP_VY bn::fixed(-3.0)
 #define GRAVITY        bn::fixed(.2)
-#define FRICTION       bn::fixed(-.2)
 #define FRICTION_GROUND bn::fixed(-.1)
 #define FRICTION_AIR   bn::fixed(-.02)
 #define MAX_FALL       bn::fixed(5.5)
@@ -34,14 +33,6 @@
 #define MAX_ENEMY_BOMBS   4
 #define MAX_ENEMIES       16
 #define MAX_BONUSES       3
-
-// Cooldown
-#define FRESH_COOLDOWN_COUNTER 30
-
-// Stati bonus
-#define BONUS_STATUS_HIDE  0
-#define BONUS_STATUS_SHOW  1
-#define BONUS_STATUS_SHINE 2
 
 
 #define MAX_DOORS 4 
