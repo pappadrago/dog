@@ -11,6 +11,8 @@ struct collision_map_info
     const uint8_t* data;
     int columns;
     int rows;
+    int map_w;
+    int map_h;    
 };
 
 // schema: 1..NUM_SCHEMI (valori fuori range -> schema 1)

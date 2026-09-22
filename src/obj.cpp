@@ -97,7 +97,7 @@ void live_obj::apply_map(int schema) {
 
 
     if (chr_x <= 0) { chr_x = bn::fixed(0);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
-    if (chr_x >= bn::fixed(MAP_W)) { chr_x = bn::fixed(MAP_W);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
+    if (chr_x >= bn::fixed(map.columns<<4)) { chr_x = bn::fixed(map.columns<<4);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
 
 
 

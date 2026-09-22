@@ -20,8 +20,11 @@ public:
 
     int palline_riportate = 0;
     int schema            = 1;
+    int score = 0;
 
     dog(int skin_index);
 
     void update();
+        void take_damage(int amount);
+    void add_score(int points) { score += points; }
 };

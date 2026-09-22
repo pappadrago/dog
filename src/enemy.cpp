@@ -2,6 +2,7 @@
 #include "enemy.h"
 #include "bau.h"
 #include "dog.h"
+#include "schemi.h"
 #include "bn_random.h"
 #include "bn_sprite_items_weapons.h"
 #include "bn_sprite_items_enemies.h"
@@ -9,10 +10,10 @@
 #include "bn_math.h"
 #include "bn_log.h"
 
-// Controlla i 4 angoli di una hitbox di 8x8 centrata sull'arma
+// Controlla i 4 angoli di una hitbox di 3x3 centrata sull'arma
 static bool weapon_hits_map(bn::fixed x, bn::fixed y, int schema)
 {
-    static constexpr int R = 4;
+    static constexpr int R = 3;
     return is_solid_at(x - R, y - R, schema) || is_solid_at(x + R, y - R, schema) ||
         is_solid_at(x - R, y + R, schema) || is_solid_at(x + R, y + R, schema);
 }
@@ -83,7 +84,7 @@ enemy::enemy(u_int8_t _tipo, u_int8_t attr)
         actionStand = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
         actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 8, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+            *sprite, 4, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
 
         // niente weaponSprite: l'arma è l'oggetto bomb
         break;
@@ -132,7 +133,8 @@ enemy::enemy(u_int8_t _tipo, u_int8_t attr)
 void enemy::init()
 {
     chr_y = 0;
-    chr_x = g_rng.get_int(MAP_W);
+    const collision_map_info& map = get_collision_map(g_schema);
+    chr_x = g_rng.get_int(map.map_w);
 
     dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;
     ticks2action = 120 + 60 * g_rng.get_int(5);
@@ -179,7 +181,7 @@ void enemy::update()
         wy_base += wpn_vy;
 
         if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
-            bn::fixed angle = bn::fixed(weaponTicks * weaponDir * 4);
+            bn::fixed angle = bn::fixed(weaponTicks * weaponDir * 7);
             weaponSprite->set_rotation_angle_safe(angle);
         }
 

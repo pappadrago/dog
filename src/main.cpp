@@ -61,11 +61,11 @@ namespace
     {
         bn::fixed cam_x = g_dog->chr_x - HALF_SCREEN_W;
         bn::fixed cam_y = g_dog->chr_y - HALF_SCREEN_H;
-
+    const collision_map_info& map = get_collision_map(g_schema);
         if (cam_x < 0) cam_x = 0;
-        if (cam_x > bn::fixed(MAP_W) - SCREEN_W) cam_x = bn::fixed(MAP_W) - SCREEN_W;
+        if (cam_x > bn::fixed(map.map_w) - SCREEN_W) cam_x = bn::fixed(map.map_w) - SCREEN_W;
         if (cam_y < 0) cam_y = 0;
-        if (cam_y > bn::fixed(MAP_H) - SCREEN_H) cam_y = bn::fixed(MAP_H) - SCREEN_H;
+        if (cam_y > bn::fixed(map.map_h) - SCREEN_H) cam_y = bn::fixed(map.map_h) - SCREEN_H;
 
         g_camera->set_x(cam_x.integer());
         g_camera->set_y(cam_y.integer());
@@ -86,7 +86,6 @@ int main()
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);
-    update_text(0);
 
     //bn::music_items::qwak.play(0.25);
 
@@ -178,18 +177,8 @@ int main()
             update_camera(bg0, bg1, foreground, foregroundfg);
 
             update_text_tick();
+            hud_update(g_dog->life, g_dog->score);
 
-            // 1. Aggiorna il timer
-            bool timer_scaduto = g_timer->update(text_generator);
-            (void)timer_scaduto;
-
-            // 2. Avviso visivo sotto i 10 secondi: lampeggio del testo
-            if (g_timer->active && g_timer->seconds_left() <= 10)
-            {
-                bool visibile = (g_timer->frames_left / 8) % 2 == 0;
-                for (auto& s : g_timer->text_sprites)
-                    s.set_visible(visibile);
-            }
 
         };
 

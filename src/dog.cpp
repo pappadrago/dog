@@ -73,6 +73,8 @@ void dog::update()
                 invulnerability = 60;
                 if (enem->weaponSprite)
                     enem->weaponTicks = 0;
+
+                    take_damage(1);
             }
         }
         for (item* _item : *g_items)
@@ -83,6 +85,7 @@ void dog::update()
             if (hit)
             {
                 _item->bounce(chr_x < _item->chr_x ? DIR_RIGHT : DIR_LEFT);
+                score += 10;
             }
         }
     }
@@ -123,4 +126,11 @@ void dog::update()
 
     if (invulnerability)
         sprite->set_visible(invulnerability % 2);
+}
+
+void dog::take_damage(int amount)
+{
+    life -= amount;
+    if (life < 0)
+        life = 0;
 }

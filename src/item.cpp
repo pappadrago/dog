@@ -2,6 +2,7 @@
 #include "item.h"
 #include "bau.h"
 #include "dog.h"
+#include "schemi.h"
 #include "bn_random.h"
 #include "bn_sprite_items_items.h"
 #include "bn_math.h"
@@ -17,8 +18,6 @@ item::item()
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
 
-    chr_x = g_rng.get_int(MAP_W);
-    chr_y = 512 - 200;
     do_spawn();
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
@@ -29,7 +28,8 @@ item::item()
 
 void item::do_spawn()
 {
-    chr_x = g_rng.get_int(MAP_W);
+        const collision_map_info& map = get_collision_map(g_schema);
+    chr_x = g_rng.get_int(map.map_w);
     chr_y = 200;
 }
 

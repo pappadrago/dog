@@ -12,8 +12,8 @@
 // aggiungere una riga qui sotto, un case nelle due create_* e alzare NUM_SCHEMI.
 static constexpr collision_map_info s_maps[NUM_SCHEMI] =
 {
-    { collision_map_s1, collision_map_columns_s1, collision_map_rows_s1 },
-    { collision_map_s2, collision_map_columns_s2, collision_map_rows_s2 },
+    { collision_map_s1, collision_map_columns_s1, collision_map_rows_s1, collision_map_columns_s1*16,collision_map_rows_s1*16 },
+    { collision_map_s2, collision_map_columns_s2, collision_map_rows_s2, collision_map_columns_s2*16,collision_map_rows_s2*16 },
 };
 
 // --- Porte ---
@@ -24,7 +24,7 @@ static constexpr collision_map_info s_maps[NUM_SCHEMI] =
 static constexpr door_info s1_doors[] =
 {
     //   x    y  dest_schema  dest_door
-    {   16, 448,           2,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
+    {    16, 448,           2,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
     {  1526, 432,           2,         0 },   // porta 1 -> porta 0
 };
 static constexpr door_info s2_doors[] =

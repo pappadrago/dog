@@ -58,6 +58,8 @@ enemy.o: /home/kids/gba/butano-master/examples/prendilo/src/enemy.cpp \
  /home/kids/gba/butano-master/examples/prendilo/include/bomb.h \
  /home/kids/gba/butano-master/examples/prendilo/include/bau.h \
  /home/kids/gba/butano-master/examples/prendilo/include/dog.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/schemi.h \
+ /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_weapons.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_enemies.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_enemies2.h \
@@ -124,6 +126,8 @@ enemy.o: /home/kids/gba/butano-master/examples/prendilo/src/enemy.cpp \
 /home/kids/gba/butano-master/examples/prendilo/include/bomb.h:
 /home/kids/gba/butano-master/examples/prendilo/include/bau.h:
 /home/kids/gba/butano-master/examples/prendilo/include/dog.h:
+/home/kids/gba/butano-master/examples/prendilo/include/schemi.h:
+/home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_weapons.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_enemies.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_enemies2.h:

@@ -40,7 +40,7 @@ public:
     bool onGround = false;
     int  dir = 1;
     int ticks2action = 0, invulnerability = 0;
-    bn::fixed life = MAX_LIFE;
+    int life = MAX_LIFE;
     bn::fixed max_vx = bn::fixed(2.0);
     void apply_gravity(int schema);
     void apply_friction();
