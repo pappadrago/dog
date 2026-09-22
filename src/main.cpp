@@ -24,7 +24,9 @@
 #include "dog_selection.h"
 #include "game_timer.h"
 #include "schemi.h"
+#include "enemies_table.h"
 #include "items_table.h"
+
 
 namespace
 {
@@ -34,7 +36,7 @@ namespace
     template<typename Step>
     void fade_screen(bool to_black, Step&& step)
     {
-        static constexpr int FRAMES = 20;
+        static constexpr int FRAMES = 60;
 
         for (int i = 1; i <= FRAMES; ++i)
         {
@@ -135,19 +137,17 @@ int main()
             g_dog->invulnerability = 60;   // i nemici nascono a caso: un attimo di respiro
         }
 
-        // Spawn nemici e oggetti
+        // Spawn nemici
         {
-            enemy* new_enemy = new enemy(TIPO_NEMICO_SPADACCINO_PATTUGLIATORE, ATTRIBUTO_NO);
-            g_enemies->push_back(new_enemy);
-            new_enemy->init();
-        }
+            int n_enemies = 0;
+            const enemy_def* edefs = get_schema_enemies(g_schema, n_enemies);
 
-        for (int i = 0; i < 8; ++i) {
-            enemy* new_enemy = new enemy(i % 7, ATTRIBUTO_AIM);
-            g_enemies->push_back(new_enemy);
-            new_enemy->init();
+            for (int i = 0; i < n_enemies; ++i) {
+                enemy* new_enemy = new enemy(edefs[i]);
+                g_enemies->push_back(new_enemy);
+            }
         }
-
+        // Spawn oggetti
         {
             int n_items = 0;
             const item_def* defs = get_schema_items(g_schema, n_items);
@@ -162,7 +162,6 @@ int main()
                     g_dog->chiavi_richieste++;
             }
         }
-
         update_text_clear();
 
         update_camera(bg0, bg1, foreground, foregroundfg);
@@ -189,7 +188,7 @@ int main()
                 update_camera(bg0, bg1, foreground, foregroundfg);
 
                 update_text_tick();
-                hud_update(g_dog->life, g_dog->score, g_dog->chiavi_richieste-g_dog->chiavi_raccolte);
+                hud_update(g_dog->life, g_dog->score, g_dog->chiavi_richieste - g_dog->chiavi_raccolte);
 
 
             };

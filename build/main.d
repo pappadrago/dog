@@ -100,6 +100,9 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
  /home/kids/gba/butano-master/examples/prendilo/include/dog_selection.h \
  /home/kids/gba/butano-master/examples/prendilo/include/game_timer.h \
  /home/kids/gba/butano-master/butano/include/bn_string.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/enemies_table.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/s1_enemies.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/s2_enemies.h \
  /home/kids/gba/butano-master/examples/prendilo/include/items_table.h \
  /home/kids/gba/butano-master/examples/prendilo/include/s1_items.h \
  /home/kids/gba/butano-master/examples/prendilo/include/s2_items.h
@@ -204,6 +207,9 @@ main.o: /home/kids/gba/butano-master/examples/prendilo/src/main.cpp \
 /home/kids/gba/butano-master/examples/prendilo/include/dog_selection.h:
 /home/kids/gba/butano-master/examples/prendilo/include/game_timer.h:
 /home/kids/gba/butano-master/butano/include/bn_string.h:
+/home/kids/gba/butano-master/examples/prendilo/include/enemies_table.h:
+/home/kids/gba/butano-master/examples/prendilo/include/s1_enemies.h:
+/home/kids/gba/butano-master/examples/prendilo/include/s2_enemies.h:
 /home/kids/gba/butano-master/examples/prendilo/include/items_table.h:
 /home/kids/gba/butano-master/examples/prendilo/include/s1_items.h:
 /home/kids/gba/butano-master/examples/prendilo/include/s2_items.h:

@@ -67,10 +67,7 @@ void dog::update()
                     chr_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
                     chr_vy = bn::fixed(-2.0);
                     invulnerability = 60;
-                    if (enem->weaponSprite)
-                        enem->weaponTicks = 0;
-
-                    take_damage(1);
+                    dog_damage(1);
                 }
             }
 
@@ -84,7 +81,7 @@ void dog::update()
                     if (enem->weaponSprite)
                         enem->weaponTicks = 0;
 
-                    take_damage(3);
+                    dog_damage(3);
                 }
             }
         }
@@ -136,7 +133,7 @@ void dog::update()
         sprite->set_visible(invulnerability % 2);
 }
 
-void dog::take_damage(int amount)
+void dog::dog_damage(int amount)
 {
     life -= amount;
     if (life < 0)

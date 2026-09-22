@@ -31,6 +31,18 @@ class dog;
 #define ACTION_ATTACK 2
 #define ACTION_STUN 3
 
+// Definizione statica di un nemico posizionato in uno schema.
+// Le tabelle per schema stanno in <schema>_enemies.h (es. s1_enemies.h)
+struct enemy_def
+{
+    uint8_t  tipo;             // TIPO_NEMICO_*
+    uint8_t  attributo;        // ATTRIBUTO_*
+    int16_t  x;                // posizione iniziale (coordinate mondo)
+    int8_t   dir;              // DIR_LEFT / DIR_RIGHT iniziale
+    uint16_t delay;            // ticks2action iniziale, prima del primo cambio di stato
+    uint8_t  variante = 0;     // usato solo da TIPO_NEMICO_GENERICO: skin (0-9) e tipo di arma
+};
+
 class enemy : public live_obj
 {
 public:
@@ -48,12 +60,13 @@ public:
     uint8_t currentAction = ACTION_STAND;
     uint16_t weaponTicks = 0;
 
-    enemy(u_int8_t tipo, u_int8_t attributo);
+    explicit enemy(const enemy_def& def);
 
-    void init();
     virtual void update();
     virtual ~enemy() = default;  // distruttore virtual obbligatorio
 
     void beHitByBark(int _dir);
-};
 
+private:
+    void init(const enemy_def& def);
+};

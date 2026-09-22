@@ -42,3 +42,7 @@ bn::regular_bg_ptr create_schema_bg1(int schema);
 // Livello tile (dietro) e primo piano (davanti) dello schema
 bn::regular_bg_ptr create_schema_bg(int schema);
 bn::regular_bg_ptr create_schema_fg(int schema);
+
+
+
+#define K 9 // chiave

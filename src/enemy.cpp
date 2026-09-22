@@ -13,23 +13,21 @@
 // Controlla i 4 angoli di una hitbox di 3x3 centrata sull'arma
 static bool weapon_hits_map(bn::fixed x, bn::fixed y, int schema)
 {
-    static constexpr int R = 3;
-    return is_solid_at(x - R, y - R, schema) || is_solid_at(x + R, y - R, schema) ||
-        is_solid_at(x - R, y + R, schema) || is_solid_at(x + R, y + R, schema);
+    static constexpr int HITBOX_SIZE = 3;
+    return is_solid_at(x - HITBOX_SIZE, y - HITBOX_SIZE, schema) || is_solid_at(x + HITBOX_SIZE, y - HITBOX_SIZE, schema) ||
+        is_solid_at(x - HITBOX_SIZE, y + HITBOX_SIZE, schema) || is_solid_at(x + HITBOX_SIZE, y + HITBOX_SIZE, schema);
 }
-
-enemy::enemy(u_int8_t _tipo, u_int8_t attr)
+enemy::enemy(const enemy_def& def)
 {
-    this->tipo = _tipo;
-    this->attributo = attr;
+    tipo = def.tipo;
+    attributo = def.attributo;
 
-    int N = g_rng.get_int(10) * 3;
     switch (tipo)
     {
     case TIPO_NEMICO_DRUIDO_DINAMICO:
     case TIPO_NEMICO_DRUIDO_STATICO:
-
-        N = 3 * 3;
+    {
+        int N = 3 * 3;
         sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
         actionStand = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
@@ -37,12 +35,11 @@ enemy::enemy(u_int8_t _tipo, u_int8_t attr)
             *sprite, 8, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
 
         weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, 23);
-
         break;
-
+    }
     case TIPO_NEMICO_ARCIERE_STATICO:
-
-        N = 7 * 3;
+    {
+        int N = 7 * 3;
         sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
         actionStand = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
@@ -50,23 +47,22 @@ enemy::enemy(u_int8_t _tipo, u_int8_t attr)
             *sprite, 8, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
 
         weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, 3);
-
         break;
+    }
     case TIPO_NEMICO_BLOB_PATTUGLIATORE:
-
-        N = 5 * 3;
+    {
+        int N = 5 * 3;
         sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
         actionStand = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
         // no weapon
-
         break;
+    }
     case TIPO_NEMICO_SPADACCINO_PATTUGLIATORE:
-
-        N = 0 * 3;
+    {
+        int N = 0;
         sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
         actionStand = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
@@ -74,46 +70,31 @@ enemy::enemy(u_int8_t _tipo, u_int8_t attr)
             *sprite, 8, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
 
         weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, 2);
-
         break;
-
+    }
     case TIPO_NEMICO_BOMBAROLO:
-
-        N = 0 * 3;
+    {
+        int N = 0;
         sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
         actionStand = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 4, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
         // niente weaponSprite: l'arma è l'oggetto bomb
         break;
+    }
+    default: // TIPO_NEMICO_GENERICO
+    {
+        int N = (def.variante % 10) * 3;
+        sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 3, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
 
-    default:
-        if (g_rng.get_bool() || true)
-        {
-            sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
-            actionStand = bn::create_sprite_animate_action_forever(
-                *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
-            actionWalk = bn::create_sprite_animate_action_forever(
-                *sprite, 3, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
-            weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, g_rng.get_int(10));
-
-        }
-        else {
-            {
-
-                N = g_rng.get_int(10) * 3;
-
-                sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
-                actionStand = bn::create_sprite_animate_action_forever(
-                    *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
-                actionWalk = bn::create_sprite_animate_action_forever(
-                    *sprite, 3, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-            }
-        }
+        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, def.variante % 10);
         break;
+    }
     }
 
     sprite->set_bg_priority(1);
@@ -123,21 +104,17 @@ enemy::enemy(u_int8_t _tipo, u_int8_t attr)
         weaponSprite->set_camera(g_camera);
     }
 
-    init();
+    init(def);
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
-
-
 }
 
-void enemy::init()
+void enemy::init(const enemy_def& def)
 {
     chr_y = 0;
-    const collision_map_info& map = get_collision_map(g_schema);
-    chr_x = g_rng.get_int(map.map_w);
-
-    dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;
-    ticks2action = 120 + 60 * g_rng.get_int(5);
+    chr_x = bn::fixed(def.x);
+    dir   = def.dir;
+    ticks2action = def.delay;
 
     if (tipo == TIPO_NEMICO_BLOB_PATTUGLIATORE) {
         chr_vx = bn::fixed(1.0);

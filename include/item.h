@@ -22,8 +22,7 @@ class dog;
 #define POWERUP_BAU        2
 #define POWERUP_RESISTENZA 3
 
-// Definizione statica di un item posizionato in uno schema.
-// Le tabelle per schema stanno in <schema>_items.h (es. s1_items.h)
+// Definizione statica di un item posizionato in uno schema
 struct item_def
 {
     uint8_t tipo;       // ITEM_TIPO_*

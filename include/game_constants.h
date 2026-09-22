@@ -31,7 +31,7 @@
 #define MAX_ENEMY_BULLETS 16
 #define MAX_BULLETS       8
 #define MAX_ENEMY_BOMBS   4
-#define MAX_ENEMIES       16
+#define MAX_ENEMIES       24
 #define MAX_BONUSES       3
 
 

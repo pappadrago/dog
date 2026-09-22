@@ -27,7 +27,7 @@ public:
     dog(int skin_index);
 
     void update();
-    void take_damage(int amount);
+    void dog_damage(int amount);
     void add_score(int points) { score += points; }
 
 
