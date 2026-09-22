@@ -59,34 +59,42 @@ void dog::update()
     {
         for (enemy* enem : *g_enemies)
         {
-            if (enem->invulnerability > 0) continue;
-            if (enem->weaponSprite && enem->weaponTicks == 0) continue;
+            if (enem->invulnerability == 0) {
 
-            bool hit = check_collision_16(
-                enem->weaponSprite ?
-                *enem->weaponSprite :
-                *enem->sprite, *this);
-            if (hit)
-            {
-                chr_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
-                chr_vy = bn::fixed(-2.0);
-                invulnerability = 60;
-                if (enem->weaponSprite)
-                    enem->weaponTicks = 0;
+                bool hit = check_collision_16(*enem->sprite, *this);
+                if (hit)
+                {
+                    chr_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
+                    chr_vy = bn::fixed(-2.0);
+                    invulnerability = 60;
+                    if (enem->weaponSprite)
+                        enem->weaponTicks = 0;
 
                     take_damage(1);
+                }
+            }
+
+            if (enem->weaponSprite && enem->weaponTicks > 0) {
+                bool hit = check_collision_16(*enem->weaponSprite, *this);
+                if (hit)
+                {
+                    chr_vx = (chr_x < enem->wx_base) ? bn::fixed(-2.0) : bn::fixed(2.0);
+                    chr_vy = bn::fixed(-2.0);
+                    invulnerability = 60;
+                    if (enem->weaponSprite)
+                        enem->weaponTicks = 0;
+
+                    take_damage(3);
+                }
             }
         }
+
         for (item* _item : *g_items)
         {
-            if (_item->invulnerability > 0) continue;
-
+            if (_item->raccolto) continue;
             bool hit = check_collision_16(*_item->sprite, *this);
             if (hit)
-            {
-                _item->bounce(chr_x < _item->chr_x ? DIR_RIGHT : DIR_LEFT);
-                score += 10;
-            }
+                _item->raccogli();
         }
     }
 
@@ -118,7 +126,7 @@ void dog::update()
     if (!onGround || chr_vx == 0)
         actionWalk->reset();
     if (!onGround)
-        sprite->set_tiles(spriteItems->tiles_item(), 9+(chr_vy>0?1:0));
+        sprite->set_tiles(spriteItems->tiles_item(), 9 + (chr_vy > 0 ? 1 : 0));
     else if (onGround && chr_vx != 0)
         actionWalk->update();
     else
@@ -133,4 +141,26 @@ void dog::take_damage(int amount)
     life -= amount;
     if (life < 0)
         life = 0;
+}
+
+void dog::applica_powerup(uint8_t sotto_tipo)
+{
+    switch (sotto_tipo)
+    {
+    case POWERUP_CORSA:
+        bonus_corsa += bn::fixed(0.5);
+        max_vx += bn::fixed(0.5);
+        break;
+    case POWERUP_SALTO:
+        bonus_salto += bn::fixed(0.5);
+        break;
+    case POWERUP_BAU:
+        bonus_bau += bn::fixed(1.0);
+        break;
+    case POWERUP_RESISTENZA:
+        bonus_resistenza += 30;
+        break;
+    default:
+        break;
+    }
 }

@@ -24,6 +24,7 @@
 #include "dog_selection.h"
 #include "game_timer.h"
 #include "schemi.h"
+#include "items_table.h"
 
 namespace
 {
@@ -40,7 +41,7 @@ namespace
             step();
 
             bn::fixed intensity = to_black ? bn::fixed(i) / FRAMES
-                                           : bn::fixed(FRAMES - i) / FRAMES;
+                : bn::fixed(FRAMES - i) / FRAMES;
 
             bn::bg_palettes::set_fade(bn::colors::black, intensity);
             bn::sprite_palettes::set_fade(bn::colors::black, intensity);
@@ -57,11 +58,11 @@ namespace
     // Camera e parallasse: la posizione e' clampata ai bordi della mappa,
     // cosi' funziona subito anche dopo un cambio schema.
     void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
-                       bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg)
+        bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg)
     {
         bn::fixed cam_x = g_dog->chr_x - HALF_SCREEN_W;
         bn::fixed cam_y = g_dog->chr_y - HALF_SCREEN_H;
-    const collision_map_info& map = get_collision_map(g_schema);
+        const collision_map_info& map = get_collision_map(g_schema);
         if (cam_x < 0) cam_x = 0;
         if (cam_x > bn::fixed(map.map_w) - SCREEN_W) cam_x = bn::fixed(map.map_w) - SCREEN_W;
         if (cam_y < 0) cam_y = 0;
@@ -113,7 +114,7 @@ int main()
         bg0.set_priority(3);
         bg1.set_priority(3);
 
-        bn::regular_bg_ptr foreground   = create_schema_bg(g_schema);
+        bn::regular_bg_ptr foreground = create_schema_bg(g_schema);
         bn::regular_bg_ptr foregroundfg = create_schema_fg(g_schema);
         foregroundfg.set_priority(0);
         foreground.set_priority(2);
@@ -146,11 +147,22 @@ int main()
             g_enemies->push_back(new_enemy);
             new_enemy->init();
         }
-        for (int i = 0; i < 8; ++i) {
-            item* new_item = new item();
-            g_items->push_back(new_item);
-            new_item->do_spawn();
+
+        {
+            int n_items = 0;
+            const item_def* defs = get_schema_items(g_schema, n_items);
+
+            g_dog->chiavi_raccolte = 0;
+            g_dog->chiavi_richieste = 0;
+
+            for (int i = 0; i < n_items; ++i) {
+                item* new_item = new item(defs[i]);
+                g_items->push_back(new_item);
+                if (defs[i].tipo == ITEM_TIPO_CHIAVE)
+                    g_dog->chiavi_richieste++;
+            }
         }
+
         update_text_clear();
 
         update_camera(bg0, bg1, foreground, foregroundfg);
@@ -162,25 +174,25 @@ int main()
 
         // Un frame di gioco (senza bn::core::update)
         auto game_step = [&]()
-        {
-            g_dog->update();
-            g_bau->update();
+            {
+                g_dog->update();
+                g_bau->update();
 
-            for (enemy* e : *g_enemies)
-                e->update();
-            for (item* e : *g_items)
-                e->update();
-            for (door* d : doors)
-                if (d->update())
-                    used_door = &d->info();
+                for (enemy* e : *g_enemies)
+                    e->update();
+                for (item* e : *g_items)
+                    e->update();
+                for (door* d : doors)
+                    if (d->update())
+                        used_door = &d->info();
 
-            update_camera(bg0, bg1, foreground, foregroundfg);
+                update_camera(bg0, bg1, foreground, foregroundfg);
 
-            update_text_tick();
-            hud_update(g_dog->life, g_dog->score);
+                update_text_tick();
+                hud_update(g_dog->life, g_dog->score, g_dog->chiavi_richieste-g_dog->chiavi_raccolte);
 
 
-        };
+            };
 
         // Fade-in a gioco attivo: gli sprite prendono la posizione giusta
         // (nel costruttore sono tutti creati nello stesso punto)
@@ -214,7 +226,7 @@ int main()
         g_bau->ticks = 0;
         g_bau->sprite->set_visible(false);
 
-        g_schema     = used_door->dest_schema;
+        g_schema = used_door->dest_schema;
         arrival_door = used_door->dest_door;
         // foreground e foregroundfg vengono distrutti a fine iterazione e ricreati sopra
     }

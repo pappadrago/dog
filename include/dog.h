@@ -14,17 +14,29 @@ class human;
 class bau;
 class enemy;
 
-class dog: public live_obj
+class dog : public live_obj
 {
 public:
 
     int palline_riportate = 0;
-    int schema            = 1;
     int score = 0;
+
+    int chiavi_raccolte = 0;
+    int chiavi_richieste = 0;
 
     dog(int skin_index);
 
     void update();
-        void take_damage(int amount);
+    void take_damage(int amount);
     void add_score(int points) { score += points; }
+
+
+    bn::fixed bonus_corsa = bn::fixed(0);
+    bn::fixed bonus_salto = bn::fixed(0);
+    bn::fixed bonus_bau = bn::fixed(0);
+    int       bonus_resistenza = 0;
+
+    void applica_powerup(uint8_t sotto_tipo);
+
+    bool porta_apribile() const { return chiavi_raccolte >= chiavi_richieste; }
 };

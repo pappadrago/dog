@@ -50,7 +50,10 @@ hud.o: /home/kids/gba/butano-master/examples/prendilo/src/hud.cpp \
  /home/kids/gba/butano-master/butano/include/bn_string.h \
  /home/kids/gba/butano-master/butano/include/bn_string.h \
  /home/kids/gba/butano-master/butano/include/bn_sprite_ptr.h \
- /home/kids/gba/butano-master/butano/include/bn_vector.h
+ /home/kids/gba/butano-master/butano/include/bn_vector.h \
+ /home/kids/gba/butano-master/butano/include/bn_log.h \
+ /home/kids/gba/butano-master/butano/include/bn_config_log.h \
+ /home/kids/gba/butano-master/butano/include/bn_log_backend.h
 /home/kids/gba/butano-master/examples/prendilo/include/hud.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_text_generator.h:
 /home/kids/gba/butano-master/butano/include/bn_vector.h:
@@ -103,3 +106,6 @@ hud.o: /home/kids/gba/butano-master/examples/prendilo/src/hud.cpp \
 /home/kids/gba/butano-master/butano/include/bn_string.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_ptr.h:
 /home/kids/gba/butano-master/butano/include/bn_vector.h:
+/home/kids/gba/butano-master/butano/include/bn_log.h:
+/home/kids/gba/butano-master/butano/include/bn_config_log.h:
+/home/kids/gba/butano-master/butano/include/bn_log_backend.h:

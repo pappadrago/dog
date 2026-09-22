@@ -334,7 +334,7 @@ void enemy::update()
         weaponSprite->set_y(chr_y - HALF_SCREEN_H);
         weaponSprite->set_horizontal_flip(dir == DIR_LEFT);
     }
-    if (onGround && chr_vx.integer() == 0)
+    if (onGround && chr_vx <= bn::fixed(.1))
         actionStand->update();
     else
         actionWalk->update();

@@ -25,7 +25,8 @@
 #define MAX_FALL       bn::fixed(5.5)
 
 // Vita
-#define MAX_LIFE 100
+#define MAX_LIFE 999
+#define START_LIFE 100
 
 // Limiti pool
 #define MAX_ENEMY_BULLETS 16

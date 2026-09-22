@@ -2,53 +2,61 @@
 #include "item.h"
 #include "bau.h"
 #include "dog.h"
-#include "schemi.h"
-#include "bn_random.h"
 #include "bn_sprite_items_items.h"
 #include "bn_math.h"
 #include "bn_log.h"
 
-item::item()
+// Indici tile per tipo di oggetto: adatta agli indici reali dello spritesheet "items"
+static constexpr int TILE_CHIAVE = 30;
+static constexpr int TILE_ENERGIA = 11;
+static constexpr int TILE_POWERUP_BASE = 0; // + sotto_tipo (4 varianti consecutive)
+
+static int tile_per_item(uint8_t tipo, uint8_t sotto_tipo)
 {
+    switch (tipo)
+    {
+    case ITEM_TIPO_CHIAVE:  return TILE_CHIAVE;
+    case ITEM_TIPO_ENERGIA: return TILE_ENERGIA;
+    case ITEM_TIPO_POWERUP: return TILE_POWERUP_BASE + sotto_tipo;
+    default:                return 0;
+    }
+}
 
-    int N = g_rng.get_int(10);
+item::item(const item_def& def)
+{
+    tipo = def.tipo;
+    sotto_tipo = def.sotto_tipo;
+    spawn_x = bn::fixed(def.x);
+    spawn_y = bn::fixed(def.y);
 
-    sprite = bn::sprite_items::items.create_sprite(chr_x, chr_y, N);
+    chr_x = spawn_x;
+    chr_y = spawn_y;
 
+    sprite = bn::sprite_items::items.create_sprite(chr_x, chr_y, tile_per_item(tipo, sotto_tipo));
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
 
-    do_spawn();
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
     action = ACTION_MOVING;
 }
 
-
 void item::do_spawn()
 {
-        const collision_map_info& map = get_collision_map(g_schema);
-    chr_x = g_rng.get_int(map.map_w);
-    chr_y = 200;
+    // Non più random: torna alla posizione fissa definita nella tabella dello schema.
+    chr_x = spawn_x;
+    chr_y = spawn_y;
 }
 
 void item::update()
 {
+    if (raccolto)
+    {
+        sprite->set_visible(false);
+        return;
+    }
     apply_gravity(g_schema);
-    chr_x += chr_vx;
-    if (chr_vx > 0) {
-        chr_vx += FRICTION;
-        if (chr_vx < bn::fixed(0)) chr_vx = bn::fixed(0);
-    }
-    else if (chr_vx < 0) {
-        chr_vx -= FRICTION;
-        if (chr_vx > bn::fixed(0)) chr_vx = bn::fixed(0);
-    }
-    if (bn::abs(chr_vx) < bn::fixed(0.01)) {
-        chr_vx = bn::fixed(0);
-    }
-    apply_map(g_schema);
 
     ticks2action++;
 
@@ -56,28 +64,29 @@ void item::update()
     bn::fixed dx = bn::degrees_lut_cos_safe(ticks2action << 2) * 4 - 2;
     sprite->set_x(chr_x + dx - HALF_SCREEN_W);
     sprite->set_y(chr_y + dy - HALF_SCREEN_H);
-
-    if (invulnerability > 0)
-        invulnerability--;
-
-    if (invulnerability == 1) {
-        do_spawn();
-    }
-
-    if (invulnerability > 0)
-        sprite->set_visible(invulnerability % 2);
-    else
-        sprite->set_visible(true);
+    sprite->set_visible(true);
 }
 
-
-void item::bounce(int _dir)
+void item::raccogli()
 {
-    dir = _dir;
-    chr_vx = bn::fixed(2.0).multiplication(dir);
-    chr_vy = bn::fixed(-3.0);
+    if (raccolto) return;
+    raccolto = true;
+    g_dog->add_score(10);
+    switch (tipo)
+    {
+    case ITEM_TIPO_CHIAVE:
+        g_dog->chiavi_raccolte++;
+        break;
 
-    ticks2action = 240;
-    invulnerability = 60;
+    case ITEM_TIPO_ENERGIA:
+        g_dog->life += 30; // valore da bilanciare
+        if (g_dog->life > MAX_LIFE) g_dog->life = MAX_LIFE;
+        break;
+
+    case ITEM_TIPO_POWERUP:
+        g_dog->applica_powerup(sotto_tipo);
+        break;
+    default:
+        break;
+    }
 }
-

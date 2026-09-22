@@ -39,7 +39,7 @@ void update_text_tick();
 //   life  = energia residua (0..max), score = punteggio (0..999999)
 // Alla prima chiamata i contatori partono direttamente dal valore passato.
 // Quando l'energia cala il numero lampeggia; sotto HUD_LOW_LIFE lampeggia piano.
-void hud_update(int life, int score);
+void hud_update(int life, int score, int keys);
 
 // Cancella l'HUD; alla prossima hud_update riparte da zero (nuova partita).
 void hud_reset();
