@@ -1,4 +1,5 @@
 #include "hud.h"
+#include "globals.h"
 #include "bn_format.h"
 #include "bn_string.h"
 #include "bn_sprite_ptr.h"
@@ -11,26 +12,26 @@ static constexpr int FADE_FRAMES = 60;
 // --- Layout HUD (coordinate schermo, origine al centro: x -120..120, y -80..80) ---
 // Se i numeri risultano troppo vicini alle etichette basta ritoccare queste costanti:
 // il font a larghezza variabile rende impossibile calcolarle a priori.
-static constexpr int HUD_Y             = -76;
-static constexpr int HUD_LIFE_LABEL_X  = -114;   // etichetta "VITA", allineata a sinistra
-static constexpr int HUD_LIFE_NUM_X    = -82;    // bordo destro del numero energia
+static constexpr int HUD_Y = -76;
+static constexpr int HUD_LIFE_LABEL_X = -114;   // etichetta "VITA", allineata a sinistra
+static constexpr int HUD_LIFE_NUM_X = -82;    // bordo destro del numero energia
 
 static constexpr int HUD_SCORE_LABEL_X = 75;     // bordo destro dell'etichetta "PUNTI"
-static constexpr int HUD_SCORE_NUM_X   = 119;    // bordo destro del punteggio
+static constexpr int HUD_SCORE_NUM_X = 119;    // bordo destro del punteggio
 
 static constexpr int HUD_KEYS_LABEL_X = -10;     // bordo destro dell'etichetta "CHIAVI"
-static constexpr int HUD_KEYS_NUM_X   = 20;    // bordo destro del punteggio
+static constexpr int HUD_KEYS_NUM_X = 20;    // bordo destro del punteggio
 
-static constexpr int HUD_LIFE_DIGITS   = 3;     // energia con zeri iniziali: 100, 075, 005
-static constexpr int HUD_LIFE_MAX      = 999;
-static constexpr int HUD_KEYS_DIGITS   = 2;     
-static constexpr int HUD_KEYS_MAX      = 99;
-static constexpr int HUD_SCORE_DIGITS  = 6;
-static constexpr int HUD_SCORE_MAX     = 999999;
+static constexpr int HUD_LIFE_DIGITS = 3;     // energia con zeri iniziali: 100, 075, 005
+static constexpr int HUD_LIFE_MAX = 999;
+static constexpr int HUD_KEYS_DIGITS = 2;
+static constexpr int HUD_KEYS_MAX = 99;
+static constexpr int HUD_SCORE_DIGITS = 6;
+static constexpr int HUD_SCORE_MAX = 999999;
 
-static constexpr int HUD_LOW_LIFE      = 25;     // sotto questa soglia il numero lampeggia piano
-static constexpr int HUD_FLASH_FRAMES  = 40;     // lampeggio veloce dopo un danno
-static constexpr int HUD_ROLL_DIV      = 6;      // velocita' contatore: ~1/6 della differenza per frame
+static constexpr int HUD_LOW_LIFE = 25;     // sotto questa soglia il numero lampeggia piano
+static constexpr int HUD_FLASH_FRAMES = 40;     // lampeggio veloce dopo un danno
+static constexpr int HUD_ROLL_DIV = 6;      // velocita' contatore: ~1/6 della differenza per frame
 
 static bn::sprite_text_generator* s_generator = nullptr;
 static bn::vector<bn::sprite_ptr, 24> s_sprites;
@@ -45,16 +46,16 @@ static bn::vector<bn::sprite_ptr, 8> s_score_digits;
 static bn::vector<bn::sprite_ptr, 2> s_keys_label;
 static bn::vector<bn::sprite_ptr, 4> s_keys_digits;
 
-static bool s_hud_ready   = false;
-static int  s_life_shown  = 0;
+static bool s_hud_ready = false;
+static int  s_life_shown = 0;
 static int  s_life_target = 0;
 static int  s_score_shown = 0;
 static int  s_score_target = 0;
 static int  s_keys_shown = 0;
 static int  s_keys_target = 0;
 
-static int  s_flash       = 0;
-static int  s_hud_frame   = 0;
+static int  s_flash = 0;
+static int  s_hud_frame = 0;
 
 void update_text_init(bn::sprite_text_generator* gen)
 {
@@ -180,12 +181,9 @@ void hud_update(int life, int score, int keys)
     if (!s_generator)
         return;
 
-    if (life < 0)  life = 0;
-    if (life > HUD_LIFE_MAX) life = HUD_LIFE_MAX;
-    if (score < 0) score = 0;
-    if (score > HUD_SCORE_MAX) score = HUD_SCORE_MAX;
-    if (keys < 0) keys = 0;
-    if (keys > HUD_KEYS_MAX) keys = HUD_KEYS_MAX;
+    life = capzero(life, HUD_LIFE_MAX);
+    score = capzero(score, HUD_SCORE_MAX);
+    keys = capzero(keys, HUD_KEYS_MAX);
 
 
     s_hud_frame++;
@@ -215,7 +213,7 @@ void hud_update(int life, int score, int keys)
     if (life < s_life_target)
         s_flash = HUD_FLASH_FRAMES;
 
-    s_life_target  = life;
+    s_life_target = life;
     s_score_target = score;
     s_keys_target = keys;
 

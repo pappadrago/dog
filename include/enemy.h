@@ -21,7 +21,8 @@ class dog;
 #define TIPO_NEMICO_BLOB_PATTUGLIATORE 4
 #define TIPO_NEMICO_SPADACCINO_PATTUGLIATORE 5
 #define TIPO_NEMICO_BOMBAROLO 6
-
+#define TIPO_NEMICO_MORTAIO 10
+#define TIPO_NEMICO_PATTUGLIATORE 11
 
 #define ATTRIBUTO_NO 0
 #define ATTRIBUTO_AIM 1
@@ -48,6 +49,7 @@ class enemy : public live_obj
 public:
     bn::optional<bomb> bomba;   // creata al lancio, distrutta a esplosione finita
     void throw_bomb();
+    void throw_shell();   // variante mortaio: arco alto, esplode al primo impatto
 
     bn::optional<bn::sprite_ptr>               weaponSprite;
 
@@ -65,8 +67,11 @@ public:
     virtual void update();
     virtual ~enemy() = default;  // distruttore virtual obbligatorio
 
-    void beHitByBark(int _dir);
+    void beHitByBark();
+    void beHitByDog();
 
 private:
     void init(const enemy_def& def);
+    void update_fantasma();
+    void update_pattugliatore();
 };

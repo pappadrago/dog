@@ -10,9 +10,6 @@
 class bau;
 class dog;
 
-#define ACTION_MOVING 1
-#define ACTION_ATTACK 2
-
 #define ITEM_TIPO_CHIAVE  0
 #define ITEM_TIPO_POWERUP 1
 #define ITEM_TIPO_ENERGIA 2

@@ -31,6 +31,8 @@ extern bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
 extern bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 
 bn::fixed cap(bn::fixed val, bn::fixed max);
+bn::fixed capzero(bn::fixed val, bn::fixed max);
+int capzero(int val, int max);
 
 #define MAP_HALF_W 768
 #define MAP_HALF_H 256

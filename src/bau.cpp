@@ -18,7 +18,7 @@ bau::bau()
 void bau::do_spawn()
 {
     if (g_bau->ticks > 0) return; // Bau già attivo, non spawnarne un altro
-    g_bau->chr_x = g_dog->chr_x + bn::fixed(32).multiplication(g_dog->dir);
+    g_bau->chr_x = g_dog->chr_x + bn::fixed(16).multiplication(g_dog->dir);
     g_bau->chr_y = g_dog->chr_y;
     g_bau->sprite->set_tiles(bn::sprite_items::bau.tiles_item(), g_dog->dir == DIR_LEFT ? 1 : 0);
     g_bau->chr_vx = bn::fixed(g_dog->dir == DIR_LEFT ? -1.5 : 1.5);
@@ -31,7 +31,7 @@ void bau::update()
     // --- Bau vs nemici ---
     if (ticks > 0)
     {
-        chr_x+=chr_vx;
+        chr_x += chr_vx;
         sprite->set_x(chr_x - HALF_SCREEN_W);
         sprite->set_y(chr_y - HALF_SCREEN_H);
         sprite->set_visible(ticks > BAU_FLICK_TIME || ticks % 2);
@@ -42,8 +42,7 @@ void bau::update()
             bool hit = check_collision_16(*enem->sprite, *sprite);
             if (hit)
             {
-                enem->beHitByBark(enem->chr_x < g_dog->chr_x ? DIR_LEFT : DIR_RIGHT);
-                enem->invulnerability = ticks + 1;
+                enem->beHitByBark();
             }
         }
 
@@ -51,5 +50,4 @@ void bau::update()
         if (!ticks)
             sprite->set_visible(false);
     }
-
 }

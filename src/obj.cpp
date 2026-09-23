@@ -33,11 +33,11 @@ void live_obj::apply_friction()
 
 }
 
-void live_obj::apply_gravity(int schema)
+void live_obj::apply_gravity()
 {
 
     // --- Fisica verticale ---
-    const collision_map_info& map = get_collision_map(schema);
+    const collision_map_info& map = get_collision_map(g_schema);
     {
         chr_vy += GRAVITY;
         onGround = false;
@@ -74,9 +74,9 @@ void live_obj::apply_gravity(int schema)
 
 }
 
-void live_obj::apply_map(int schema) {
+void live_obj::apply_map() {
     // check se sbatto contro muro a sx o dx
-    const collision_map_info& map = get_collision_map(schema);
+    const collision_map_info& map = get_collision_map(g_schema);
     {
         int tx = (chr_x.integer() + (chr_vx > 0 ? box_halfdim.integer() : -box_halfdim.integer())) >> 4;
 

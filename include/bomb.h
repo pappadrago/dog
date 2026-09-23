@@ -10,17 +10,17 @@
 #define BOMB_EXPLOSION_TICKS  24   // durata dell'esplosione (frame)
 #define BOMB_EXPLOSION_RADIUS 20   // raggio del danno (px)
 #define BOMB_TILE_INDEX       11    // frame di bn::sprite_items::weapons usato per la bomba (da adattare)
-
 class bomb : public live_obj
 {
 public:
-    bool finished = false;   // true a esplosione conclusa: l'owner puo' distruggerla
+    bool finished = false;
 
-    bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy);
+    bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int max_bounces = BOMB_MAX_BOUNCES);
 
     void update();
 
 private:
+    int  max_bounces;
     int  bounces         = 0;
     int  age             = 0;
     int  explosion_ticks = 0;

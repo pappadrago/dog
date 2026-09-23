@@ -42,9 +42,9 @@ public:
     int ticks2action = 0, invulnerability = 0;
     int life = START_LIFE;
     bn::fixed max_vx = bn::fixed(2.0);
-    void apply_gravity(int schema);
+    void apply_gravity();
     void apply_friction();
-    void apply_map(int schema);
+    void apply_map();
 };
 
 

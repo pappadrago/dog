@@ -4,7 +4,8 @@
 #include "bn_math.h"
 #include "bn_sprite_items_weapons.h"
 
-bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy)
+bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int max_bounces) :
+    max_bounces(max_bounces)
 {
     chr_x = x;
     chr_y = y;
@@ -34,11 +35,11 @@ void bomb::update()
     age++;
 
     // --- Gravità + contatto col suolo ---
-    apply_gravity(g_schema);
+    apply_gravity();
 
     if (onGround)
     {
-        if (bounces >= BOMB_MAX_BOUNCES)
+        if (bounces >= max_bounces)
         {
             // terzo impatto: dopo i 2 rimbalzi la bomba esplode
             explode();
@@ -53,7 +54,7 @@ void bomb::update()
     // --- Movimento orizzontale (rimbalza contro i muri) ---
     bn::fixed old_vx = chr_vx;
     chr_x += chr_vx;
-    apply_map(g_schema);
+    apply_map();
     if (chr_vx == bn::fixed(0) && old_vx != bn::fixed(0)) {
         chr_x -= old_vx;
         chr_vx = -old_vx.multiplication(bn::fixed(0.5));

@@ -38,8 +38,6 @@ item::item(const item_def& def)
 
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
-
-    action = ACTION_MOVING;
 }
 
 void item::update()
@@ -49,7 +47,7 @@ void item::update()
         sprite->set_visible(false);
         return;
     }
-    apply_gravity(g_schema);
+    apply_gravity();
 
     ticks2action++;
 

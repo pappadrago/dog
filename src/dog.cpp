@@ -64,10 +64,13 @@ void dog::update()
                 bool hit = check_collision_16(*enem->sprite, *this);
                 if (hit)
                 {
-                    chr_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
+                    bn::fixed new_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
                     chr_vy = bn::fixed(-2.0);
                     invulnerability = 60;
+
                     dog_damage(1);
+                    enem->beHitByDog();
+                    chr_vx = new_vx;
                 }
             }
 
@@ -96,7 +99,7 @@ void dog::update()
     }
 
     // --- Fisica verticale ---
-    apply_gravity(g_schema);
+    apply_gravity();
 
     if (bn::keypad::right_held()) {
         dir = DIR_RIGHT;
@@ -113,7 +116,7 @@ void dog::update()
     bn::fixed run = bn::keypad::l_held() ? bn::fixed(.5) : bn::fixed(.0);
     chr_vx = cap(chr_vx, max_vx + run);
     chr_x += chr_vx;
-    apply_map(g_schema);
+    apply_map();
 
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);

@@ -23,3 +23,13 @@ bn::fixed cap(bn::fixed val, bn::fixed max) {
     if (val < -max) val = -max;
     return val;
 }
+bn::fixed capzero(bn::fixed val, bn::fixed max) {
+    if (val > max) val = max;
+    if (val < 0) val = bn::fixed(0);
+    return val;
+}
+int capzero(int val, int max) {
+    if (val > max) val = max;
+    if (val < 0) val = 0;
+    return val;
+}
