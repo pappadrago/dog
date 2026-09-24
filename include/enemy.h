@@ -24,13 +24,22 @@ class dog;
 #define TIPO_NEMICO_MORTAIO 10
 #define TIPO_NEMICO_PATTUGLIATORE 11
 
+#define TIPO_NEMICO_PUGILE 12
+
 #define ATTRIBUTO_NO 0
-#define ATTRIBUTO_AIM 1
+#define ATTRIBUTO_AIM 1<<0
+#define ATTRIBUTO_MELEE 1<<1
+#define ATTRIBUTO_BASH 1<<2
 
 #define ACTION_STAND 0
 #define ACTION_MOVE 1
 #define ACTION_ATTACK 2
 #define ACTION_STUN 3
+
+#define MELEE_NONE     0
+#define MELEE_WINDUP   1
+#define MELEE_ACTIVE   2
+#define MELEE_RECOVERY 3
 
 // Definizione statica di un nemico posizionato in uno schema.
 // Le tabelle per schema stanno in <schema>_enemies.h (es. s1_enemies.h)
@@ -52,6 +61,7 @@ public:
     void throw_shell();   // variante mortaio: arco alto, esplode al primo impatto
 
     bn::optional<bn::sprite_ptr>               weaponSprite;
+    bn::optional<bn::sprite_animate_action<10>> actionMelee;
 
     bn::fixed wx_base = 0, wy_base = 0;
     bn::fixed wpn_vx = 0, wpn_vy = 0;
@@ -69,6 +79,10 @@ public:
 
     void beHitByBark();
     void beHitByDog();
+
+    int     contact_damage = 5;     // danno per semplice contatto
+    int     melee_damage = 0;     // 0 = non è un nemico melee
+    bool dog_in_melee_range() const;
 
 private:
     void init(const enemy_def& def);
