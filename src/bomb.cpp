@@ -4,8 +4,8 @@
 #include "bn_math.h"
 #include "bn_sprite_items_weapons.h"
 
-bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int max_bounces) :
-    max_bounces(max_bounces)
+bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounces) :
+    max_bounces(_max_bounces)
 {
     chr_x = x;
     chr_y = y;
