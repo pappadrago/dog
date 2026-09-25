@@ -27,9 +27,9 @@ class dog;
 #define TIPO_NEMICO_PUGILE 12
 
 #define ATTRIBUTO_NO 0
-#define ATTRIBUTO_AIM 1<<0
-#define ATTRIBUTO_MELEE 1<<1
-#define ATTRIBUTO_BASH 1<<2
+#define ATTRIBUTO_AIM (1<<0)
+#define ATTRIBUTO_MELEE (1<<1)
+#define ATTRIBUTO_BASH (1<<2)
 
 #define ACTION_STAND 0
 #define ACTION_MOVE 1
@@ -80,8 +80,9 @@ public:
     void beHitByBark();
     void beHitByDog();
 
-    int     contact_damage = 5;     // danno per semplice contatto
+    int     contact_damage = 1;     // danno per semplice contatto
     int     melee_damage = 0;     // 0 = non è un nemico melee
+    int meleeTicks;
     bool dog_in_melee_range() const;
 
 private:

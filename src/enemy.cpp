@@ -105,14 +105,12 @@ enemy::enemy(const enemy_def& def)
             *sprite, 8, bn::sprite_items::king.tiles_item(), 4, 5, 6, 7, 8, 9);
         // nessuna weaponSprite: danno solo da contatto
         max_vx = bn::fixed(0.8);
-        BN_LOG("attributo ", attributo);
-        BN_LOG("attributo & ATTRIBUTO_MELEE ", (attributo & ATTRIBUTO_MELEE));
         if (attributo & ATTRIBUTO_MELEE) {
 
             actionMelee = bn::create_sprite_animate_action_once(
-                *sprite, 3, bn::sprite_items::king.tiles_item(), 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
-            contact_damage = 5;
-            melee_damage = 15;
+                *sprite, 2, bn::sprite_items::king.tiles_item(), 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
+            contact_damage = 1;
+            melee_damage = 5;
         }
         break;
     }
@@ -183,21 +181,25 @@ void enemy::update_pattugliatore()
     bool sees_dog = (cane_a_destra && dir == DIR_RIGHT) ||
         (!cane_a_destra && dir == DIR_LEFT);
 
-    chr_vx = cap(chr_vx, (sees_dog && dog_in_melee_range() && (attributo&ATTRIBUTO_BASH)) ? (max_vx + max_vx) : max_vx);
+    chr_vx = cap(chr_vx, (sees_dog && dog_in_melee_range() && (attributo & ATTRIBUTO_BASH)) ? (max_vx + max_vx) : max_vx);
     chr_x += chr_vx;
 
-    if (currentAction == ACTION_MOVE && (attributo&ATTRIBUTO_MELEE) && bn::abs(chr_x - g_dog->chr_x) < 32) {
+    if (currentAction == ACTION_MOVE && (attributo & ATTRIBUTO_MELEE)
+        && bn::abs(chr_x - g_dog->chr_x) < (28)
+        && bn::abs(chr_y - g_dog->chr_y) < 24) {
         dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
         currentAction = ACTION_ATTACK;
         actionMelee->reset();
+        meleeTicks = 16;
         ticks2action = 30;
         chr_accx = bn::fixed(0);
     }
 
+    if(meleeTicks>0)meleeTicks--;
+
     apply_map();
     apply_friction();
     apply_gravity();
-
 
     ticks2action--;
     if (ticks2action == 0) {
@@ -407,7 +409,7 @@ void enemy::update()
                     if (tipo == TIPO_NEMICO_ARCIERE_STATICO)
                         gittata = gittata.multiplication(1.5); // stessa durata maggior gittata -> più velocità
 
-                    if (attributo == ATTRIBUTO_AIM) {
+                    if (attributo & ATTRIBUTO_AIM) {
                         bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
 
                         wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time + weapon_time);

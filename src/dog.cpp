@@ -61,15 +61,29 @@ void dog::update()
         {
             if (enem->invulnerability == 0) {
 
-                bool hit = check_collision_16(*enem->sprite, *this);
+                bool hit;
+                bool hitByMelee = false;
+                if (enem->melee_damage && enem->currentAction == ACTION_ATTACK) {
+                    hit = check_collision_melee(*enem);
+                    hitByMelee = true;
+                }
+                else
+                    hit = check_collision_16(*enem->sprite, *this);
+                    
                 if (hit)
                 {
                     bn::fixed new_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
                     chr_vy = bn::fixed(-2.0);
                     invulnerability = 60;
 
-                    dog_damage(1);
-                    enem->beHitByDog();
+                    if (hitByMelee) {
+                        dog_damage(enem->melee_damage);
+                    }
+                    else {
+                        enem->beHitByDog();
+                        dog_damage(enem->contact_damage);
+                    }
+
                     chr_vx = new_vx;
                 }
             }
