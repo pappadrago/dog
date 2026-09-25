@@ -11,7 +11,6 @@
 #include "bn_sprite_items_dog.h"
 #include "bn_sprite_items_fox.h"
 #include "bn_sprite_items_dog5.h"
-#include "bn_sprite_items_bau.h"
 #include "bn_log.h"
 
 
@@ -31,11 +30,10 @@ dog::dog(int n)
     actionStand = bn::create_sprite_animate_action_forever(
         *sprite, 5, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
     actionWalk = bn::create_sprite_animate_action_forever(
-        *sprite, 3, spriteItems->tiles_item(), 6, 7, 8, 9, 10, 11);
+        *sprite, 3, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10);
 
     g_dog->sprite->set_camera(g_camera);
     g_dog->sprite->set_bg_priority(2);
-
 }
 
 void dog::update()
@@ -140,7 +138,7 @@ void dog::update()
     if (!onGround || chr_vx == 0)
         actionWalk->reset();
     if (!onGround)
-        sprite->set_tiles(spriteItems->tiles_item(), 9 + (chr_vy > 0 ? 1 : 0));
+        sprite->set_tiles(spriteItems->tiles_item(), 8 + (chr_vy > 0 ? 1 : 0));
     else if (onGround && chr_vx != 0)
         actionWalk->update();
     else

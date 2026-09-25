@@ -65,7 +65,7 @@ bau.o: /home/kids/gba/butano-master/examples/prendilo/src/bau.cpp \
  /home/kids/gba/butano-master/butano/include/bn_fixed_rect_fwd.h \
  /home/kids/gba/butano-master/examples/prendilo/include/enemy.h \
  /home/kids/gba/butano-master/examples/prendilo/include/bomb.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h \
+ /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sound_items.h \
  /home/kids/gba/butano-master/butano/include/bn_sound_item.h \
  /home/kids/gba/butano-master/butano/include/bn_sound_handle.h
@@ -135,7 +135,7 @@ bau.o: /home/kids/gba/butano-master/examples/prendilo/src/bau.cpp \
 /home/kids/gba/butano-master/butano/include/bn_fixed_rect_fwd.h:
 /home/kids/gba/butano-master/examples/prendilo/include/enemy.h:
 /home/kids/gba/butano-master/examples/prendilo/include/bomb.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h:
+/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sound_items.h:
 /home/kids/gba/butano-master/butano/include/bn_sound_item.h:
 /home/kids/gba/butano-master/butano/include/bn_sound_handle.h:

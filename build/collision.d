@@ -68,6 +68,7 @@ collision.o: \
  /home/kids/gba/butano-master/butano/include/bn_reciprocal_lut.h \
  /home/kids/gba/butano-master/butano/include/bn_rule_of_three_approximation.h \
  /home/kids/gba/butano-master/butano/include/bn_camera_ptr.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/bau.h \
  /home/kids/gba/butano-master/butano/include/bn_math.h
 /home/kids/gba/butano-master/examples/prendilo/include/collision.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_ptr.h:
@@ -137,4 +138,5 @@ collision.o: \
 /home/kids/gba/butano-master/butano/include/bn_reciprocal_lut.h:
 /home/kids/gba/butano-master/butano/include/bn_rule_of_three_approximation.h:
 /home/kids/gba/butano-master/butano/include/bn_camera_ptr.h:
+/home/kids/gba/butano-master/examples/prendilo/include/bau.h:
 /home/kids/gba/butano-master/butano/include/bn_math.h:

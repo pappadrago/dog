@@ -9,11 +9,7 @@
 #include "bn_random.h"
 #include "bn_sound_items.h"
 #include "bn_sprite_items_dog.h"
-#include "bn_sprite_items_dog2.h"
-#include "bn_sprite_items_dog3.h"
-#include "bn_sprite_items_dog4.h"
 #include "bn_sprite_items_dog5.h"
-#include "bn_sprite_items_bau.h"
 #include "bn_log.h"
 #include "schemi.h"
 
@@ -30,12 +26,10 @@ void live_obj::apply_friction()
     if (bn::abs(chr_vx) < bn::fixed(0.01)) {
         chr_vx = bn::fixed(0);
     }
-
 }
 
 void live_obj::apply_gravity()
 {
-
     // --- Fisica verticale ---
     const collision_map_info& map = get_collision_map(g_schema);
     {

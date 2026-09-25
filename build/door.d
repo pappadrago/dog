@@ -37,8 +37,9 @@ door.o: /home/kids/gba/butano-master/examples/prendilo/src/door.cpp \
  /home/kids/gba/butano-master/butano/include/bn_vector_fwd.h \
  /home/kids/gba/butano-master/examples/prendilo/include/game_constants.h \
  /home/kids/gba/butano-master/butano/include/bn_fixed.h \
- /home/kids/gba/butano-master/examples/prendilo/include/door.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/bau.h \
  /home/kids/gba/butano-master/butano/include/bn_sprite_ptr.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/door.h \
  /home/kids/gba/butano-master/examples/prendilo/include/schemi.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h \
  /home/kids/gba/butano-master/examples/prendilo/include/dog.h \
@@ -99,8 +100,9 @@ door.o: /home/kids/gba/butano-master/examples/prendilo/src/door.cpp \
 /home/kids/gba/butano-master/butano/include/bn_vector_fwd.h:
 /home/kids/gba/butano-master/examples/prendilo/include/game_constants.h:
 /home/kids/gba/butano-master/butano/include/bn_fixed.h:
-/home/kids/gba/butano-master/examples/prendilo/include/door.h:
+/home/kids/gba/butano-master/examples/prendilo/include/bau.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_ptr.h:
+/home/kids/gba/butano-master/examples/prendilo/include/door.h:
 /home/kids/gba/butano-master/examples/prendilo/include/schemi.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h:
 /home/kids/gba/butano-master/examples/prendilo/include/dog.h:

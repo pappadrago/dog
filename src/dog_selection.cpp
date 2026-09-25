@@ -6,7 +6,6 @@
 #include "bn_sprite_items_dog.h"
 #include "bn_sprite_items_fox.h"
 #include "bn_sprite_items_dog5.h"
-#include "bn_sprite_items_bau.h"
 #include "bn_regular_bg_ptr.h"
 #include "bn_regular_bg_items_cover.h"
 #include "globals.h"
@@ -34,7 +33,7 @@ int dog_selection_screen(bn::sprite_text_generator& text_generator)
             *sprites[i], 5, items[i]->tiles_item(), (0+i)%5, (1+i)%5, (2+i)%5, (3+i)%5, (4+i)%5);
     }
 
-    bn::sprite_ptr cursor = bn::sprite_items::bau.create_sprite(START_X, CURSOR_Y, 0);
+    bn::sprite_ptr cursor = bn::sprite_items::dog.create_sprite(START_X, CURSOR_Y, 11);
 
     bn::vector<bn::sprite_ptr, 32> txt_sprites;
     text_generator.set_center_alignment();
@@ -63,7 +62,8 @@ int dog_selection_screen(bn::sprite_text_generator& text_generator)
         }
         if (bn::keypad::start_pressed()) return selected;
 
-        g_rng.get_int();
+        int n=g_rng.get_int();
+        n++;
         bn::core::update();
     }
 }

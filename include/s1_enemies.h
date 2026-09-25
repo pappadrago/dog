@@ -2,10 +2,11 @@
 #include "enemy.h"
 
 constexpr enemy_def schema1_enemies[] = {
-    { TIPO_NEMICO_SPADACCINO_PATTUGLIATORE, ATTRIBUTO_NO,  400, DIR_RIGHT, 80  },
-    { TIPO_NEMICO_GENERICO,                 ATTRIBUTO_AIM, 200, DIR_LEFT,  150, 2 },
-    { TIPO_NEMICO_GENERICO,                 ATTRIBUTO_AIM, 600, DIR_RIGHT, 210, 5 },
+    // { TIPO_NEMICO_SPADACCINO_PATTUGLIATORE, ATTRIBUTO_NO,  400, DIR_RIGHT, 80  },
+    // { TIPO_NEMICO_GENERICO,                 ATTRIBUTO_AIM, 200, DIR_LEFT,  150, 2 },
+    // { TIPO_NEMICO_GENERICO,                 ATTRIBUTO_AIM, 600, DIR_RIGHT, 210, 5 },
     { TIPO_NEMICO_DRUIDO_DINAMICO,          ATTRIBUTO_AIM, 900, DIR_LEFT,  180 },
+/*
     { TIPO_NEMICO_DRUIDO_STATICO,          ATTRIBUTO_AIM, 900, DIR_LEFT,  180 },
     { TIPO_NEMICO_ARCIERE_STATICO,          ATTRIBUTO_AIM, 1200, DIR_RIGHT, 240 },
     { TIPO_NEMICO_BLOB_PATTUGLIATORE,       ATTRIBUTO_NO,  1200, DIR_LEFT,  120 },
@@ -15,5 +16,6 @@ constexpr enemy_def schema1_enemies[] = {
     { TIPO_NEMICO_PATTUGLIATORE,       ATTRIBUTO_BASH,  280, DIR_LEFT,  120 },
     { TIPO_NEMICO_PATTUGLIATORE,       ATTRIBUTO_MELEE|ATTRIBUTO_BASH,  400, DIR_LEFT,  120 },
     { TIPO_NEMICO_PATTUGLIATORE,       ATTRIBUTO_MELEE,  620, DIR_LEFT,  120 },
+    */
 };
 constexpr int schema1_enemies_count = sizeof(schema1_enemies) / sizeof(schema1_enemies[0]);

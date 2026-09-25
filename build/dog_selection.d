@@ -59,7 +59,6 @@ dog_selection.o: \
  /home/kids/gba/butano-master/butano/include/bn_sprite_item.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_fox.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_cover.h \
  /home/kids/gba/butano-master/butano/include/bn_regular_bg_item.h \
@@ -78,7 +77,9 @@ dog_selection.o: \
  /home/kids/gba/butano-master/butano/include/bn_optional.h \
  /home/kids/gba/butano-master/butano/include/bn_vector.h \
  /home/kids/gba/butano-master/examples/prendilo/include/game_constants.h \
- /home/kids/gba/butano-master/butano/include/bn_fixed.h
+ /home/kids/gba/butano-master/butano/include/bn_fixed.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/bau.h \
+ /home/kids/gba/butano-master/butano/include/bn_sprite_ptr.h
 /home/kids/gba/butano-master/examples/prendilo/include/dog_selection.h:
 /home/kids/gba/butano-master/butano/include/bn_sprite_text_generator.h:
 /home/kids/gba/butano-master/butano/include/bn_vector.h:
@@ -138,7 +139,6 @@ dog_selection.o: \
 /home/kids/gba/butano-master/butano/include/bn_sprite_item.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_fox.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_ptr.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_regular_bg_items_cover.h:
 /home/kids/gba/butano-master/butano/include/bn_regular_bg_item.h:
@@ -158,3 +158,5 @@ dog_selection.o: \
 /home/kids/gba/butano-master/butano/include/bn_vector.h:
 /home/kids/gba/butano-master/examples/prendilo/include/game_constants.h:
 /home/kids/gba/butano-master/butano/include/bn_fixed.h:
+/home/kids/gba/butano-master/examples/prendilo/include/bau.h:
+/home/kids/gba/butano-master/butano/include/bn_sprite_ptr.h:

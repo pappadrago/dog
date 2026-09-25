@@ -6,6 +6,7 @@
 #include "bn_vector.h"
 #include "game_constants.h"
 #include "math.h"
+#include "bau.h"
 
 // Forward declaration di tutte le classi di gioco:
 // i .cpp che ne hanno bisogno includeranno i rispettivi header.

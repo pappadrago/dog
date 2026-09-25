@@ -54,8 +54,8 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
  /home/kids/gba/butano-master/butano/include/bn_reciprocal_lut.h \
  /home/kids/gba/butano-master/butano/include/bn_rule_of_three_approximation.h \
  /home/kids/gba/butano-master/butano/include/bn_camera_ptr.h \
- /home/kids/gba/butano-master/examples/prendilo/include/dog.h \
  /home/kids/gba/butano-master/examples/prendilo/include/bau.h \
+ /home/kids/gba/butano-master/examples/prendilo/include/dog.h \
  /home/kids/gba/butano-master/examples/prendilo/include/enemy.h \
  /home/kids/gba/butano-master/examples/prendilo/include/bomb.h \
  /home/kids/gba/butano-master/examples/prendilo/include/collision.h \
@@ -71,11 +71,7 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
  /home/kids/gba/butano-master/butano/include/bn_sound_item.h \
  /home/kids/gba/butano-master/butano/include/bn_sound_handle.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog2.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog3.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog4.h \
  /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h \
- /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h \
  /home/kids/gba/butano-master/butano/include/bn_log.h \
  /home/kids/gba/butano-master/butano/include/bn_config_log.h \
  /home/kids/gba/butano-master/butano/include/bn_log_backend.h \
@@ -136,8 +132,8 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
 /home/kids/gba/butano-master/butano/include/bn_reciprocal_lut.h:
 /home/kids/gba/butano-master/butano/include/bn_rule_of_three_approximation.h:
 /home/kids/gba/butano-master/butano/include/bn_camera_ptr.h:
-/home/kids/gba/butano-master/examples/prendilo/include/dog.h:
 /home/kids/gba/butano-master/examples/prendilo/include/bau.h:
+/home/kids/gba/butano-master/examples/prendilo/include/dog.h:
 /home/kids/gba/butano-master/examples/prendilo/include/enemy.h:
 /home/kids/gba/butano-master/examples/prendilo/include/bomb.h:
 /home/kids/gba/butano-master/examples/prendilo/include/collision.h:
@@ -153,11 +149,7 @@ obj.o: /home/kids/gba/butano-master/examples/prendilo/src/obj.cpp \
 /home/kids/gba/butano-master/butano/include/bn_sound_item.h:
 /home/kids/gba/butano-master/butano/include/bn_sound_handle.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog2.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog3.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog4.h:
 /home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_dog5.h:
-/home/kids/gba/butano-master/examples/prendilo/build/bn_sprite_items_bau.h:
 /home/kids/gba/butano-master/butano/include/bn_log.h:
 /home/kids/gba/butano-master/butano/include/bn_config_log.h:
 /home/kids/gba/butano-master/butano/include/bn_log_backend.h:

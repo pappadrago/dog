@@ -142,7 +142,7 @@ enemy::enemy(const enemy_def& def)
 
 void enemy::init(const enemy_def& def)
 {
-    chr_y = 512 - 140;
+    chr_y = 100;
     chr_x = bn::fixed(def.x);
     dir = def.dir;
     ticks2action = def.delay;
@@ -195,7 +195,7 @@ void enemy::update_pattugliatore()
         chr_accx = bn::fixed(0);
     }
 
-    if(meleeTicks>0)meleeTicks--;
+    if (meleeTicks > 0)meleeTicks--;
 
     apply_map();
     apply_friction();
@@ -259,9 +259,9 @@ void enemy::update()
         chr_vx = cap(chr_vx, max_vx);
         chr_x += chr_vx;
     }
-    apply_friction();
     apply_map();
     apply_gravity();
+    apply_friction();
 
     // A: calcola le nuove posizioni di enemy e weapon (se c'è)
     if (weaponSprite && weaponTicks > 0) {
@@ -436,7 +436,7 @@ void enemy::update()
         weaponSprite->set_y(chr_y - HALF_SCREEN_H);
         weaponSprite->set_horizontal_flip(dir == DIR_LEFT);
         if (tipo == TIPO_NEMICO_DRUIDO_DINAMICO || tipo == TIPO_NEMICO_DRUIDO_STATICO) {
-            weaponSprite->set_y(100); // out of view
+            weaponSprite->set_y(-100); // out of view
         }
     }
 
