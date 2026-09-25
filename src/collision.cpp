@@ -23,31 +23,7 @@ bool check_collision(const bn::sprite_ptr& s1, const bn::sprite_ptr& s2)
     return rect1.intersects(rect2);
 }
 
-bool check_collision_ball_dog(const bn::sprite_ptr& ball, const dog& _dog)
-{
-    bn::fixed dog_x = _dog.sprite->x();
-    bn::fixed dog_y = _dog.sprite->y() + 6;
-    bn::fixed dog_hw = 8;
-    bn::fixed dog_hh = 13;
-    bn::fixed ball_hw = 4;
-    bn::fixed ball_hh = 4;
 
-    return bn::abs(ball.x() - dog_x) < (dog_hw + ball_hw) &&
-        bn::abs(ball.y() - dog_y) < (dog_hh + ball_hh);
-}
-
-bool check_collision_16(const bn::sprite_ptr& ball, const dog& _dog)
-{
-    bn::fixed dog_x = _dog.sprite->x();
-    bn::fixed dog_y = _dog.sprite->y() + 6;
-    bn::fixed dog_hw = 8;
-    bn::fixed dog_hh = 13;
-    bn::fixed ball_hw = 6;
-    bn::fixed ball_hh = 6;
-
-    return bn::abs(ball.x() - dog_x) < (dog_hw + ball_hw) &&
-        bn::abs(ball.y() - dog_y) < (dog_hh + ball_hh);
-}
 
 bool check_collision_melee(const enemy& _enemy) {
     bn::fixed dog_x = g_dog->sprite->x();
@@ -64,22 +40,22 @@ bool check_collision_melee(const enemy& _enemy) {
     bool hit = bn::abs(enem_x - dog_x) < (dog_hw + enem_hw) &&
         bn::abs(enem_y - dog_y) < (dog_hh + enem_hh);
 
-    BN_LOG("check_collision_melee ", hit, ", enem_hw: ", enem_hw);
     return hit;
 }
+bool check_collision_16(const bn::sprite_ptr& sprite){
+        bn::fixed dog_hw = 8, dog_hh = 8;
+    bn::fixed ball_hw = 8, ball_hh = 8;
 
-bool check_collision_32(const bn::sprite_ptr& ball, const dog& _dog)
-{
-    bn::fixed dog_x = _dog.sprite->x();
-    bn::fixed dog_y = _dog.sprite->y() + 6;
-    bn::fixed dog_hw = 8;
-    bn::fixed dog_hh = 13;
-    bn::fixed ball_hw = 12;
-    bn::fixed ball_hh = 6;
+        bn::fixed dog_x = g_dog->sprite->x();
+    bn::fixed dog_y = g_dog->sprite->y();
 
-    return bn::abs(ball.x() - dog_x) < (dog_hw + ball_hw) &&
-        bn::abs(ball.y() - dog_y) < (dog_hh + ball_hh);
+    bn::fixed enem_x = sprite.x();
+    bn::fixed enem_y = sprite.y();
+
+    return bn::abs(enem_x - dog_x) < (dog_hw + ball_hw) &&
+        bn::abs(enem_y -dog_y) < (dog_hh + ball_hh);
 }
+
 bool check_collision_16(const bn::sprite_ptr& ball, const bn::sprite_ptr& _dog)
 {
     bn::fixed dog_hw = 8, dog_hh = 8;
@@ -87,4 +63,18 @@ bool check_collision_16(const bn::sprite_ptr& ball, const bn::sprite_ptr& _dog)
 
     return bn::abs(ball.x() - _dog.x()) < (dog_hw + ball_hw) &&
         bn::abs(ball.y() - _dog.y()) < (dog_hh + ball_hh);
+}
+bool check_collision_16(const enemy& _enemy)
+{
+    bn::fixed dog_hw = 8, dog_hh = 8;
+    bn::fixed ball_hw = 8, ball_hh = 8;
+
+        bn::fixed dog_x = g_dog->sprite->x();
+    bn::fixed dog_y = g_dog->sprite->y();
+
+    bn::fixed enem_x = _enemy.sprite->x();
+    bn::fixed enem_y = _enemy.sprite->y();
+
+    return bn::abs(enem_x - dog_x) < (dog_hw + ball_hw) &&
+        bn::abs(enem_y -dog_y) < (dog_hh + ball_hh);
 }

@@ -68,8 +68,8 @@ void dog::update()
                     hitByMelee = true;
                 }
                 else
-                    hit = check_collision_16(*enem->sprite, *this);
-                    
+                    hit = check_collision_16(*enem);
+
                 if (hit)
                 {
                     bn::fixed new_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
@@ -89,7 +89,7 @@ void dog::update()
             }
 
             if (enem->weaponSprite && enem->weaponTicks > 0) {
-                bool hit = check_collision_16(*enem->weaponSprite, *this);
+                bool hit = check_collision_16(*enem->weaponSprite);
                 if (hit)
                 {
                     chr_vx = (chr_x < enem->wx_base) ? bn::fixed(-2.0) : bn::fixed(2.0);
@@ -106,7 +106,7 @@ void dog::update()
         for (item* _item : *g_items)
         {
             if (_item->raccolto) continue;
-            bool hit = check_collision_16(*_item->sprite, *this);
+            bool hit = check_collision_16(*_item->sprite);
             if (hit)
                 _item->raccogli();
         }
