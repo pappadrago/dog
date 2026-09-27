@@ -25,6 +25,7 @@
 #include "schemi.h"
 #include "enemies_table.h"
 #include "items_table.h"
+#include <bn_blending.h>
 
 
 namespace
@@ -115,9 +116,14 @@ int main()
         bg0.set_priority(3);
         bg1.set_priority(3);
 
-        bn::regular_bg_ptr foreground = create_schema_bg(g_schema);
-        bn::regular_bg_ptr foregroundfg = create_schema_fg(g_schema);
+        bn::regular_bg_ptr foreground = create_schema_platform(g_schema);
+        bn::regular_bg_ptr foregroundfg = create_schema_foreground(g_schema);
+
+        foregroundfg.set_blending_enabled(true);
+        bn::blending::set_transparency_alpha(bn::fixed(0.6));
+
         foregroundfg.set_priority(0);
+
         foreground.set_priority(2);
 
         // Porte dello schema
@@ -170,14 +176,27 @@ int main()
         // ------------------------------------------------------------
         const door_info* used_door = nullptr;
 
+        g_boss.emplace(400, 100, 10, ATTRIBUTO_MELEE);
+
         // Un frame di gioco (senza bn::core::update)
         auto game_step = [&]()
             {
                 g_dog->update();
                 g_bau->update();
+                g_boss->update();
 
                 for (enemy* e : *g_enemies)
                     e->update();
+
+                for (int i = g_enemies->size() - 1; i >= 0; --i)
+                {
+                    if ((*g_enemies)[i]->distrutto)
+                    {
+                        delete (*g_enemies)[i];
+                        g_enemies->erase(g_enemies->begin() + i);
+                    }
+                }
+
                 for (item* e : *g_items)
                     e->update();
                 for (door* d : doors)

@@ -14,14 +14,16 @@ bau::bau()
     sprite->set_bg_priority(1);
 }
 
+
+
 void bau::do_spawn()
 {
-    if (g_bau->ticks > 0) return; // Bau già attivo, non spawnarne un altro
+    if (g_bau->ticks > 0) return;
     g_bau->chr_x = g_dog->chr_x + bn::fixed(16).multiplication(g_dog->dir);
     g_bau->chr_y = g_dog->chr_y;
     g_bau->sprite->set_tiles(bn::sprite_items::dog.tiles_item(), g_dog->dir == DIR_LEFT ? 12 : 11);
     g_bau->chr_vx = bn::fixed(g_dog->dir == DIR_LEFT ? -1.5 : 1.5);
-    g_bau->ticks = BAU_DURATA;
+    g_bau->ticks = BAU_DURATA + g_dog->bonus_bau.integer();   // più potente = dura di più, copre più spazio
     bn::sound_items::bau.play();
 }
 

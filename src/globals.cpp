@@ -4,6 +4,7 @@
 #include "enemy.h"
 #include "item.h"
 #include "dog.h"
+#include "boss.h"
 #include "game_timer.h"
 
 
@@ -12,6 +13,7 @@ bn::optional<bn::camera_ptr>           g_camera;
 
 bn::optional<bau>                      g_bau;
 bn::optional<dog>                      g_dog;
+bn::optional<boss>                      g_boss;
 bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
 bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 bn::optional<game_timer> g_timer;

@@ -32,7 +32,12 @@
 #define MAX_BULLETS       8
 #define MAX_ENEMY_BOMBS   4
 #define MAX_ENEMIES       24
+
 #define MAX_BONUSES       3
+
+#define MAX_CASSE 3
+#define PIATTAFORMA_X bn::fixed(400)   // coordinate fisse della piattaforma in alto: da adattare all'arena reale
+#define PIATTAFORMA_Y bn::fixed(80)
 
 
 #define MAX_DOORS 4 

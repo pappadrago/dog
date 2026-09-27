@@ -40,8 +40,8 @@ bn::regular_bg_ptr create_schema_bg0(int schema);
 bn::regular_bg_ptr create_schema_bg1(int schema);
 
 // Livello tile (dietro) e primo piano (davanti) dello schema
-bn::regular_bg_ptr create_schema_bg(int schema);
-bn::regular_bg_ptr create_schema_fg(int schema);
+bn::regular_bg_ptr create_schema_platform(int schema);
+bn::regular_bg_ptr create_schema_foreground(int schema);
 
 
 

@@ -44,6 +44,13 @@ item::item(const item_def& def)
 
 void item::update()
 {
+
+        static constexpr bn::fixed ITEM_ACTIVATION_RANGE_X = 240;
+    // Da qui in poi: corpo del nemico e decisioni AI, congelabili se lontano dal cane
+    if (bn::abs(chr_x - g_dog->chr_x) > ITEM_ACTIVATION_RANGE_X)
+        return;
+
+
     if (raccolto && ticks2action == 0)
     {
         sprite->set_visible(false);

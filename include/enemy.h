@@ -85,6 +85,9 @@ public:
     int meleeTicks;
     bool dog_in_melee_range() const;
 
+    int  vita_residua_ticks = -1;   // -1 = nessun limite; >=0 = nemico evocato, sparisce a 0
+    bool distrutto = false;         // true quando la magia si esaurisce: va rimosso da g_enemies
+
 private:
     void init(const enemy_def& def);
     void update_fantasma();

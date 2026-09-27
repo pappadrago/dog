@@ -1,6 +1,8 @@
 #include "collision.h"
 #include "dog.h"
 #include "enemy.h"
+#include "cassa.h"
+#include "boss.h"
 #include "bn_log.h"
 #include "game_constants.h"
 #include "globals.h"
@@ -77,4 +79,43 @@ bool check_collision_16(const enemy& _enemy)
 
     return bn::abs(enem_x - dog_x) < (dog_hw + ball_hw) &&
         bn::abs(enem_y -dog_y) < (dog_hh + ball_hh);
+}
+
+// collision.cpp
+bool check_collision_boss(const cassa& c)
+{
+    bn::fixed meta_boss = g_boss->dimensione/2;
+    return bn::abs(c.chr_x - g_boss->chr_x) < (meta_boss + c.box_halfdim) &&
+           bn::abs(c.chr_y - g_boss->chr_y) < (meta_boss + c.box_halfdim);
+}
+
+
+bool check_collision_melee_boss(const boss& _boss)
+{
+    bn::fixed dog_x = g_dog->sprite->x();
+    bn::fixed dog_y = g_dog->sprite->y();
+    bn::fixed boss_x = _boss.sprite->x();
+    bn::fixed boss_y = _boss.sprite->y();
+
+    bn::fixed dog_hw = 12, dog_hh = 13;
+    bn::fixed boss_hw = g_boss->dimensione.division(2) + (20 - _boss.meleeTicks);   // il colpo "si estende"
+    bn::fixed boss_hh = g_boss->dimensione.division(2);
+
+    return bn::abs(boss_x - dog_x) < (dog_hw + boss_hw) &&
+           bn::abs(boss_y - dog_y) < (dog_hh + boss_hh);
+}
+
+bool check_collision_16_boss(const boss& _boss)
+{
+    bn::fixed dog_x = g_dog->sprite->x();
+    bn::fixed dog_y = g_dog->sprite->y();
+    bn::fixed boss_x = _boss.sprite->x();
+    bn::fixed boss_y = _boss.sprite->y();
+
+    bn::fixed dog_hw = 8, dog_hh = 8;
+    bn::fixed boss_hw = g_boss->dimensione.division(2);
+    bn::fixed boss_hh = g_boss->dimensione.division(2);
+
+    return bn::abs(boss_x - dog_x) < (dog_hw + boss_hw) &&
+           bn::abs(boss_y - dog_y) < (dog_hh + boss_hh);
 }

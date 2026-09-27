@@ -6,14 +6,15 @@
 #include "bn_regular_bg_items_bg_s2.h"
 #include "bn_regular_bg_items_s1.h"
 #include "bn_regular_bg_items_s1fg.h"
+#include "bn_regular_bg_items_fog.h"
 #include "bn_regular_bg_items_s2.h"
 #include "bn_regular_bg_items_s2fg.h"
 // Per aggiungere uno schema: includere s2.h e gli sfondi s2/s2fg,
 // aggiungere una riga qui sotto, un case nelle due create_* e alzare NUM_SCHEMI.
 static constexpr collision_map_info s_maps[NUM_SCHEMI] =
 {
-    { collision_map_s1, collision_map_columns_s1, collision_map_rows_s1, collision_map_columns_s1*16,collision_map_rows_s1*16 },
-    { collision_map_s2, collision_map_columns_s2, collision_map_rows_s2, collision_map_columns_s2*16,collision_map_rows_s2*16 },
+    { collision_map_s1, collision_map_columns_s1, collision_map_rows_s1, collision_map_columns_s1 * 16,collision_map_rows_s1 * 16 },
+    { collision_map_s2, collision_map_columns_s2, collision_map_rows_s2, collision_map_columns_s2 * 16,collision_map_rows_s2 * 16 },
 };
 
 // --- Porte ---
@@ -24,14 +25,14 @@ static constexpr collision_map_info s_maps[NUM_SCHEMI] =
 static constexpr door_info s1_doors[] =
 {
     //   x    y  dest_schema  dest_door
-    {    16, 448,           2,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
-    {  1526, 432,           2,         0 },   // porta 1 -> porta 0
+    { 16, 448,           2,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
+    { 1526, 432,           2,         0 },   // porta 1 -> porta 0
 };
 static constexpr door_info s2_doors[] =
 {
     //   x    y  dest_schema  dest_door
-    {   16, 432,           1,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
-    {  1526, 464,           1,         0 },   // porta 1 -> porta 0
+    { 16, 432,           1,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
+    { 1526, 464,           1,         0 },   // porta 1 -> porta 0
 };
 
 static constexpr door_list s_doors[NUM_SCHEMI] =
@@ -60,7 +61,7 @@ bn::regular_bg_ptr create_schema_bg0(int schema)
 {
     switch (schema)
     {
-     case 2: return bn::regular_bg_items::bg_s2.create_bg(0);
+    case 2: return bn::regular_bg_items::bg_s2.create_bg(0);
     case 1:
     default:
         return bn::regular_bg_items::bg_s1.create_bg(0);
@@ -71,29 +72,29 @@ bn::regular_bg_ptr create_schema_bg1(int schema)
 {
     switch (schema)
     {
-     case 2: return bn::regular_bg_items::bg_s2.create_bg(1);
+    case 2: return bn::regular_bg_items::bg_s2.create_bg(1);
     case 1:
     default:
         return bn::regular_bg_items::bg_s1.create_bg(1);
     }
 }
 
-bn::regular_bg_ptr create_schema_bg(int schema)
+bn::regular_bg_ptr create_schema_platform(int schema)
 {
     switch (schema)
     {
-     case 2: return bn::regular_bg_items::s2.create_bg(0);
+    case 2: return bn::regular_bg_items::s2.create_bg(0);
     case 1:
     default:
         return bn::regular_bg_items::s1.create_bg(0);
     }
 }
 
-bn::regular_bg_ptr create_schema_fg(int schema)
+bn::regular_bg_ptr create_schema_foreground(int schema)
 {
     switch (schema)
     {
-     case 2: return bn::regular_bg_items::s2fg.create_bg(0);
+    case 2: return bn::regular_bg_items::s2fg.create_bg(0);
     case 1:
     default:
         return bn::regular_bg_items::s1fg.create_bg(0);

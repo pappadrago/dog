@@ -153,6 +153,14 @@ void enemy::init(const enemy_def& def)
     }
 
     currentAction = (tipo == TIPO_NEMICO_PATTUGLIATORE || tipo == TIPO_NEMICO_BLOB_PATTUGLIATORE) ? ACTION_MOVE : ACTION_STAND;
+
+    sprite->set_x(chr_x);
+    sprite->set_y(chr_y);
+    if (weaponSprite) {
+        weaponSprite->set_x(chr_x);
+        weaponSprite->set_y(chr_y);
+
+    }
 }
 
 void enemy::update_pattugliatore()
@@ -242,10 +250,17 @@ void enemy::update_pattugliatore()
 void enemy::update()
 {
 
-    if (tipo == TIPO_NEMICO_PATTUGLIATORE ||
-        tipo == TIPO_NEMICO_BLOB_PATTUGLIATORE) {
-        update_pattugliatore();
-        return;
+    if (vita_residua_ticks >= 0)
+    {
+        vita_residua_ticks--;
+        if (vita_residua_ticks <= 0)
+        {
+            distrutto = true;
+            sprite->set_visible(false);
+            if (weaponSprite) weaponSprite->set_visible(false);
+            return;
+        }
+
     }
 
     if (bomba) {
@@ -254,14 +269,6 @@ void enemy::update()
             bomba.reset();
     }
 
-    {
-        chr_vx += chr_accx;
-        chr_vx = cap(chr_vx, max_vx);
-        chr_x += chr_vx;
-    }
-    apply_map();
-    apply_gravity();
-    apply_friction();
 
     // A: calcola le nuove posizioni di enemy e weapon (se c'è)
     if (weaponSprite && weaponTicks > 0) {
@@ -290,6 +297,24 @@ void enemy::update()
 
         }
     }
+    static constexpr bn::fixed ENEMY_ACTIVATION_RANGE_X = 240;
+    // Da qui in poi: corpo del nemico e decisioni AI, congelabili se lontano dal cane
+    if (bn::abs(chr_x - g_dog->chr_x) > ENEMY_ACTIVATION_RANGE_X)
+        return;
+
+    if (tipo == TIPO_NEMICO_PATTUGLIATORE ||
+        tipo == TIPO_NEMICO_BLOB_PATTUGLIATORE) {
+        update_pattugliatore();
+        return;
+    }
+    {
+        chr_vx += chr_accx;
+        chr_vx = cap(chr_vx, max_vx);
+        chr_x += chr_vx;
+    }
+    apply_map();
+    apply_gravity();
+    apply_friction();
 
     if (invulnerability > 0)
         invulnerability--;
@@ -449,6 +474,8 @@ void enemy::update()
         sprite->set_visible(invulnerability % 2);
     else if (currentAction == ACTION_STUN)
         sprite->set_visible(ticks2action % 2);
+    else         if (vita_residua_ticks > 0 && vita_residua_ticks < 60)   // ultimo secondo: lampeggia, avvisa che sta per sparire
+        sprite->set_visible(vita_residua_ticks % 2);
     else
         sprite->set_visible(true);
 

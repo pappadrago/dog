@@ -18,7 +18,7 @@ class dog : public live_obj
 {
 public:
 
-    int palline_riportate = 0;
+    int sprite_dy = 0;
     int score = 0;
 
     int chiavi_raccolte = 0;

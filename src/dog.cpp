@@ -10,27 +10,66 @@
 #include "bn_sound_items.h"
 #include "bn_sprite_items_dog.h"
 #include "bn_sprite_items_fox.h"
+#include "bn_sprite_items_fox1632.h"
+#include "bn_sprite_items_zombie.h"
 #include "bn_sprite_items_dog5.h"
 #include "bn_log.h"
 
 
 dog::dog(int n)
 {
+    
     switch (n)
     {
-    case 0: spriteItems = bn::sprite_items::dog;  break;
-    case 1: spriteItems = bn::sprite_items::fox; break;
-    case 2: spriteItems = bn::sprite_items::dog5; break;
-    default: break;
+    case 0:
+        spriteItems = bn::sprite_items::dog;
+        bonus_salto += bn::fixed(1.0);    // salto più alto
+        break;
+    case 1:
+        spriteItems = bn::sprite_items::fox1632;
+        max_vx += bn::fixed(0.5);         // velocità massima più alta
+        sprite_dy = 8;
+        break;
+    case 2:
+        spriteItems = bn::sprite_items::dog5;
+        bonus_bau += bn::fixed(3.0);      // bau più potente
+        break;
+    default:
+        break;
     }
     sprite = spriteItems->create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
 
     sprite->set_bg_priority(1);
 
-    actionStand = bn::create_sprite_animate_action_forever(
-        *sprite, 5, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
-    actionWalk = bn::create_sprite_animate_action_forever(
-        *sprite, 3, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10);
+    switch (n)
+    {
+    case 0:
+        bonus_salto += bn::fixed(1.0);    // salto più alto
+
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 8, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10);
+
+        break;
+    case 1:
+        max_vx += bn::fixed(0.8);         // velocità massima più alta
+
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 8, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);
+        break;
+    case 2:
+        bonus_bau += bn::fixed(3.0);      // bau più potente
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 8, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10);
+        break;
+    default:
+        break;
+    }
 
     g_dog->sprite->set_camera(g_camera);
     g_dog->sprite->set_bg_priority(2);
@@ -41,7 +80,7 @@ void dog::update()
     if (bn::keypad::b_pressed() && onGround)
     {
         onGround = false;
-        chr_vy = bn::fixed(-5.0);
+        chr_vy = bn::fixed(-4.0) - bonus_salto;   // bonus_salto positivo → salto più alto
     }
 
     if (bn::keypad::a_pressed() && g_bau->ticks == 0)
@@ -132,7 +171,7 @@ void dog::update()
 
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_y(chr_y - HALF_SCREEN_H+sprite_dy);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
 
     if (!onGround || chr_vx == 0)

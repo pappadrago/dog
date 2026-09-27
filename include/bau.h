@@ -19,6 +19,9 @@ public:
     int value = -1;
     int ticks = 0;
 
+    bn::fixed bau_speed = bn::fixed(2.0);
+    bn::fixed bau_speed_neg = bn::fixed(-2.0);
+
     bau();
 
     void do_spawn();

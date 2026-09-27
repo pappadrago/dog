@@ -7,6 +7,9 @@
 #include "game_constants.h"
 #include "math.h"
 #include "bau.h"
+#include "cassa.h"
+#include "boss.h"
+#include "dog.h"
 
 // Forward declaration di tutte le classi di gioco:
 // i .cpp che ne hanno bisogno includeranno i rispettivi header.
@@ -15,6 +18,8 @@ class item;
 class enemy;
 class dog;
 class game_timer;
+class cassa;
+class boss;
 
 // --- Globali ---
 // Definiti in globals.cpp, accessibili ovunque includendo questo file.
@@ -30,6 +35,8 @@ extern bn::optional<game_timer> g_timer;
 // il costruttore globale con template non banale.
 extern bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
 extern bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
+extern bn::optional<boss> g_boss;
+extern bn::optional<bn::vector<cassa*, MAX_CASSE>> g_casse;
 
 bn::fixed cap(bn::fixed val, bn::fixed max);
 bn::fixed capzero(bn::fixed val, bn::fixed max);
