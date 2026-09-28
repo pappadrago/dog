@@ -176,7 +176,7 @@ int main()
         // ------------------------------------------------------------
         const door_info* used_door = nullptr;
 
-        g_boss.emplace(400, 100, 10, ATTRIBUTO_MELEE);
+        g_boss.emplace(400, 100, 10, ATTRIBUTO_MELEE|ATTRIBUTO_BASH);
 
         // Un frame di gioco (senza bn::core::update)
         auto game_step = [&]()

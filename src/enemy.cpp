@@ -106,7 +106,6 @@ enemy::enemy(const enemy_def& def)
         // nessuna weaponSprite: danno solo da contatto
         max_vx = bn::fixed(0.8);
         if (attributo & ATTRIBUTO_MELEE) {
-
             actionMelee = bn::create_sprite_animate_action_once(
                 *sprite, 2, bn::sprite_items::king.tiles_item(), 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
             contact_damage = 1;
@@ -114,6 +113,20 @@ enemy::enemy(const enemy_def& def)
         }
         break;
     }
+
+        case TIPO_NEMICO_ZOMBIE: 
+    {
+        int N = 1 * 3;
+        sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 3, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+
+        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, def.variante % 10);
+        break;
+    }
+
     default: // TIPO_NEMICO_GENERICO
     {
         int N = (def.variante % 10) * 3;

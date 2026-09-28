@@ -18,7 +18,7 @@
 
 dog::dog(int n)
 {
-    
+
     switch (n)
     {
     case 0:
@@ -147,6 +147,41 @@ void dog::update()
             if (hit)
                 _item->raccogli();
         }
+
+        if (g_boss.has_value() && g_boss->invulnerability == 0)
+        {
+            bool hit = false;
+            bool hitByMelee = false;
+            if (g_boss->melee_damage && g_boss->currentAction == ACTION_ATTACK && g_boss->ticks_attacco_melee<=16) {
+                hit = check_collision_melee_boss(*g_boss);
+                hitByMelee = true;
+            }
+            // else  hit = check_collision_16_boss(*g_boss);
+
+            if (hit)
+            {
+                bn::fixed new_vx = (chr_x < g_boss->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
+                chr_vy = bn::fixed(-2.0);
+                invulnerability = 60;
+                dog_damage(hitByMelee ? g_boss->melee_damage : g_boss->contact_damage);
+                chr_vx = new_vx;
+            }
+            else            if (g_boss->weaponSprite && g_boss->weaponTicks > 0) {
+                bool hit = check_collision_16(*g_boss->weaponSprite);
+                if (hit)
+                {
+                    chr_vx = (chr_x < g_boss->wx_base) ? bn::fixed(-2.0) : bn::fixed(2.0);
+                    chr_vy = bn::fixed(-2.0);
+                    invulnerability = 60;
+                    if (g_boss->weaponSprite){
+                        g_boss->weaponTicks = 0;
+                        g_boss->weaponSprite->set_visible(false);
+                    }
+
+                    dog_damage(3);
+                }
+            }
+        }
     }
 
     // --- Fisica verticale ---
@@ -171,7 +206,7 @@ void dog::update()
 
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H+sprite_dy);
+    sprite->set_y(chr_y - HALF_SCREEN_H + sprite_dy);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
 
     if (!onGround || chr_vx == 0)

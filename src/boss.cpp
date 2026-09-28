@@ -27,21 +27,26 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t _attributo, bn::fixe
     actionStand = bn::create_sprite_animate_action_forever(
         *sprite, 10, bn::sprite_items::zombie.tiles_item(), 0, 1, 2, 3);
 
+    actionWalk = bn::create_sprite_animate_action_forever(
+        *sprite, 5, bn::sprite_items::zombie.tiles_item(), 4, 5, 6, 7, 8, 9, 10);
+
     if (attributo & ATTRIBUTO_MELEE)
     {
-        actionMelee = bn::create_sprite_animate_action_once(
-            *sprite, 5, bn::sprite_items::zombie.tiles_item(), 4, 5, 6, 7, 8, 9, 10, 11);   // placeholder: frame dedicati
+        actionMelee = bn::create_sprite_animate_action_forever(
+            *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14);   // placeholder: frame dedicati
         melee_damage = 20;
     }
 
-    weaponSprite = bn::sprite_items::weapons.create_sprite(x, y, 23);
+    weaponSprite = bn::sprite_items::weapons.create_sprite(x, y, 26);
     weaponSprite->set_visible(false);
-
+    weaponSprite->set_camera(g_camera);
     dir = DIR_RIGHT;
-    max_vx = bn::fixed(1.0);
+    max_vx = bn::fixed(.5);
 
-    actionSummon = bn::create_sprite_animate_action_once(
-        *sprite, 12, bn::sprite_items::zombie.tiles_item(),  12, 13, 14);
+    actionSummon = bn::create_sprite_animate_action_forever(
+        *sprite, 4, bn::sprite_items::zombie.tiles_item(), 15, 16);
+
+    ticks_prossimo_attacco = 120;
 }
 
 void boss::update()
@@ -64,55 +69,77 @@ void boss::update()
         return;
     }
 
-
     const collision_map_info& mappa = get_collision_map(g_schema);
 
-    bool cane_a_destra = chr_x < g_dog->chr_x;
-    bool sees_dog = (cane_a_destra && dir == DIR_RIGHT) || (!cane_a_destra && dir == DIR_LEFT);
+    static constexpr bn::fixed RANGE_MELEE = 20;    // abbastanza vicino: tenta il corpo a corpo
+    static constexpr bn::fixed RANGE_SUMMON = 120;   // troppo lontano per colpire, ma abbastanza per evocare
 
-    // --- Movimento a muro, sospeso durante l'attacco melee ---
+    bool cane_a_destra = chr_x < g_dog->chr_x;
+    bn::fixed dist_x = bn::abs(chr_x - g_dog->chr_x);
+
     if (currentAction == ACTION_MOVE)
     {
-        bn::fixed meta = bn::fixed(dimensione / 2);
-        bn::fixed x_avanti = chr_x + meta.multiplication(dir) + bn::fixed(2 * dir);
-        if (x_avanti <= 0 || x_avanti >= bn::fixed(mappa.map_w) || is_solid_at(x_avanti, chr_y, g_schema))
-            dir = -dir;
+        // lento a cambiare direzione
+        if (ticks2dir > 0)
+            ticks2dir--;
+        if (ticks2dir == 0) {
+            ticks2dir = 60;
+            dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
+        }
 
         chr_accx = GROUND_ACCEL;
+
+        if ((attributo & ATTRIBUTO_MELEE) && dist_x < RANGE_MELEE && onGround)
+        {
+            // Priorità 1: abbastanza vicino, avanza dritto per colpire
+            if (bn::abs(chr_y - g_dog->chr_y) < 32)
+            {
+                currentAction = ACTION_ATTACK;
+                actionMelee->reset();
+                meleeTicks = 20;
+                ticks_attacco_melee = 32; // multiplo di durata animazione melee
+                chr_accx = bn::fixed(0);
+            }
+        }
+        else if (dist_x < RANGE_SUMMON && ticks_prossimo_summon <= 0 && onGround)
+        {
+            // Priorità 2: troppo lontano per colpire, ma nel raggio del summon
+            dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
+            chr_accx = bn::fixed(0);
+            avvia_summon();
+        }
+        else
+        {
+            // Priorità 3: troppo lontano da entrambi, pattuglia avanti e indietro
+            bn::fixed meta = dimensione / 2;
+            bn::fixed x_avanti = chr_x + meta.multiplication(dir) + bn::fixed(2 * dir);
+            if (onGround)
+                if (x_avanti <= 0 || x_avanti >= bn::fixed(mappa.map_w) || is_solid_at(x_avanti, chr_y, g_schema)) {
+                    //dir = -dir;
+                    //chr_vy = bn::fixed(-2); // salta!
+                }
+
+            chr_accx = GROUND_ACCEL;
+        }
     }
     else
         chr_accx = bn::fixed(0);
 
     chr_vx += chr_accx.multiplication(dir);
 
+    bool sees_dog = (cane_a_destra && dir == DIR_RIGHT) || (!cane_a_destra && dir == DIR_LEFT);
     bool bash_attivo = sees_dog && dog_in_melee_range() && (attributo & ATTRIBUTO_BASH);
     chr_vx = cap(chr_vx, bash_attivo ? (max_vx + max_vx) : max_vx);
     chr_x += chr_vx;
 
-    // --- Trigger dell'attacco melee ---
-    if (currentAction == ACTION_MOVE && (attributo & ATTRIBUTO_MELEE)
-        && bn::abs(chr_x - g_dog->chr_x) < 40 && bn::abs(chr_y - g_dog->chr_y) < 32)
-    {
-        dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
-        currentAction = ACTION_ATTACK;
-        actionMelee->reset();
-        meleeTicks = 20;
-        ticks_attacco_melee = 40;
-        chr_accx = bn::fixed(0);
-    }
-
     if (meleeTicks > 0) meleeTicks--;
+    if (ticks_prossimo_summon > 0) ticks_prossimo_summon--;   // il cooldown scorre sempre, non solo mentre pattuglia
 
     apply_map();
     apply_friction();
     apply_gravity();
 
-    if (currentAction == ACTION_MOVE)
-    {
-
-    }
-
-    // --- Saltello periodico, solo mentre pattuglia ---
+    // --- Saltello periodico, solo mentre pattuglia liberamente ---
     if (currentAction == ACTION_MOVE && onGround)
     {
         if (ticks_prossimo_saltello > 0)
@@ -125,7 +152,7 @@ void boss::update()
         }
     }
 
-    // --- Lancio arma a distanza, sospeso durante l'attacco melee ---
+    // --- Lancio arma a distanza: indipendente dalla scelta sopra, il boss può farlo comunque durante ACTION_MOVE ---
     if (weaponTicks > 0)
     {
         wx_base += wpn_vx;
@@ -136,14 +163,8 @@ void boss::update()
         if (weaponTicks == 0)
             weaponSprite->set_visible(false);
     }
-    else if (currentAction == ACTION_MOVE)
+    else if (currentAction == ACTION_MOVE || currentAction == ACTION_STAND)
     {
-
-        if (ticks_prossimo_summon > 0)
-            ticks_prossimo_summon--;
-        else
-            avvia_summon();
-
         if (ticks_prossimo_attacco > 0)
             ticks_prossimo_attacco--;
         else
@@ -151,18 +172,18 @@ void boss::update()
             wx_base = chr_x;
             wy_base = chr_y;
 
-            bn::fixed dx = g_dog->chr_x - wx_base;
-            bn::fixed dy = g_dog->chr_y - wy_base;
+            bn::fixed dx = g_dog->chr_x + 16 - wx_base;
+            bn::fixed dy = g_dog->chr_y + 8 - wy_base;
             bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
             bn::fixed gittata = SCREEN_DG;
             bn::fixed weapon_time = bn::fixed(120.0);
 
-            wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time + weapon_time);
-            wpn_vy = bn::degrees_lut_sin_safe(angle).multiplication(gittata).division(weapon_time + weapon_time);
+            wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time);
+            wpn_vy = bn::degrees_lut_sin_safe(angle).multiplication(gittata).division(weapon_time);
             weaponTicks = weapon_time.integer();
 
             weaponSprite->set_visible(true);
-            ticks_prossimo_attacco = 100 + g_rng.get_int(60);
+            ticks_prossimo_attacco = 120 + g_rng.get_int(120);
         }
     }
 
@@ -174,19 +195,23 @@ void boss::update()
             currentAction = ACTION_MOVE;
     }
 
-
-
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
 
     if (currentAction == ACTION_ATTACK && actionMelee.has_value())
     {
-        if (!actionMelee->done())
-            actionMelee->update();
+
+        actionMelee->update();
+    }
+    else if (currentAction == ACTION_MOVE && onGround && chr_vx != 0)
+    {
+        actionWalk->update();
     }
     else
+    {
         actionStand->update();
+    }
 
     if (invulnerability > 0)
     {
@@ -221,18 +246,18 @@ void boss::interrompi_summon()
 
 void boss::completa_summon()
 {
-    enemy_def def{ TIPO_NEMICO_GENERICO, ATTRIBUTO_AIM,
-                   int16_t(chr_x.integer() + 40 * dir), int8_t(-dir), 30 };
+    enemy_def def{ TIPO_NEMICO_ZOMBIE, ATTRIBUTO_AIM,
+                   int16_t(chr_x.integer() + 10 * dir), int8_t(-dir), 30 };
     enemy* nuovo = new enemy(def);
 
-    nuovo->chr_y = chr_y -16;
-    nuovo->chr_vy = bn::fixed(-2);
-    nuovo->vita_residua_ticks = 180;   // 10 secondi a 60fps
+    nuovo->chr_y = chr_y - 16;
+    nuovo->chr_vy = bn::fixed(-3);
+    nuovo->chr_vx = bn::fixed(3 * dir);
+    nuovo->vita_residua_ticks = 600;   // 10 secondi a 60fps
 
     g_enemies->push_back(nuovo);
 
     in_summon = false;
     ticks_prossimo_summon = 200 + g_rng.get_int(100);
 
-    BN_LOG("summoned one enemy");
 }

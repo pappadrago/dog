@@ -27,6 +27,7 @@ bn::fixed dimensione;   // lato dello sprite (o del bounding box), non più una 
     int ticks_attacco_melee = 0;
     int ticks_prossimo_attacco = 90;
     int ticks_prossimo_saltello = 60;
+    int ticks2dir = 0;
 
     int contact_damage = 2;
     int melee_damage = 0;   // 0 = niente attacco melee configurato
@@ -42,7 +43,7 @@ bn::fixed dimensione;   // lato dello sprite (o del bounding box), non più una 
     bool in_summon = false;
     int  summon_ticks = 0;
     int  ticks_prossimo_summon = 150;
-    bn::optional<bn::sprite_animate_action<10>> actionSummon;
+    bn::optional<bn::sprite_animate_action<12>> actionSummon;
 
     void avvia_summon();
     void interrompi_summon();
