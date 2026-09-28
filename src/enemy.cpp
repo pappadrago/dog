@@ -282,7 +282,6 @@ void enemy::update()
             bomba.reset();
     }
 
-
     // A: calcola le nuove posizioni di enemy e weapon (se c'è)
     if (weaponSprite && weaponTicks > 0) {
         // weapon attiva, devo muoverla
@@ -301,13 +300,12 @@ void enemy::update()
         weaponSprite->set_horizontal_flip(weaponDir == DIR_LEFT);
 
         // collisione con la mappa: solo armi da lancio
-        if (tipo == TIPO_NEMICO_DRUIDO_DINAMICO || tipo == TIPO_NEMICO_DRUIDO_STATICO) {
+        if (tipo == TIPO_NEMICO_DRUIDO_DINAMICO || tipo == TIPO_NEMICO_DRUIDO_STATICO|| tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
             // dont check for map collision
         }
-        else if (tipo != TIPO_NEMICO_SPADACCINO_PATTUGLIATORE && weapon_hits_map(wx_base, wy_base, g_schema)) {
+        else if (weapon_hits_map(wx_base, wy_base, g_schema)) {
             wpn_vx = 0;
             wpn_vy = 0;
-
         }
     }
     static constexpr bn::fixed ENEMY_ACTIVATION_RANGE_X = 240;
@@ -405,6 +403,7 @@ void enemy::update()
                     max_vx = bn::fixed(0.8);
                     chr_accx = bn::fixed(0.15).multiplication(dir);
                     break;
+                case TIPO_NEMICO_ZOMBIE:
                 case TIPO_NEMICO_PUGILE:
                     dir = (g_dog->chr_x > chr_x) ? DIR_RIGHT : DIR_LEFT;   // insegue il cane
                     chr_vx = bn::fixed(0);
@@ -412,6 +411,7 @@ void enemy::update()
                     max_vx = bn::fixed(1.0);
                     ticks2action = 60;
                     break;
+                case TIPO_NEMICO_DRUIDO_STATICO:
                 default:
                     break;
                 }

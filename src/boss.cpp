@@ -37,7 +37,7 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t _attributo, bn::fixe
         melee_damage = 20;
     }
 
-    weaponSprite = bn::sprite_items::weapons.create_sprite(x, y, 26);
+    weaponSprite = bn::sprite_items::weapons.create_sprite(x, y, 29);
     weaponSprite->set_visible(false);
     weaponSprite->set_camera(g_camera);
     dir = DIR_RIGHT;

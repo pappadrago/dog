@@ -7,7 +7,7 @@
 #include "obj.h"
 
 #define BOMB_MAX_BOUNCES      2    // rimbalzi sulla mappa prima dell'esplosione
-#define BOMB_EXPLOSION_TICKS  24   // durata dell'esplosione (frame)
+#define BOMB_EXPLOSION_TICKS  120   // durata dell'esplosione (frame)
 #define BOMB_EXPLOSION_RADIUS 20   // raggio del danno (px)
 #define BOMB_TILE_INDEX       11    // frame di bn::sprite_items::weapons usato per la bomba (da adattare)
 class bomb : public live_obj

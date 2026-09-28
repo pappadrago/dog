@@ -30,6 +30,7 @@ class dog;
 #define ATTRIBUTO_AIM (1<<0)
 #define ATTRIBUTO_MELEE (1<<1)
 #define ATTRIBUTO_BASH (1<<2)
+#define ATTRIBUTO_PATROL (1<<3)
 
 #define ACTION_STAND 0
 #define ACTION_MOVE 1
