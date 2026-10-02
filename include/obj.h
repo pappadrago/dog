@@ -30,7 +30,7 @@ public:
     bn::fixed chr_vx = bn::fixed(0);
 
     bn::fixed box_dim = bn::fixed(16);
-    bn::fixed box_halfdim = bn::fixed(6);
+    bn::fixed box_halfdim = bn::fixed(7);
 };
 
 class live_obj : public obj

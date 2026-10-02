@@ -38,7 +38,7 @@ static constexpr door_info s2_doors[] =
 {
     //   x    y  dest_schema  dest_door
     { 16, 432,           1,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
-    { 1526, 464,           1,         0 },   // porta 1 -> porta 0
+    { 1510, 464,           1,         0 },   // porta 1 -> porta 0
 };
 
 static constexpr door_list s_doors[NUM_SCHEMI] =

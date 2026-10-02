@@ -19,57 +19,20 @@
 dog::dog(int n)
 {
 
-    switch (n)
-    {
-    case 0:
-        spriteItems = bn::sprite_items::dog;
-        bonus_salto += bn::fixed(1.0);    // salto più alto
-        break;
-    case 1:
-        spriteItems = bn::sprite_items::fox1632;
-        max_vx += bn::fixed(0.5);         // velocità massima più alta
-        sprite_dy = 8;
-        break;
-    case 2:
-        spriteItems = bn::sprite_items::dog5;
-        bonus_bau += bn::fixed(3.0);      // bau più potente
-        break;
-    default:
-        break;
-    }
+
+    spriteItems = bn::sprite_items::fox1632;
+    max_vx += bn::fixed(0.5);         // velocità massima più alta
+
+
     sprite = spriteItems->create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
 
     sprite->set_bg_priority(1);
 
-    switch (n)
-    {
-    case 0:
-        bonus_salto += bn::fixed(1.0);    // salto più alto
+    actionStand = bn::create_sprite_animate_action_forever(
+        *sprite, 8, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
+    actionWalk = bn::create_sprite_animate_action_forever(
+        *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);
 
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10);
-
-        break;
-    case 1:
-        max_vx += bn::fixed(0.8);         // velocità massima più alta
-
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 8, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);
-        break;
-    case 2:
-        bonus_bau += bn::fixed(3.0);      // bau più potente
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 8, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10);
-        break;
-    default:
-        break;
-    }
 
     g_dog->sprite->set_camera(g_camera);
     g_dog->sprite->set_bg_priority(2);
@@ -79,6 +42,9 @@ dog::dog(int n)
     polvere_sprite->set_bg_priority(3);
     polvere_anim = bn::create_sprite_animate_action_once(
         *polvere_sprite, 3, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // placeholder: 4 frame di sbuffo
+
+    box_dim = bn::fixed(8);
+    box_halfdim = bn::fixed(4);        
 }
 
 void dog::update()
@@ -190,8 +156,6 @@ void dog::update()
         }
     }
 
-    // --- Fisica verticale ---
-    apply_gravity();
 
     if (atterrato_ora && velocita_atterraggio > CADUTA_DURA_SOGLIA)
     {
@@ -199,7 +163,7 @@ void dog::update()
         polvere_anim->reset();
         polvere_sprite->set_visible(true);
         polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
-        polvere_sprite->set_y(chr_y - HALF_SCREEN_H + 8);
+        polvere_sprite->set_y(chr_y - HALF_SCREEN_H );
 
     }
 
@@ -217,18 +181,18 @@ void dog::update()
         dir = DIR_LEFT;
         chr_vx -= (onGround ? GROUND_ACCEL : AIR_ACCEL);
     }
-    else {
-        apply_friction();
-    }
 
     bn::fixed run = bn::keypad::l_held() ? bn::fixed(.8) : bn::fixed(.0);
     chr_vx = cap(chr_vx, max_vx + run + bonus_corsa);
     chr_x += chr_vx;
     apply_map();
+    // --- Fisica verticale ---
+    apply_gravity();
+    apply_friction();
 
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H + sprite_dy);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
 
     if (!onGround || chr_vx == 0)

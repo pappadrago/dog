@@ -158,7 +158,7 @@ int main()
             get_schema_platform_item(g_schema).palette_item(),
             plat_map->map_item);
         bn::regular_bg_ptr foreground = item_scrivibile.create_bg(0, 0);
-        foreground.set_priority(1);
+        foreground.set_priority(2);
 
         // Porte dello schema
         const door_list& dl = get_schema_doors(g_schema);
