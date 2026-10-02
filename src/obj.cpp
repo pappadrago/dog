@@ -30,50 +30,59 @@ void live_obj::apply_friction()
 
 void live_obj::apply_gravity()
 {
-    // --- Fisica verticale ---
     const collision_map_info& map = get_collision_map(g_schema);
     {
-
-
         chr_vy += GRAVITY;
         onGround = false;
-        atterrato_ora = false;
-
-        if (chr_vy > MAX_FALL) chr_vy = MAX_FALL;
+        if(chr_vy > MAX_FALL_SPEED)
+            chr_vy = MAX_FALL_SPEED;
         chr_y += chr_vy;
 
-        // Legge tile mappa sotto il cane 
-        int tx1 = (chr_x.integer() + box_halfdim.integer()) >> 4;
-        int tx2 = (chr_x.integer() - box_halfdim.integer()) >> 4;
+        int cx = chr_x.integer();
+        int bh = box_halfdim.integer();
+
+        int tx1 = (cx + bh) >> 4;
+        int tx2 = (cx - bh) >> 4;
 
         if (tx1 < 0) tx1 = 0;
         if (tx2 < 0) tx2 = 0;
         if (tx1 > map.columns - 1) tx1 = map.columns - 1;
         if (tx2 > map.columns - 1) tx2 = map.columns - 1;
 
+        bool falling = chr_vy > 0;
 
-        u_int16_t ty = ((chr_y + (chr_vy > 0 ? box_dim : bn::fixed(0.0))).division(16.0)).integer();
+        // Punto di controllo verticale: piedi se scendo, testa se salgo
+        int ty = (chr_y + (falling ? box_dim : -box_dim)).integer() >> 4;
+        if (ty < 0) ty = 0;
+        if (ty > map.rows - 1) ty = map.rows - 1;
 
-        uint8_t tile_dwn1 = map.data[ty * map.columns + tx1];
-        uint8_t tile_dwn2 = map.data[ty * map.columns + tx2];
+        int row = ty * map.columns;
+        uint8_t tile_dwn1 = map.data[row + tx1];
+        uint8_t tile_dwn2 = map.data[row + tx2];
 
-        if ((tile_dwn1 == 1 || tile_dwn2 == 1))
+        if (tile_dwn1 == 1 || tile_dwn2 == 1)
         {
-            chr_y = bn::fixed(ty << 4) + (chr_vy > 0 ? -box_dim : box_dim);
-
-            u_int16_t y = (ty * 16) + (chr_vy > 0 ? -box_dim.floor_integer() : box_dim.floor_integer());
-
-            if (chr_vy > 0) {
+            if (chr_vy > 0)
+            {
+                // Atterraggio: i piedi si fermano sul bordo SUPERIORE della tile
+                chr_y = bn::fixed(ty << 4) - box_dim;
                 onGround = true;
+
                 atterrato_ora = true;
                 velocita_atterraggio = chr_vy;
+
+            }
+            else
+            {
+                // Testata: la testa si ferma sul bordo INFERIORE della tile
+                chr_y = bn::fixed((ty << 4) + 16) + box_halfdim;
             }
             chr_vy = 0;
-            chr_y = bn::fixed(y);
         }
     }
-
 }
+
+
 
 void live_obj::apply_map() {
     // check se sbatto contro muro a sx o dx

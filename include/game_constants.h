@@ -21,7 +21,7 @@
 #define GRAVITY        bn::fixed(.2)
 #define FRICTION_GROUND bn::fixed(-.1)
 #define FRICTION_AIR   bn::fixed(-.02)
-#define MAX_FALL       bn::fixed(5.5)
+#define MAX_FALL_SPEED       bn::fixed(5.5)
 
 // Vita
 #define MAX_LIFE 999
