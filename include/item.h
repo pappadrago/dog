@@ -13,17 +13,18 @@ class dog;
 #define ITEM_TIPO_CHIAVE  0
 #define ITEM_TIPO_POWERUP 1
 #define ITEM_TIPO_ENERGIA 2
+#define ITEM_TIPO_SBLOCCO 3
 
-#define POWERUP_CORSA      0
-#define POWERUP_SALTO      1
-#define POWERUP_BAU        2
-#define POWERUP_RESISTENZA 3
+#define POWERUP_CORSA      (1<<0)
+#define POWERUP_SALTO      (1<<1)
+#define POWERUP_BAU        (1<<2)
+#define POWERUP_RESISTENZA (1<<3)
 
 // Definizione statica di un item posizionato in uno schema
 struct item_def
 {
     uint8_t tipo;       // ITEM_TIPO_*
-    uint8_t sotto_tipo; // usato solo per ITEM_TIPO_POWERUP -> POWERUP_*
+    uint8_t attributo; // usato solo per ITEM_TIPO_POWERUP -> POWERUP_*
     int16_t x;
     int16_t y;
 };
@@ -34,7 +35,7 @@ public:
 
     int      action = 0;
     uint8_t  tipo;
-    uint8_t  sotto_tipo;
+    uint8_t  attributo;
     bn::fixed spawn_x, spawn_y;
     bool     raccolto = false;
 

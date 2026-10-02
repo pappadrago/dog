@@ -12,7 +12,7 @@ class boss : public live_obj
 public:
     int colpi_rimasti;
     int colpi_totali;
-bn::fixed dimensione;   // lato dello sprite (o del bounding box), non più una macro fissa
+    bn::fixed dimensione;   // lato dello sprite (o del bounding box), non più una macro fissa
 
     uint8_t attributo = ATTRIBUTO_NO;      // ATTRIBUTO_BASH, ATTRIBUTO_MELEE (bitmask)
     uint8_t currentAction = ACTION_MOVE;
@@ -38,7 +38,7 @@ bn::fixed dimensione;   // lato dello sprite (o del bounding box), non più una 
     void subisci_colpo() { if (colpi_rimasti > 0) { colpi_rimasti--; invulnerability = 30; } }
     bool sconfitto() const { return colpi_rimasti <= 0; }
     bool dog_in_melee_range() const;
-
+    bool dog_in_bash_range() const;
 
     bool in_summon = false;
     int  summon_ticks = 0;

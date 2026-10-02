@@ -38,6 +38,15 @@ extern bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 extern bn::optional<boss> g_boss;
 extern bn::optional<bn::vector<cassa*, MAX_CASSE>> g_casse;
 
+
+class piattaforma;
+#define MAX_PIATTAFORME 16
+extern bn::optional<bn::vector<piattaforma*, MAX_PIATTAFORME>> g_piattaforme;
+
+class lava_zona;
+#define MAX_LAVA 8
+extern bn::optional<bn::vector<lava_zona*, MAX_LAVA>> g_lava;
+
 bn::fixed cap(bn::fixed val, bn::fixed max);
 bn::fixed capzero(bn::fixed val, bn::fixed max);
 int capzero(int val, int max);

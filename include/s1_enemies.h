@@ -18,6 +18,11 @@ constexpr enemy_def schema1_enemies[] = {
     { TIPO_NEMICO_PATTUGLIATORE,       ATTRIBUTO_MELEE|ATTRIBUTO_BASH,  400, DIR_LEFT,  120 },
      */
     { TIPO_NEMICO_PATTUGLIATORE,       ATTRIBUTO_MELEE,  620, DIR_LEFT,  120 },
-    
+
+        { TIPO_NEMICO_MORTAIO,       ATTRIBUTO_NO,  240, DIR_LEFT,  120 },
+    { TIPO_NEMICO_MORTAIO,       ATTRIBUTO_NO,  340, DIR_LEFT,  120 },
+    { TIPO_NEMICO_MORTAIO,       ATTRIBUTO_NO,  440, DIR_LEFT,  120 },
+    { TIPO_NEMICO_MORTAIO,       ATTRIBUTO_NO,  640, DIR_LEFT,  120 },
+
 };
 constexpr int schema1_enemies_count = sizeof(schema1_enemies) / sizeof(schema1_enemies[0]);

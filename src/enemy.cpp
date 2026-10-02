@@ -114,7 +114,7 @@ enemy::enemy(const enemy_def& def)
         break;
     }
 
-        case TIPO_NEMICO_ZOMBIE: 
+    case TIPO_NEMICO_ZOMBIE:
     {
         int N = 1 * 3;
         sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
@@ -300,7 +300,7 @@ void enemy::update()
         weaponSprite->set_horizontal_flip(weaponDir == DIR_LEFT);
 
         // collisione con la mappa: solo armi da lancio
-        if (tipo == TIPO_NEMICO_DRUIDO_DINAMICO || tipo == TIPO_NEMICO_DRUIDO_STATICO|| tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
+        if (tipo == TIPO_NEMICO_DRUIDO_DINAMICO || tipo == TIPO_NEMICO_DRUIDO_STATICO || tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
             // dont check for map collision
         }
         else if (weapon_hits_map(wx_base, wy_base, g_schema)) {
@@ -514,6 +514,10 @@ void enemy::beHitByBark()
     currentAction = ACTION_STUN;
     ticks2action =
         invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+
+    if (vita_residua_ticks)
+        vita_residua_ticks = invulnerability;
+
 }
 
 void enemy::beHitByDog()
@@ -528,6 +532,8 @@ void enemy::beHitByDog()
     currentAction = ACTION_STUN;
     ticks2action =
         invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+
+
 }
 
 void enemy::throw_bomb()

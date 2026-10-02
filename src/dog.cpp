@@ -47,7 +47,7 @@ dog::dog(int n)
         bonus_salto += bn::fixed(1.0);    // salto più alto
 
         actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 8, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
+            *sprite, 6, spriteItems->tiles_item(), 0, 1, 2, 3, 4);
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10);
 
@@ -73,6 +73,12 @@ dog::dog(int n)
 
     g_dog->sprite->set_camera(g_camera);
     g_dog->sprite->set_bg_priority(2);
+
+    polvere_sprite = bn::sprite_items::fox1632.create_sprite(0, 0, 0);
+    polvere_sprite->set_camera(g_camera);
+    polvere_sprite->set_bg_priority(3);
+    polvere_anim = bn::create_sprite_animate_action_once(
+        *polvere_sprite, 3, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // placeholder: 4 frame di sbuffo
 }
 
 void dog::update()
@@ -152,7 +158,7 @@ void dog::update()
         {
             bool hit = false;
             bool hitByMelee = false;
-            if (g_boss->melee_damage && g_boss->currentAction == ACTION_ATTACK && g_boss->ticks_attacco_melee<=16) {
+            if (g_boss->melee_damage && g_boss->currentAction == ACTION_ATTACK && g_boss->ticks_attacco_melee <= 16) {
                 hit = check_collision_melee_boss(*g_boss);
                 hitByMelee = true;
             }
@@ -173,7 +179,7 @@ void dog::update()
                     chr_vx = (chr_x < g_boss->wx_base) ? bn::fixed(-2.0) : bn::fixed(2.0);
                     chr_vy = bn::fixed(-2.0);
                     invulnerability = 60;
-                    if (g_boss->weaponSprite){
+                    if (g_boss->weaponSprite) {
                         g_boss->weaponTicks = 0;
                         g_boss->weaponSprite->set_visible(false);
                     }
@@ -187,6 +193,22 @@ void dog::update()
     // --- Fisica verticale ---
     apply_gravity();
 
+    if (atterrato_ora && velocita_atterraggio > CADUTA_DURA_SOGLIA)
+    {
+        stordito_ticks = STORDIMENTO_CADUTA_TICKS;
+        polvere_anim->reset();
+        polvere_sprite->set_visible(true);
+        polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
+        polvere_sprite->set_y(chr_y - HALF_SCREEN_H + 8);
+
+    }
+
+    if (!polvere_anim->done())
+        polvere_anim->update();
+    else
+        polvere_sprite->set_visible(false);
+
+
     if (bn::keypad::right_held()) {
         dir = DIR_RIGHT;
         chr_vx += (onGround ? GROUND_ACCEL : AIR_ACCEL);
@@ -199,8 +221,8 @@ void dog::update()
         apply_friction();
     }
 
-    bn::fixed run = bn::keypad::l_held() ? bn::fixed(.5) : bn::fixed(.0);
-    chr_vx = cap(chr_vx, max_vx + run);
+    bn::fixed run = bn::keypad::l_held() ? bn::fixed(.8) : bn::fixed(.0);
+    chr_vx = cap(chr_vx, max_vx + run + bonus_corsa);
     chr_x += chr_vx;
     apply_map();
 
@@ -229,24 +251,22 @@ void dog::dog_damage(int amount)
         life = 0;
 }
 
-void dog::applica_powerup(uint8_t sotto_tipo)
+void dog::applica_powerup(uint8_t attributo)
 {
-    switch (sotto_tipo)
-    {
-    case POWERUP_CORSA:
-        bonus_corsa += bn::fixed(0.5);
-        max_vx += bn::fixed(0.5);
-        break;
-    case POWERUP_SALTO:
-        bonus_salto += bn::fixed(0.5);
-        break;
-    case POWERUP_BAU:
-        bonus_bau += bn::fixed(1.0);
-        break;
-    case POWERUP_RESISTENZA:
-        bonus_resistenza += 30;
-        break;
-    default:
-        break;
+    if (attributo & POWERUP_CORSA) {
+        if (bonus_corsa == bn::fixed(0))
+            bonus_corsa = bn::fixed(0.8);
+    }
+    if (attributo & POWERUP_SALTO) {
+        if (bonus_salto == bn::fixed(0))
+            bonus_salto = bn::fixed(0.8);
+    }
+    if (attributo & POWERUP_BAU) {
+        if (bonus_bau == bn::fixed(0))
+            bonus_bau = bn::fixed(1.0);
+    }
+    if (attributo & POWERUP_RESISTENZA) {
+        if (bonus_resistenza == bn::fixed(0))
+            bonus_resistenza += 30;
     }
 }

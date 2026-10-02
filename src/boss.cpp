@@ -51,7 +51,19 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t _attributo, bn::fixe
 
 void boss::update()
 {
-
+    // --- Lancio arma a distanza: indipendente dalla scelta sopra, il boss può farlo comunque durante ACTION_MOVE ---
+    if (weaponTicks > 0)
+    {
+        wx_base += wpn_vx;
+        wy_base += wpn_vy;
+        weaponSprite->set_x(wx_base - HALF_SCREEN_W);
+        weaponSprite->set_y(wy_base - HALF_SCREEN_H);
+        weaponTicks--;
+        if (weaponTicks < 30)
+            weaponSprite->set_visible(weaponTicks % 2);
+        if (weaponTicks == 0)
+            weaponSprite->set_visible(false);
+    }
     if (in_summon)
     {
         summon_ticks--;
@@ -68,8 +80,6 @@ void boss::update()
 
         return;
     }
-
-    const collision_map_info& mappa = get_collision_map(g_schema);
 
     static constexpr bn::fixed RANGE_MELEE = 20;    // abbastanza vicino: tenta il corpo a corpo
     static constexpr bn::fixed RANGE_SUMMON = 120;   // troppo lontano per colpire, ma abbastanza per evocare
@@ -101,25 +111,20 @@ void boss::update()
                 chr_accx = bn::fixed(0);
             }
         }
-        else if (dist_x < RANGE_SUMMON && ticks_prossimo_summon <= 0 && onGround)
+        else if ((attributo & ATTRIBUTO_SUMMON) && dist_x < RANGE_SUMMON && ticks_prossimo_summon <= 0 && onGround && weaponTicks == 0)
         {
             // Priorità 2: troppo lontano per colpire, ma nel raggio del summon
             dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
             chr_accx = bn::fixed(0);
             avvia_summon();
         }
-        else
+        else if (attributo & ATTRIBUTO_PATROL)
         {
             // Priorità 3: troppo lontano da entrambi, pattuglia avanti e indietro
-            bn::fixed meta = dimensione / 2;
-            bn::fixed x_avanti = chr_x + meta.multiplication(dir) + bn::fixed(2 * dir);
             if (onGround)
-                if (x_avanti <= 0 || x_avanti >= bn::fixed(mappa.map_w) || is_solid_at(x_avanti, chr_y, g_schema)) {
-                    //dir = -dir;
-                    //chr_vy = bn::fixed(-2); // salta!
-                }
-
-            chr_accx = GROUND_ACCEL;
+                chr_accx = GROUND_ACCEL;
+            else
+                chr_accx = AIR_ACCEL;
         }
     }
     else
@@ -128,8 +133,8 @@ void boss::update()
     chr_vx += chr_accx.multiplication(dir);
 
     bool sees_dog = (cane_a_destra && dir == DIR_RIGHT) || (!cane_a_destra && dir == DIR_LEFT);
-    bool bash_attivo = sees_dog && dog_in_melee_range() && (attributo & ATTRIBUTO_BASH);
-    chr_vx = cap(chr_vx, bash_attivo ? (max_vx + max_vx) : max_vx);
+    bool bash_attivo = sees_dog && dog_in_bash_range() && (attributo & ATTRIBUTO_BASH);
+    chr_vx = cap(chr_vx, bash_attivo ? (max_vx + max_vx + max_vx) : max_vx);
     chr_x += chr_vx;
 
     if (meleeTicks > 0) meleeTicks--;
@@ -140,7 +145,7 @@ void boss::update()
     apply_gravity();
 
     // --- Saltello periodico, solo mentre pattuglia liberamente ---
-    if (currentAction == ACTION_MOVE && onGround)
+    if (currentAction == ACTION_MOVE && onGround && chr_vx == bn::fixed(0))
     {
         if (ticks_prossimo_saltello > 0)
             ticks_prossimo_saltello--;
@@ -152,38 +157,29 @@ void boss::update()
         }
     }
 
-    // --- Lancio arma a distanza: indipendente dalla scelta sopra, il boss può farlo comunque durante ACTION_MOVE ---
-    if (weaponTicks > 0)
-    {
-        wx_base += wpn_vx;
-        wy_base += wpn_vy;
-        weaponSprite->set_x(wx_base - HALF_SCREEN_W);
-        weaponSprite->set_y(wy_base - HALF_SCREEN_H);
-        weaponTicks--;
-        if (weaponTicks == 0)
-            weaponSprite->set_visible(false);
-    }
-    else if (currentAction == ACTION_MOVE || currentAction == ACTION_STAND)
-    {
-        if (ticks_prossimo_attacco > 0)
-            ticks_prossimo_attacco--;
-        else
+    if (attributo & ATTRIBUTO_FIREBALL) {
+        if (currentAction == ACTION_MOVE || currentAction == ACTION_STAND)
         {
-            wx_base = chr_x;
-            wy_base = chr_y;
+            if (ticks_prossimo_attacco > 0)
+                ticks_prossimo_attacco--;
+            else
+            {
+                wx_base = chr_x;
+                wy_base = chr_y;
 
-            bn::fixed dx = g_dog->chr_x + 16 - wx_base;
-            bn::fixed dy = g_dog->chr_y + 8 - wy_base;
-            bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
-            bn::fixed gittata = SCREEN_DG;
-            bn::fixed weapon_time = bn::fixed(120.0);
+                bn::fixed dx = g_dog->chr_x + 16 - wx_base;
+                bn::fixed dy = g_dog->chr_y + 8 - wy_base;
+                bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
+                bn::fixed gittata = SCREEN_DG;
+                bn::fixed weapon_time = bn::fixed(180.0);
 
-            wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time);
-            wpn_vy = bn::degrees_lut_sin_safe(angle).multiplication(gittata).division(weapon_time);
-            weaponTicks = weapon_time.integer();
-
-            weaponSprite->set_visible(true);
-            ticks_prossimo_attacco = 120 + g_rng.get_int(120);
+                wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time);
+                wpn_vy = bn::degrees_lut_sin_safe(angle).multiplication(gittata).division(weapon_time);
+                weaponTicks = weapon_time.integer();
+                weaponSprite->set_rotation_angle_safe(-90 - angle);
+                weaponSprite->set_visible(true);
+                ticks_prossimo_attacco = 120 + g_rng.get_int(120);
+            }
         }
     }
 
@@ -227,6 +223,11 @@ bool boss::dog_in_melee_range() const
     return bn::abs(g_dog->chr_x - chr_x) < 70;
 }
 
+bool boss::dog_in_bash_range() const
+{
+    return bn::abs(g_dog->chr_x - chr_x) < 70;
+}
+
 void boss::avvia_summon()
 {
     in_summon = true;
@@ -247,7 +248,7 @@ void boss::interrompi_summon()
 void boss::completa_summon()
 {
     enemy_def def{ TIPO_NEMICO_ZOMBIE, ATTRIBUTO_AIM,
-                   int16_t(chr_x.integer() + 10 * dir), int8_t(-dir), 30 };
+                   int16_t(chr_x.integer() + 10 * dir), int8_t(-dir), 60 };
     enemy* nuovo = new enemy(def);
 
     nuovo->chr_y = chr_y - 16;

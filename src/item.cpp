@@ -5,10 +5,12 @@
 #include "bn_sprite_items_items.h"
 #include "bn_math.h"
 #include "bn_log.h"
+#include "piattaforma.h"
 
 // Indici tile per tipo di oggetto: adatta agli indici reali dello spritesheet "items"
 static constexpr int TILE_CHIAVE = 31;
 static constexpr int TILE_ENERGIA = 11;
+static constexpr int TILE_SBLOCCO = 30;
 static constexpr int TILE_POWERUP_BASE = 0; // + sotto_tipo (4 varianti consecutive)
 
 static int tile_per_item(uint8_t tipo, uint8_t sotto_tipo)
@@ -17,7 +19,8 @@ static int tile_per_item(uint8_t tipo, uint8_t sotto_tipo)
     {
     case ITEM_TIPO_CHIAVE:  return TILE_CHIAVE;
     case ITEM_TIPO_ENERGIA: return TILE_ENERGIA;
-    case ITEM_TIPO_POWERUP: return TILE_POWERUP_BASE + sotto_tipo;
+    case ITEM_TIPO_POWERUP: return TILE_POWERUP_BASE;
+    case ITEM_TIPO_SBLOCCO: return TILE_SBLOCCO; // Assuming a tile index for the lock item
     default:                return 0;
     }
 }
@@ -25,14 +28,14 @@ static int tile_per_item(uint8_t tipo, uint8_t sotto_tipo)
 item::item(const item_def& def)
 {
     tipo = def.tipo;
-    sotto_tipo = def.sotto_tipo;
+    attributo = def.attributo;
     spawn_x = bn::fixed(def.x);
     spawn_y = bn::fixed(def.y);
 
     chr_x = spawn_x;
     chr_y = spawn_y;
 
-    sprite = bn::sprite_items::items.create_sprite(chr_x, chr_y, tile_per_item(tipo, sotto_tipo));
+    sprite = bn::sprite_items::items.create_sprite(chr_x, chr_y, tile_per_item(tipo, attributo));
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
 
@@ -45,7 +48,7 @@ item::item(const item_def& def)
 void item::update()
 {
 
-        static constexpr bn::fixed ITEM_ACTIVATION_RANGE_X = 240;
+    static constexpr bn::fixed ITEM_ACTIVATION_RANGE_X = 240;
     // Da qui in poi: corpo del nemico e decisioni AI, congelabili se lontano dal cane
     if (bn::abs(chr_x - g_dog->chr_x) > ITEM_ACTIVATION_RANGE_X)
         return;
@@ -88,7 +91,12 @@ void item::raccogli()
         break;
 
     case ITEM_TIPO_POWERUP:
-        g_dog->applica_powerup(sotto_tipo);
+        g_dog->applica_powerup(attributo);
+        break;
+    case ITEM_TIPO_SBLOCCO:
+        for (piattaforma* p : *g_piattaforme)
+            if (p->def.attiva_con == attributo)
+                p->commuta();
         break;
     default:
         break;

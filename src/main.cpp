@@ -8,7 +8,10 @@
 #include "bn_colors.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_regular_bg_ptr.h"
+#include "bn_regular_bg_items_s1.h"
+#include "bn_regular_bg_map_ptr.h"
 #include "bn_regular_bg_map_cell_info.h"
+#include "bn_memory.h"
 #include "common_variable_8x16_sprite_font.h"
 #include "bn_log.h"
 
@@ -25,7 +28,9 @@
 #include "schemi.h"
 #include "enemies_table.h"
 #include "items_table.h"
+#include "platform_map.h"
 #include <bn_blending.h>
+#include "piattaforma.h"
 
 
 namespace
@@ -83,9 +88,19 @@ namespace
     }
 }
 
+
+void qualche_funzione()
+{
+
+
+
+}
+
 int main()
 {
     bn::core::init();
+
+
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);
@@ -99,6 +114,8 @@ int main()
     g_bau.emplace();
     g_enemies.emplace();
     g_items.emplace();
+    g_piattaforme.emplace();
+    g_lava.emplace();
     g_timer.emplace();
     g_dog.emplace(skin_selezionato);
 
@@ -116,15 +133,32 @@ int main()
         bg0.set_priority(3);
         bg1.set_priority(3);
 
-        bn::regular_bg_ptr foreground = create_schema_platform(g_schema);
         bn::regular_bg_ptr foregroundfg = create_schema_foreground(g_schema);
 
-        foregroundfg.set_blending_enabled(true);
-        bn::blending::set_transparency_alpha(bn::fixed(0.6));
-
         foregroundfg.set_priority(0);
+        /*
+                bn::regular_bg_item bg_item = create_schema_bg_item(g_schema);
+                bn::unique_ptr<platform_map> test(new platform_map(bg_item));
+                bn::regular_bg_item item_test(
+                    bg_item.tiles_item(),
+                    bg_item.palette_item(),
+                    test->map_item);   // ".map_item" se puntatore, "test.map_item" se statica
+                bn::regular_bg_ptr foreground = item_test.create_bg(0, 0);
+                foreground.set_priority(1);
+                */
 
-        foreground.set_priority(2);
+
+        carica_collisione_schema(g_schema);   // PRIMA di tutto: porte/nemici/item/piattaforme ne dipendono
+
+        static bn::unique_ptr<platform_map> plat_map;
+        plat_map.reset(new platform_map(get_schema_platform_item(g_schema)));
+
+        bn::regular_bg_item item_scrivibile(
+            get_schema_platform_item(g_schema).tiles_item(),
+            get_schema_platform_item(g_schema).palette_item(),
+            plat_map->map_item);
+        bn::regular_bg_ptr foreground = item_scrivibile.create_bg(0, 0);
+        foreground.set_priority(1);
 
         // Porte dello schema
         const door_list& dl = get_schema_doors(g_schema);
@@ -167,6 +201,18 @@ int main()
                     g_dog->chiavi_richieste++;
             }
         }
+        {
+            int n_piattaforme = 0;
+            const piattaforma_def* pdefs = get_schema_piattaforme(g_schema, n_piattaforme);
+            for (int i = 0; i < n_piattaforme; i++)
+                g_piattaforme->push_back(new piattaforma(pdefs[i], *plat_map, foreground.map()));
+        }
+        {
+            int n_lava = 0;
+            const lava_zona_def* ldefs = get_schema_lava(g_schema, n_lava);
+            for (int i = 0; i < n_lava; i++)
+                g_lava->push_back(new lava_zona(ldefs[i], *plat_map, foreground.map()));
+        }
         update_text_clear();
 
         update_camera(bg0, bg1, foreground, foregroundfg);
@@ -176,14 +222,15 @@ int main()
         // ------------------------------------------------------------
         const door_info* used_door = nullptr;
 
-        g_boss.emplace(400, 100, 10, ATTRIBUTO_MELEE|ATTRIBUTO_BASH);
+        //        g_boss.emplace(400, 100, 10, ATTRIBUTO_FIREBALL | ATTRIBUTO_BASH | ATTRIBUTO_MELEE | ATTRIBUTO_SUMMON);
 
-        // Un frame di gioco (senza bn::core::update)
+                // Un frame di gioco (senza bn::core::update)
         auto game_step = [&]()
             {
                 g_dog->update();
                 g_bau->update();
-                g_boss->update();
+                if (g_boss.has_value())
+                    g_boss->update();
 
                 for (enemy* e : *g_enemies)
                     e->update();
@@ -202,6 +249,8 @@ int main()
                 for (door* d : doors)
                     if (d->update())
                         used_door = &d->info();
+                for (lava_zona* z : *g_lava)
+                    z->update();
 
                 update_camera(bg0, bg1, foreground, foregroundfg);
 
@@ -238,6 +287,13 @@ int main()
         for (door* d : doors)
             delete d;
         doors.clear();
+
+        for (piattaforma* p : *g_piattaforme)
+            delete p;
+        g_piattaforme->clear();
+        for (lava_zona* z : *g_lava)
+            delete z;
+        g_lava->clear();
 
         // eventuale bau in volo
         g_bau->ticks = 0;

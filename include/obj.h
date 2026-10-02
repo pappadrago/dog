@@ -23,17 +23,17 @@ public:
     bn::optional<bn::sprite_animate_action<8>> actionWalk;
     bn::optional<bn::sprite_item>              spriteItems;
 
-    bn::fixed chr_y  = 512-200;
-    bn::fixed chr_x  = 100;
+    bn::fixed chr_y = 512 - 200;
+    bn::fixed chr_x = 100;
     bn::fixed chr_vy = bn::fixed(0);
     bn::fixed chr_accx = bn::fixed(0);
     bn::fixed chr_vx = bn::fixed(0);
 
     bn::fixed box_dim = bn::fixed(16);
-    bn::fixed box_halfdim = bn::fixed(8);
+    bn::fixed box_halfdim = bn::fixed(6);
 };
 
-class live_obj: public obj
+class live_obj : public obj
 {
 public:
 
@@ -42,6 +42,12 @@ public:
     int ticks2action = 0, invulnerability = 0;
     int life = START_LIFE;
     bn::fixed max_vx = bn::fixed(1.0);
+
+
+    bool atterrato_ora = false;           // true solo nel frame esatto in cui tocca terra
+    bn::fixed velocita_atterraggio = 0;   // chr_vy un istante prima di essere azzerata
+
+
     void apply_gravity();
     void apply_friction();
     void apply_map();
@@ -50,4 +56,4 @@ public:
 
 // true se il punto (x, y) in coordinate mondo cade in un tile solido
 // (fuori mappa conta come solido)
-bool is_solid_at(bn::fixed x, bn::fixed y,int schema);
+bool is_solid_at(bn::fixed x, bn::fixed y, int schema);

@@ -33,8 +33,12 @@ void live_obj::apply_gravity()
     // --- Fisica verticale ---
     const collision_map_info& map = get_collision_map(g_schema);
     {
+
+
         chr_vy += GRAVITY;
         onGround = false;
+        atterrato_ora = false;
+
         if (chr_vy > MAX_FALL) chr_vy = MAX_FALL;
         chr_y += chr_vy;
 
@@ -59,8 +63,11 @@ void live_obj::apply_gravity()
 
             u_int16_t y = (ty * 16) + (chr_vy > 0 ? -box_dim.floor_integer() : box_dim.floor_integer());
 
-            if (chr_vy > 0)
+            if (chr_vy > 0) {
                 onGround = true;
+                atterrato_ora = true;
+                velocita_atterraggio = chr_vy;
+            }
             chr_vy = 0;
             chr_y = bn::fixed(y);
         }
@@ -91,7 +98,7 @@ void live_obj::apply_map() {
 
 
     if (chr_x <= 0) { chr_x = bn::fixed(0);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
-    if (chr_x >= bn::fixed(map.columns<<4)) { chr_x = bn::fixed(map.columns<<4);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
+    if (chr_x >= bn::fixed(map.columns << 4)) { chr_x = bn::fixed(map.columns << 4);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
 
 
 

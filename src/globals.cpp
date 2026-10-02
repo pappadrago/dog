@@ -5,6 +5,7 @@
 #include "item.h"
 #include "dog.h"
 #include "boss.h"
+#include "piattaforma.h"
 #include "game_timer.h"
 
 
@@ -17,6 +18,8 @@ bn::optional<boss>                      g_boss;
 bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
 bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 bn::optional<game_timer> g_timer;
+bn::optional<bn::vector<piattaforma*, MAX_PIATTAFORME>> g_piattaforme;
+bn::optional<bn::vector<lava_zona*, MAX_LAVA>> g_lava;
 
 int g_schema = 1;
 

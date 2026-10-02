@@ -31,6 +31,8 @@ class dog;
 #define ATTRIBUTO_MELEE (1<<1)
 #define ATTRIBUTO_BASH (1<<2)
 #define ATTRIBUTO_PATROL (1<<3)
+#define ATTRIBUTO_FIREBALL (1<<4)
+#define ATTRIBUTO_SUMMON (1<<5)
 
 #define ACTION_STAND 0
 #define ACTION_MOVE 1
