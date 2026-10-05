@@ -176,8 +176,12 @@ void hud_reset()
     s_flash = 0;
 }
 
-void hud_update(int life, int score, int keys)
+void hud_update()
 {
+    int life = g_dog->life;
+    int score = g_dog->score;
+    int keys = g_dog->chiavi_richieste - g_dog->chiavi_raccolte;
+
     if (!s_generator)
         return;
 

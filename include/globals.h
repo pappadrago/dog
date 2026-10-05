@@ -47,6 +47,10 @@ class lava_zona;
 #define MAX_LAVA 8
 extern bn::optional<bn::vector<lava_zona*, MAX_LAVA>> g_lava;
 
+class piattaforma_mobile;
+#define MAX_PIATTAFORME_MOBILI 8
+extern bn::optional<bn::vector<piattaforma_mobile*, MAX_PIATTAFORME_MOBILI>> g_piattaforme_mobili;
+
 bn::fixed cap(bn::fixed val, bn::fixed max);
 bn::fixed capzero(bn::fixed val, bn::fixed max);
 int capzero(int val, int max);

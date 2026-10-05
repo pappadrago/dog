@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "bn_regular_bg_ptr.h"
 #include "piattaforma.h"
+#include "piattaforma_mobile.h"
 #include "lava.h"
 
 // Numero di schemi disponibili: aumentare quando si aggiunge s2, s3...
@@ -58,3 +59,5 @@ const bn::regular_bg_item& get_schema_platform_item(int schema);
 
 const piattaforma_def* get_schema_piattaforme(int schema, int& count);
 const lava_zona_def* get_schema_lava(int schema, int& count);
+
+const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& count);

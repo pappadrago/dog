@@ -1,6 +1,7 @@
 #include "lava.h"
 #include "globals.h"
 #include "dog.h"
+#include "enemy.h"
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_log.h"
 
@@ -21,12 +22,12 @@ void lava_zona::applica(const uint16_t tiles_hw[4])
             int hx = tx * 2, hy = ty * 2;   // 1 tile di gioco (16px) = blocco 2x2 di celle hardware (8px)
 
             auto scrivi = [&](int ox, int oy, uint16_t tile_index)
-            {
-                bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
-                bn::regular_bg_map_cell_info info(cella);
-                info.set_tile_index(tile_index);
-                cella = info.cell();
-            };
+                {
+                    bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
+                    bn::regular_bg_map_cell_info info(cella);
+                    info.set_tile_index(tile_index);
+                    cella = info.cell();
+                };
 
             scrivi(0, 0, tiles_hw[0]);
             scrivi(1, 0, tiles_hw[1]);
@@ -37,16 +38,19 @@ void lava_zona::applica(const uint16_t tiles_hw[4])
     _mappa_bg.reload_cells_ref();
 }
 
-bool lava_zona::dog_dentro() const
+bool lava_zona::dentro(bn::fixed x, bn::fixed y) const
 {
     bn::fixed x1 = bn::fixed(def.tile_x1 * 16);
     bn::fixed y1 = bn::fixed(def.tile_y1 * 16);
     bn::fixed x2 = bn::fixed(def.tile_x2 * 16 + 16);
     bn::fixed y2 = bn::fixed(def.tile_y2 * 16 + 16);
-    bn::fixed dog_y = g_dog->chr_y+6;   // il cane è "dentro" se il suo centro è dentro la lava
 
-    return g_dog->chr_x > x1 && g_dog->chr_x < x2 &&
-           dog_y > y1 && dog_y < y2;
+    return x > x1 && x < x2 && y > y1 && y < y2;
+}
+
+bool lava_zona::dog_dentro() const
+{
+    return dentro(g_dog->chr_x, g_dog->chr_y + 6);
 }
 
 void lava_zona::update()
@@ -61,15 +65,22 @@ void lava_zona::update()
     }
 
     bool dog_inside = dog_dentro();
-
-if (dog_inside)
-        g_dog->sprite->set_bg_priority(3);   // priorità più alta (più avanti) mentre è nella lava
-
     if (dog_inside && g_dog->invulnerability == 0)
     {
-        g_dog->chr_vy = bn::fixed(-3.5);   // piccolo "saltello" fuori dalla lava
-        g_dog->dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;   // piccolo "saltello" fuori dalla lava
+        g_dog->chr_vy = bn::fixed(-3.5);
+        g_dog->dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;
         g_dog->invulnerability = 60;
         g_dog->dog_damage(def.danno);
+    }
+
+    for (enemy* e : *g_enemies)
+    {
+        if (e->distrutto) continue;
+        if (dentro(e->chr_x, e->chr_y + 6))
+        {
+            e->distrutto = true;
+            if (e->sprite) e->sprite->set_visible(false);
+            if (e->weaponSprite) e->weaponSprite->set_visible(false);
+        }
     }
 }

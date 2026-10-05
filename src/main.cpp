@@ -118,6 +118,7 @@ int main()
     g_lava.emplace();
     g_timer.emplace();
     g_dog.emplace();
+    g_piattaforme_mobili.emplace();
 
     g_schema = 1;
     int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
@@ -213,6 +214,12 @@ int main()
             for (int i = 0; i < n_lava; i++)
                 g_lava->push_back(new lava_zona(ldefs[i], *plat_map, foreground.map()));
         }
+        {
+            int n = 0;
+            const piattaforma_mobile_def* defs = get_schema_piattaforme_mobili(g_schema, n);
+            for (int i = 0; i < n; i++)
+                g_piattaforme_mobili->push_back(new piattaforma_mobile(defs[i]));
+        }
         update_text_clear();
 
         update_camera(bg0, bg1, foreground, foregroundfg);
@@ -230,6 +237,8 @@ int main()
                 for (piattaforma* p : *g_piattaforme)
                     p->update();
                 g_dog->update();
+                for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                    pm->update();
                 g_bau->update();
                 if (g_boss.has_value())
                     g_boss->update();
@@ -257,7 +266,7 @@ int main()
                 update_camera(bg0, bg1, foreground, foregroundfg);
 
                 update_text_tick();
-                hud_update(g_dog->life, g_dog->score, g_dog->chiavi_richieste - g_dog->chiavi_raccolte);
+                hud_update();
 
 
             };
@@ -289,7 +298,12 @@ int main()
         for (door* d : doors)
             delete d;
         doors.clear();
-
+        for (int i = g_piattaforme_mobili->size() - 1; i >= 0; --i)
+            if ((*g_piattaforme_mobili)[i]->distrutta)
+            {
+                delete (*g_piattaforme_mobili)[i];
+                g_piattaforme_mobili->erase(g_piattaforme_mobili->begin() + i);
+            }
         for (piattaforma* p : *g_piattaforme)
             delete p;
         g_piattaforme->clear();

@@ -20,6 +20,7 @@ bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 bn::optional<game_timer> g_timer;
 bn::optional<bn::vector<piattaforma*, MAX_PIATTAFORME>> g_piattaforme;
 bn::optional<bn::vector<lava_zona*, MAX_LAVA>> g_lava;
+bn::optional<bn::vector<piattaforma_mobile*, MAX_PIATTAFORME_MOBILI>> g_piattaforme_mobili;
 
 int g_schema = 1;
 

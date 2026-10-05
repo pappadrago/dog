@@ -11,6 +11,7 @@
 #include "bn_regular_bg_items_s2fg.h"
 
 #include "s1_piattaforme.h"
+#include "s1_piattaforme_mobili.h"
 #include "s2_piattaforme.h"
 
 #include "s1_lava.h"
@@ -201,6 +202,25 @@ const lava_zona_def* get_schema_lava(int schema, int& count)
         // return schema2_lava;
         count = 0;
         return nullptr;   // finché s2 non ha lava propria
+    default:
+        count = 0;
+        return nullptr;
+    }
+}
+
+
+const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& count)
+{
+    switch (schema)
+    {
+    case 1:
+        count = schema1_piattaforme_mobili_count;
+        return schema1_piattaforme_mobili;
+    case 2:
+        // count = schema2_piattaforme_mobili_count;
+        // return schema2_piattaforme_mobili;
+        count = 0;
+        return nullptr;   // finché s2 non ha piattaforme mobili proprie
     default:
         count = 0;
         return nullptr;

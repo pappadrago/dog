@@ -6,6 +6,7 @@
 #include "bn_math.h"
 #include "bn_log.h"
 #include "piattaforma.h"
+#include "piattaforma_mobile.h"
 
 // Indici tile per tipo di oggetto: adatta agli indici reali dello spritesheet "items"
 static constexpr int TILE_CHIAVE = 31;
@@ -97,6 +98,10 @@ void item::raccogli()
         for (piattaforma* p : *g_piattaforme)
             if (p->def.attiva_con == attributo)
                 p->commuta();
+
+        for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+            if (pm->def.attiva_con == attributo)
+                pm->attiva_piattaforma();
         break;
     default:
         break;

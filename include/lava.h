@@ -1,5 +1,6 @@
 #pragma once
 #include "platform_map.h"
+#include "enemy.h"
 #include "bn_regular_bg_map_ptr.h"
 #include <cstdint>
 
@@ -28,5 +29,7 @@ private:
     platform_map* _buffer;
     bn::regular_bg_map_ptr _mappa_bg;
     void applica(const uint16_t tiles_hw[4]);
+private:
+    bool dentro(bn::fixed x, bn::fixed y) const;
     bool dog_dentro() const;
 };
