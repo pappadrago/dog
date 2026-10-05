@@ -1,17 +1,25 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "GBA-Butano",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/kids/gba/butano-master/butano/include"
+                "${workspaceFolder}/include/**",
+                "/home/kids/gba/butano-master/butano/include/**"
             ],
-            "defines": [],
-            "compilerPath": "/usr/bin/gcc",
+            "defines": [
+                "GBA",
+                "BN_CFG_NVRAM_STRESS_TEST=0"
+            ],
+            "compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
             "cStandard": "gnu17",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-gcc-x64",
-            "configurationProvider": "ms-vscode.makefile-tools"
+            "cppStandard": "gnu++20",
+            "intelliSenseMode": "gcc-arm",
+            "compilerArgs": [
+                "-mcpu=arm7tdmi",
+                "-mtune=arm7tdmi",
+                "-mthumb"
+            ]
         }
     ],
     "version": 4

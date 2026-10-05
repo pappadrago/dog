@@ -117,7 +117,7 @@ int main()
     g_piattaforme.emplace();
     g_lava.emplace();
     g_timer.emplace();
-    g_dog.emplace(skin_selezionato);
+    g_dog.emplace();
 
     g_schema = 1;
     int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
@@ -224,9 +224,11 @@ int main()
 
         //        g_boss.emplace(400, 100, 10, ATTRIBUTO_FIREBALL | ATTRIBUTO_BASH | ATTRIBUTO_MELEE | ATTRIBUTO_SUMMON);
 
-                // Un frame di gioco (senza bn::core::update)
+        // Un frame di gioco (senza bn::core::update)
         auto game_step = [&]()
             {
+                for (piattaforma* p : *g_piattaforme)
+                    p->update();
                 g_dog->update();
                 g_bau->update();
                 if (g_boss.has_value())

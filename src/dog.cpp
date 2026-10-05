@@ -16,13 +16,10 @@
 #include "bn_log.h"
 
 
-dog::dog(int n)
+dog::dog()
 {
-
-
     spriteItems = bn::sprite_items::fox1632;
     max_vx += bn::fixed(0.5);         // velocità massima più alta
-
 
     sprite = spriteItems->create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
 
@@ -41,19 +38,41 @@ dog::dog(int n)
     polvere_sprite->set_camera(g_camera);
     polvere_sprite->set_bg_priority(3);
     polvere_anim = bn::create_sprite_animate_action_once(
-        *polvere_sprite, 3, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // placeholder: 4 frame di sbuffo
+        *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // placeholder: 4 frame di sbuffo
 
     box_dim = bn::fixed(8);
-    box_halfdim = bn::fixed(4);        
+    box_halfdim = bn::fixed(4);
 }
 
 void dog::update()
 {
+    //Dato che in main.cpp g_dog->update() gira prima di lava_zona::update() nello stesso frame (verificato nel tuo game_step),
+    //  resettare qui a ogni frame e lasciare che un'eventuale zona di lava la rialzi più tardi nello stesso giro 
+    // produce il comportamento corretto
+    sprite->set_bg_priority(1);
+
     if (bn::keypad::b_pressed() && onGround)
     {
         onGround = false;
         chr_vy = bn::fixed(-4.0) - bonus_salto;   // bonus_salto positivo → salto più alto
     }
+
+    if (bn::keypad::r_pressed())
+    {
+
+    }
+
+    bn::fixed runningExtraSpeed = bn::keypad::l_held() ? bn::fixed(.8) : ZERO;
+
+    if (bn::keypad::right_held()) {
+        dir = DIR_RIGHT;
+        chr_vx += (onGround ? GROUND_ACCEL : AIR_ACCEL);
+    }
+    else if (bn::keypad::left_held()) {
+        dir = DIR_LEFT;
+        chr_vx -= (onGround ? GROUND_ACCEL : AIR_ACCEL);
+    }
+
 
     if (bn::keypad::a_pressed() && g_bau->ticks == 0)
     {
@@ -138,8 +157,8 @@ void dog::update()
                 dog_damage(hitByMelee ? g_boss->melee_damage : g_boss->contact_damage);
                 chr_vx = new_vx;
             }
-            else            if (g_boss->weaponSprite && g_boss->weaponTicks > 0) {
-                bool hit = check_collision_16(*g_boss->weaponSprite);
+            else if (g_boss->weaponSprite && g_boss->weaponTicks > 0) {
+                hit = check_collision_16(*g_boss->weaponSprite);
                 if (hit)
                 {
                     chr_vx = (chr_x < g_boss->wx_base) ? bn::fixed(-2.0) : bn::fixed(2.0);
@@ -163,9 +182,20 @@ void dog::update()
         polvere_anim->reset();
         polvere_sprite->set_visible(true);
         polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
-        polvere_sprite->set_y(chr_y - HALF_SCREEN_H );
-
+        polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
+        polvere_sprite->set_vertical_flip(false);
     }
+    if (testata_ora)
+    {
+        stordito_ticks = STORDIMENTO_CADUTA_TICKS;
+        polvere_anim->reset();
+        polvere_sprite->set_visible(true);
+        polvere_sprite->set_visible(true);
+        polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
+        polvere_sprite->set_y(chr_y + 4 - HALF_SCREEN_H);   // sopra la testa, non ai piedi
+        polvere_sprite->set_vertical_flip(true);
+    }
+
 
     if (!polvere_anim->done())
         polvere_anim->update();
@@ -173,17 +203,7 @@ void dog::update()
         polvere_sprite->set_visible(false);
 
 
-    if (bn::keypad::right_held()) {
-        dir = DIR_RIGHT;
-        chr_vx += (onGround ? GROUND_ACCEL : AIR_ACCEL);
-    }
-    else if (bn::keypad::left_held()) {
-        dir = DIR_LEFT;
-        chr_vx -= (onGround ? GROUND_ACCEL : AIR_ACCEL);
-    }
-
-    bn::fixed run = bn::keypad::l_held() ? bn::fixed(.8) : bn::fixed(.0);
-    chr_vx = cap(chr_vx, max_vx + run + bonus_corsa);
+    chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
     chr_x += chr_vx;
     apply_map();
     // --- Fisica verticale ---

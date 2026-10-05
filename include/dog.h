@@ -26,7 +26,7 @@ public:
     int chiavi_raccolte = 0;
     int chiavi_richieste = 0;
 
-    dog(int skin_index);
+    dog();
 
     void update();
     void dog_damage(int amount);

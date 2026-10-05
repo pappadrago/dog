@@ -61,6 +61,10 @@ void lava_zona::update()
     }
 
     bool dog_inside = dog_dentro();
+
+if (dog_inside)
+        g_dog->sprite->set_bg_priority(3);   // priorità più alta (più avanti) mentre è nella lava
+
     if (dog_inside && g_dog->invulnerability == 0)
     {
         g_dog->chr_vy = bn::fixed(-3.5);   // piccolo "saltello" fuori dalla lava

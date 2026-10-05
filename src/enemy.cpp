@@ -443,7 +443,6 @@ void enemy::update()
 
                     bn::fixed gittata = SCREEN_DG;
 
-
                     if (tipo == TIPO_NEMICO_ARCIERE_STATICO)
                         gittata = gittata.multiplication(1.5); // stessa durata maggior gittata -> più velocità
 
@@ -452,6 +451,8 @@ void enemy::update()
 
                         wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time + weapon_time);
                         wpn_vy = bn::degrees_lut_sin_safe(angle).multiplication(gittata).division(weapon_time + weapon_time);
+
+                        weaponSprite->set_rotation_angle_safe(-90 - angle);
                     }
                     else {
                         wpn_vx = gittata.multiplication(weaponDir).division(weapon_time + weapon_time);
@@ -517,11 +518,11 @@ void enemy::beHitByBark()
 
     if (vita_residua_ticks)
         vita_residua_ticks = invulnerability;
-
 }
 
 void enemy::beHitByDog()
 {
+     // questo è il contatto fisico con il cane, non un colpo di arma: il nemico viene respinto e stordito
     chr_vy = bn::fixed(-3.0);
     chr_vx = g_dog->chr_vx > 0 ? bn::fixed(2.0) : bn::fixed(-2.0);
     chr_accx = bn::fixed(0);
@@ -563,6 +564,7 @@ void enemy::throw_shell()
 
     bomba.emplace(chr_x, chr_y - 4, vx, vy, /*max_bounces=*/0);
 }
+
 bool enemy::dog_in_melee_range() const
 {
     return bn::abs(g_dog->chr_x - chr_x) < 48;

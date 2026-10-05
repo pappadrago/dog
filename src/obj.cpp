@@ -32,9 +32,11 @@ void live_obj::apply_gravity()
 {
     const collision_map_info& map = get_collision_map(g_schema);
     {
+        atterrato_ora = false;
+        testata_ora = false;
         chr_vy += GRAVITY;
         onGround = false;
-        if(chr_vy > MAX_FALL_SPEED)
+        if (chr_vy > MAX_FALL_SPEED)
             chr_vy = MAX_FALL_SPEED;
         chr_y += chr_vy;
 
@@ -76,6 +78,7 @@ void live_obj::apply_gravity()
             {
                 // Testata: la testa si ferma sul bordo INFERIORE della tile
                 chr_y = bn::fixed((ty << 4) + 16) + box_halfdim;
+                testata_ora = true;
             }
             chr_vy = 0;
         }

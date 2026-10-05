@@ -14,6 +14,8 @@ static constexpr bn::fixed AIR_FRICTION = bn::fixed(0.02);
 static constexpr bn::fixed GROUND_ACCEL = bn::fixed(0.15);
 static constexpr bn::fixed GROUND_FRICTION = bn::fixed(0.08);
 
+static constexpr bn::fixed ZERO = bn::fixed(0.0);
+
 class obj
 {
 public:
@@ -25,9 +27,9 @@ public:
 
     bn::fixed chr_y = 512 - 200;
     bn::fixed chr_x = 100;
-    bn::fixed chr_vy = bn::fixed(0);
-    bn::fixed chr_accx = bn::fixed(0);
-    bn::fixed chr_vx = bn::fixed(0);
+    bn::fixed chr_vy = ZERO;
+    bn::fixed chr_accx = ZERO;
+    bn::fixed chr_vx = ZERO;
 
     bn::fixed box_dim = bn::fixed(16);
     bn::fixed box_halfdim = bn::fixed(7);
@@ -45,8 +47,8 @@ public:
 
 
     bool atterrato_ora = false;           // true solo nel frame esatto in cui tocca terra
-    bn::fixed velocita_atterraggio = 0;   // chr_vy un istante prima di essere azzerata
-
+    bn::fixed velocita_atterraggio = ZERO;   // chr_vy un istante prima di essere azzerata
+bool testata_ora = false;  
 
     void apply_gravity();
     void apply_friction();

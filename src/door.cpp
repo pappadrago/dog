@@ -35,6 +35,7 @@ bool door::update()
     else
         frame = DOOR_FRAME_CLOSED;
 
+    // cambia il frame solo se diverso da quello corrente, per evitare di aggiornare lo sprite ogni frame
     if (frame != current_frame)
     {
         current_frame = frame;

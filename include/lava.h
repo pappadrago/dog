@@ -3,6 +3,8 @@
 #include "bn_regular_bg_map_ptr.h"
 #include <cstdint>
 
+#define LAVA_TILE 13
+
 struct lava_zona_def
 {
     int16_t  tile_x1, tile_y1, tile_x2, tile_y2;   // rettangolo in tile di gioco (16px)

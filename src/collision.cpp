@@ -65,6 +65,7 @@ bool check_collision_16(const bn::sprite_ptr& ball, const bn::sprite_ptr& _dog)
     return bn::abs(ball.x() - _dog.x()) < (dog_hw + ball_hw) &&
         bn::abs(ball.y() - _dog.y()) < (dog_hh + ball_hh);
 }
+
 bool check_collision_16(const enemy& _enemy)
 {
     bn::fixed dog_hw = 12, dog_hh = 6;
