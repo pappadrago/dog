@@ -8,8 +8,6 @@
 #include "bn_math.h"
 #include "bn_random.h"
 #include "bn_sound_items.h"
-#include "bn_sprite_items_dog.h"
-#include "bn_sprite_items_dog5.h"
 #include "bn_log.h"
 #include "schemi.h"
 
@@ -112,9 +110,38 @@ void live_obj::apply_map() {
     if (chr_x <= 0) { chr_x = bn::fixed(0);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
     if (chr_x >= bn::fixed(map.columns << 4)) { chr_x = bn::fixed(map.columns << 4);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
 
+    if (chr_x <= 0) { chr_x = bn::fixed(0); chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
+    if (chr_x >= bn::fixed(map.columns << 4)) { chr_x = bn::fixed(map.columns << 4); chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
 
+    // Rileva un muro adiacente indipendentemente dalla direzione di marcia: serve al wall jump,
+    // che deve valere anche restando fermi contro il muro, non solo premendo verso di esso.
+// src/obj.cpp, dentro apply_map(), al posto del blocco muro_lato che avevi
+    muro_lato = 0;
+    {
+        int cx = chr_x.integer();
+        int bh = box_halfdim.integer();
+        int margine = bh + 2;   // tolleranza: il resting point reale non è sempre perfettamente a contatto
 
+        int txd = (cx + margine) >> 4;
+        int txs = (cx - margine) >> 4;
+        if (txd < 0) txd = 0; if (txd > map.columns - 1) txd = map.columns - 1;
+        if (txs < 0) txs = 0; if (txs > map.columns - 1) txs = map.columns - 1;
+
+        int ty1 = (chr_y.integer() + bh) >> 4;
+        int ty2 = (chr_y.integer() - 0) >> 4;
+        if (ty1 < 0) ty1 = 0; if (ty1 > map.rows - 1) ty1 = map.rows - 1;
+        if (ty2 < 0) ty2 = 0; if (ty2 > map.rows - 1) ty2 = map.rows - 1;
+
+        bool muro_destra = map.data[ty1 * map.columns + txd] == 1 || map.data[ty2 * map.columns + txd] == 1;
+        bool muro_sinistra = map.data[ty1 * map.columns + txs] == 1 || map.data[ty2 * map.columns + txs] == 1;
+
+        if (muro_destra)        muro_lato = DIR_RIGHT;
+        else if (muro_sinistra) muro_lato = DIR_LEFT;
+
+    }
 }
+
+
 
 bool is_solid_at(bn::fixed x, bn::fixed y, int schema)
 {

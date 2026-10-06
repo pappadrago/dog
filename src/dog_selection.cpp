@@ -3,9 +3,7 @@
 #include "bn_core.h"
 #include "bn_array.h"
 #include "bn_sprite_animate_actions.h"
-#include "bn_sprite_items_dog.h"
 #include "bn_sprite_items_fox1632.h"
-#include "bn_sprite_items_dog5.h"
 #include "bn_sprite_items_enemies.h"
 #include "bn_sprite_items_enemies2.h"
 #include "bn_regular_bg_ptr.h"
@@ -62,10 +60,10 @@ int dog_selection_screen(bn::sprite_text_generator& text_generator)
         int x = START_X + i * SPACING;
         sprites[i] = items[i]->create_sprite(x, DOG_Y, 0);
         anims[i] = bn::create_sprite_animate_action_forever(
-            *sprites[i], 5, items[i]->tiles_item(), 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55);
+            *sprites[i], 6, items[i]->tiles_item(), 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55);
     }
 
-    bn::sprite_ptr cursor = bn::sprite_items::dog.create_sprite(START_X, CURSOR_Y, 11);
+    bn::sprite_ptr cursor = bn::sprite_items::fox1632.create_sprite(START_X, CURSOR_Y, 61);
 
     bn::vector<bn::sprite_ptr, 32> txt_sprites;
     text_generator.set_center_alignment();

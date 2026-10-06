@@ -5,7 +5,7 @@
 #include "bn_fixed.h"
 #include "game_constants.h"
 
-#define BAU_DURATA 30
+#define BAU_DURATA 60
 #define BAU_FLICK_TIME 15
 
 class bau

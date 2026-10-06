@@ -43,7 +43,16 @@ public:
     bool porta_apribile() const { return chiavi_raccolte >= chiavi_richieste; }
 
     int stordito_ticks = 0;
+    int idle_ticks = 0;
 
     bn::optional<bn::sprite_ptr> polvere_sprite;
     bn::optional<bn::sprite_animate_action<4>> polvere_anim;
+
+#define WALL_JUMP_VX bn::fixed(2.6)
+#define WALL_JUMP_VY bn::fixed(-2.6)   // meno negativa del salto normale (-4.0): più orizzontale che verticale
+#define WALL_JUMP_ANIM_TICKS 14
+
+    bn::optional<bn::sprite_animate_action<4>> actionWallJump;   // placeholder: aggiorna numero/indici frame quando pronti
+    bn::optional<bn::sprite_animate_action<14>> actionIdle;   // placeholder: aggiorna numero/indici frame quando pronti
+    int wall_jump_anim_ticks = 0;
 };

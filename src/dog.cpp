@@ -8,11 +8,9 @@
 #include "bn_math.h"
 #include "bn_random.h"
 #include "bn_sound_items.h"
-#include "bn_sprite_items_dog.h"
 #include "bn_sprite_items_fox.h"
 #include "bn_sprite_items_fox1632.h"
 #include "bn_sprite_items_zombie.h"
-#include "bn_sprite_items_dog5.h"
 #include "bn_log.h"
 
 
@@ -30,6 +28,9 @@ dog::dog()
     actionWalk = bn::create_sprite_animate_action_forever(
         *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);
 
+    actionIdle = bn::create_sprite_animate_action_forever(
+        *sprite, 5, spriteItems->tiles_item(), 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55);   // placeholder: idle con coda che si muove
+
 
     g_dog->sprite->set_camera(g_camera);
     g_dog->sprite->set_bg_priority(2);
@@ -42,6 +43,9 @@ dog::dog()
 
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
+
+    actionWallJump = bn::create_sprite_animate_action_once(
+        *sprite, 3, spriteItems->tiles_item(), 20, 21, 22);
 }
 
 void dog::update()
@@ -51,10 +55,33 @@ void dog::update()
     // produce il comportamento corretto
     sprite->set_bg_priority(1);
 
-    if (bn::keypad::b_pressed() && onGround)
+    if (bn::keypad::b_pressed())
     {
-        onGround = false;
-        chr_vy = bn::fixed(-4.0) - bonus_salto;   // bonus_salto positivo → salto più alto
+        if (onGround)
+        {
+            onGround = false;
+            chr_vy = bn::fixed(-4.0) - bonus_salto;
+        }
+        else if (muro_lato != 0)
+        {
+            int direzione_spinta = (muro_lato == DIR_RIGHT) ? DIR_LEFT : DIR_RIGHT;
+
+            chr_vx = WALL_JUMP_VX.multiplication(bn::fixed(direzione_spinta));
+            chr_vy = WALL_JUMP_VY;
+            dir = direzione_spinta;
+
+            actionWallJump->reset();
+            wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
+
+
+            polvere_anim->reset();
+            polvere_sprite->set_visible(true);
+            polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
+            polvere_sprite->set_y(chr_y - HALF_SCREEN_H);   // sopra la testa, non ai piedi
+            polvere_sprite->set_rotation_angle_safe(-90 * dir);
+            polvere_sprite->set_vertical_flip(false);
+            muro_lato = 0;   // consumato: serve toccare di nuovo un muro per un secondo wall jump
+        }
     }
 
     if (bn::keypad::r_pressed())
@@ -184,31 +211,38 @@ void dog::update()
         polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
         polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
         polvere_sprite->set_vertical_flip(false);
+        polvere_sprite->set_rotation_angle_safe(0);
     }
-    if (testata_ora)
+    else if (testata_ora)
     {
         stordito_ticks = STORDIMENTO_CADUTA_TICKS;
         polvere_anim->reset();
         polvere_sprite->set_visible(true);
-        polvere_sprite->set_visible(true);
         polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
         polvere_sprite->set_y(chr_y + 4 - HALF_SCREEN_H);   // sopra la testa, non ai piedi
         polvere_sprite->set_vertical_flip(true);
+        polvere_sprite->set_rotation_angle_safe(0);
     }
-
 
     if (!polvere_anim->done())
         polvere_anim->update();
     else
         polvere_sprite->set_visible(false);
 
-
-    chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
+    if (wall_jump_anim_ticks == 0)
+        chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
     chr_x += chr_vx;
     apply_map();
     // --- Fisica verticale ---
-    apply_gravity();
     apply_friction();
+    apply_gravity();
+
+    if (chr_vx == 0 && chr_vy == 0)
+        idle_ticks++;
+    else {
+        idle_ticks = 0;
+        actionIdle->reset();
+    }
 
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);
@@ -217,7 +251,21 @@ void dog::update()
 
     if (!onGround || chr_vx == 0)
         actionWalk->reset();
-    if (!onGround)
+
+    if (idle_ticks > 120) {
+        actionIdle->update();
+        if(idle_ticks > 360){
+            idle_ticks = 0;
+            actionIdle->reset();
+        }
+    }
+    else if (wall_jump_anim_ticks > 0)
+    {
+        wall_jump_anim_ticks--;
+        if (!actionWallJump->done())
+            actionWallJump->update();
+    }
+    else if (!onGround)
         sprite->set_tiles(spriteItems->tiles_item(), 8 + (chr_vy > 0 ? 1 : 0));
     else if (onGround && chr_vx != 0)
         actionWalk->update();
@@ -226,6 +274,9 @@ void dog::update()
 
     if (invulnerability)
         sprite->set_visible(invulnerability % 2);
+
+
+
 }
 
 void dog::dog_damage(int amount)

@@ -6,7 +6,6 @@
 #include "bn_regular_bg_items_bg_s2.h"
 #include "bn_regular_bg_items_s1.h"
 #include "bn_regular_bg_items_s1fg.h"
-#include "bn_regular_bg_items_fog.h"
 #include "bn_regular_bg_items_s2.h"
 #include "bn_regular_bg_items_s2fg.h"
 

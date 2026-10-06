@@ -226,16 +226,16 @@ int main()
                 for (piattaforma* p : *g_piattaforme)
                     p->update();
 
-                g_dog->update();
                 for (piattaforma_mobile* pm : *g_piattaforme_mobili)
-                    pm->update();
+                    pm->muovi();
 
-                g_bau->update();
-                if (g_boss.has_value())
-                    g_boss->update();
+                for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                    pm->trasporta_se_agganciato();
 
+                g_dog->update();
                 for (enemy* e : *g_enemies)
                     e->update();
+
 
                 for (int i = g_enemies->size() - 1; i >= 0; --i)
                 {
@@ -246,6 +246,15 @@ int main()
                     }
                 }
 
+                for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                    pm->verifica_nuovo_aggancio();
+
+                g_bau->update();
+
+                g_bau->update();
+                if (g_boss.has_value())
+                    g_boss->update();
+
                 for (item* e : *g_items)
                     e->update();
                 for (door* d : doors)
@@ -253,6 +262,13 @@ int main()
                         used_door = &d->info();
                 for (lava_zona* z : *g_lava)
                     z->update();
+
+                for (int i = g_piattaforme_mobili->size() - 1; i >= 0; --i)
+                    if ((*g_piattaforme_mobili)[i]->distrutta)
+                    {
+                        delete (*g_piattaforme_mobili)[i];
+                        g_piattaforme_mobili->erase(g_piattaforme_mobili->begin() + i);
+                    }
 
                 update_camera(bg0, bg1, foreground, foregroundfg);
 
@@ -287,15 +303,16 @@ int main()
         for (door* d : doors)
             delete d;
         doors.clear();
-        for (int i = g_piattaforme_mobili->size() - 1; i >= 0; --i)
-            if ((*g_piattaforme_mobili)[i]->distrutta)
-            {
-                delete (*g_piattaforme_mobili)[i];
-                g_piattaforme_mobili->erase(g_piattaforme_mobili->begin() + i);
-            }
+
         for (piattaforma* p : *g_piattaforme)
             delete p;
         g_piattaforme->clear();
+
+        for (piattaforma_mobile* p : *g_piattaforme_mobili)
+            delete p;
+        g_piattaforme_mobili->clear();
+
+
         for (lava_zona* z : *g_lava)
             delete z;
         g_lava->clear();

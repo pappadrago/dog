@@ -48,8 +48,8 @@ public:
 
     bool atterrato_ora = false;           // true solo nel frame esatto in cui tocca terra
     bn::fixed velocita_atterraggio = ZERO;   // chr_vy un istante prima di essere azzerata
-bool testata_ora = false;  
-
+    bool testata_ora = false;
+    int muro_lato = 0;   // DIR_LEFT/DIR_RIGHT se in questo istante c'è un muro di fianco, 0 se nessuno
     void apply_gravity();
     void apply_friction();
     void apply_map();
