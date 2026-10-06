@@ -13,6 +13,7 @@
 #include "s1_piattaforme.h"
 #include "s1_piattaforme_mobili.h"
 #include "s2_piattaforme.h"
+#include "s2_piattaforme_mobili.h"
 
 #include "s1_lava.h"
 
@@ -217,10 +218,8 @@ const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& cou
         count = schema1_piattaforme_mobili_count;
         return schema1_piattaforme_mobili;
     case 2:
-        // count = schema2_piattaforme_mobili_count;
-        // return schema2_piattaforme_mobili;
-        count = 0;
-        return nullptr;   // finché s2 non ha piattaforme mobili proprie
+        count = schema2_piattaforme_mobili_count;
+        return schema2_piattaforme_mobili;
     default:
         count = 0;
         return nullptr;

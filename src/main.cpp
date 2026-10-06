@@ -137,17 +137,6 @@ int main()
         bn::regular_bg_ptr foregroundfg = create_schema_foreground(g_schema);
 
         foregroundfg.set_priority(0);
-        /*
-                bn::regular_bg_item bg_item = create_schema_bg_item(g_schema);
-                bn::unique_ptr<platform_map> test(new platform_map(bg_item));
-                bn::regular_bg_item item_test(
-                    bg_item.tiles_item(),
-                    bg_item.palette_item(),
-                    test->map_item);   // ".map_item" se puntatore, "test.map_item" se statica
-                bn::regular_bg_ptr foreground = item_test.create_bg(0, 0);
-                foreground.set_priority(1);
-                */
-
 
         carica_collisione_schema(g_schema);   // PRIMA di tutto: porte/nemici/item/piattaforme ne dipendono
 
@@ -236,9 +225,11 @@ int main()
             {
                 for (piattaforma* p : *g_piattaforme)
                     p->update();
+
                 g_dog->update();
                 for (piattaforma_mobile* pm : *g_piattaforme_mobili)
                     pm->update();
+
                 g_bau->update();
                 if (g_boss.has_value())
                     g_boss->update();
@@ -267,8 +258,6 @@ int main()
 
                 update_text_tick();
                 hud_update();
-
-
             };
 
         // Fade-in a gioco attivo: gli sprite prendono la posizione giusta

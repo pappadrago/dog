@@ -3,6 +3,7 @@
 #include "dog.h"
 #include "bn_math.h"
 #include "bn_sprite_items_fox1632.h"
+#include <bn_log.h>
 
 piattaforma_mobile::piattaforma_mobile(const piattaforma_mobile_def& d) : def(d)
 {
@@ -31,8 +32,8 @@ void piattaforma_mobile::calcola_posizione()
     bn::fixed cos_a = bn::degrees_lut_cos_safe(_angolo);
     bn::fixed sin_a = bn::degrees_lut_sin_safe(_angolo);
 
-    bn::fixed lx = bn::fixed(def.semiasse_x) * cos_a;
-    bn::fixed ly = bn::fixed(def.semiasse_y) * sin_a;
+    bn::fixed lx = bn::fixed(def.semiasse_x).multiplication(cos_a);
+    bn::fixed ly = bn::fixed(def.semiasse_y).multiplication(sin_a);
 
     bn::fixed cos_r = bn::degrees_lut_cos_safe(bn::fixed(def.rotazione));
     bn::fixed sin_r = bn::degrees_lut_sin_safe(bn::fixed(def.rotazione));
@@ -40,7 +41,6 @@ void piattaforma_mobile::calcola_posizione()
     _x = bn::fixed(def.centro_x) + lx.multiplication(cos_r) - ly.multiplication(sin_r);
     _y = bn::fixed(def.centro_y) + lx.multiplication(sin_r) + ly.multiplication(cos_r);
 }
-
 
 void piattaforma_mobile::update()
 {
@@ -108,8 +108,8 @@ void piattaforma_mobile::collisione_cloud()
 
 void piattaforma_mobile::collisione_solida()
 {
-    static constexpr bn::fixed META_LARGHEZZA = 16;
-    static constexpr bn::fixed META_ALTEZZA = 4;
+    static constexpr bn::fixed META_LARGHEZZA = bn::fixed(16);
+    static constexpr bn::fixed META_ALTEZZA = bn::fixed(4);
 
     bn::fixed dx = g_dog->chr_x - _x;
     bn::fixed dy = g_dog->chr_y - _y;
@@ -117,30 +117,36 @@ void piattaforma_mobile::collisione_solida()
     bn::fixed overlap_x = (META_LARGHEZZA + g_dog->box_halfdim) - bn::abs(dx);
     bn::fixed overlap_y = (META_ALTEZZA + g_dog->box_dim) - bn::abs(dy);
 
-    if (overlap_x <= 0 || overlap_y <= 0)
+    if (overlap_x <= 0 || overlap_y <= 0){
+        BN_LOG("no overlap: overlap_x: ", overlap_x, " overlap_y: ", overlap_y);
         return;   // nessuna sovrapposizione reale
+    }
 
     if (overlap_x < overlap_y)
     {
         // risolvi lungo X: blocco laterale, come un muro
         g_dog->chr_x += (dx > 0) ? overlap_x : -overlap_x;
         g_dog->chr_vx = 0;
+        BN_LOG("overlap_x: ", overlap_x, " overlap_y: ", overlap_y, " dog_x: ", g_dog->chr_x);
     }
     else
     {
-        if (dy < 0)
+        if (dy < ZERO)
         {
             // il cane è sopra: appoggio, come la nuvola, ma qui è garantito (nessuna finestra di tolleranza)
             g_dog->chr_y = (_y - META_ALTEZZA) - g_dog->box_dim;
             g_dog->chr_vy = 0;
             g_dog->onGround = true;
             g_dog->chr_x += (_x - _px);
+            BN_LOG("cane sopra, _y: ",  g_dog->chr_y-_py);
         }
         else
         {
             // il cane è sotto: bloccato dal basso, come un soffitto
             g_dog->chr_y = (_y + META_ALTEZZA) + g_dog->box_dim;
             if (g_dog->chr_vy < 0) g_dog->chr_vy = 0;
+            BN_LOG("cane sotto, _y: ", _y, " dog_y: ", g_dog->chr_y);
         }
     }
+
 }
