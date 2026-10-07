@@ -11,7 +11,8 @@
 
 #define VELOCITA_VY_CADUTA_DURA bn::fixed(4.0)   // velocità d'impatto oltre la quale scatta lo stordimento
 #define STORDIMENTO_CADUTA_TICKS 30
-
+#define DASH_TICKS 15
+#define DASH_SPEED bn::fixed(4.5)
 class ball;
 class human;
 class bau;
@@ -45,22 +46,24 @@ public:
 
     int stordito_ticks = 0;
     int idle_ticks = 0;
+    int dash_ticks = 0;
 
     bn::optional<bn::sprite_ptr> polvere_sprite;
     bn::optional<bn::sprite_animate_action<4>> polvere_anim;
-    bn::optional<bn::sprite_animate_action<4>> gorund_pound_anim;
+    bn::optional<bn::sprite_animate_action<4>> ground_pound_anim;
 
 #define WALL_JUMP_VX bn::fixed(2.5)
 #define WALL_JUMP_VY bn::fixed(-2.0)   // meno negativa del salto normale (-4.0): più orizzontale che verticale
 #define WALL_JUMP_ANIM_TICKS 14
 
-    bn::optional<bn::sprite_animate_action<4>> actionWallJump;   // placeholder: aggiorna numero/indici frame quando pronti
-    bn::optional<bn::sprite_animate_action<14>> actionIdle;   // placeholder: aggiorna numero/indici frame quando pronti
-    bn::optional<bn::sprite_animate_action<6>> actionIdleB;   // placeholder: aggiorna numero/indici frame quando pronti
+    bn::optional<bn::sprite_animate_action<4>> actionWallJump;   
+    bn::optional<bn::sprite_animate_action<14>> actionIdle;  
     int wall_jump_anim_ticks = 0;
 
     bool doppio_salto_acquisito = false;
     bool wall_jump_acquisito = false;
+    bool dash_acquisito = false;
+    bool air_dash_acquisito = false;
     bool doppio_salto_disponibile = false;   // si consuma a ogni uso, si ricarica all'atterraggio
 
 

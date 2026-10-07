@@ -17,7 +17,6 @@
 dog::dog()
 {
     spriteItems = bn::sprite_items::fox1632;
-    max_vx += bn::fixed(0.5);         // velocità massima più alta
 
     sprite = spriteItems->create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
 
@@ -29,10 +28,7 @@ dog::dog()
         *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);
 
     actionIdle = bn::create_sprite_animate_action_forever(
-        *sprite, 5, spriteItems->tiles_item(), 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55);   // placeholder: idle con coda che si muove
-    actionIdleB = bn::create_sprite_animate_action_forever(
-        *sprite, 25, spriteItems->tiles_item(), 28, 29, 30, 31, 32, 33);   // placeholder: idle con coda che si muove
-
+        *sprite, 5, spriteItems->tiles_item(), 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55);   // idle con testa che si muove
 
     g_dog->sprite->set_camera(g_camera);
     g_dog->sprite->set_bg_priority(2);
@@ -42,7 +38,7 @@ dog::dog()
     polvere_sprite->set_bg_priority(3);
     polvere_anim = bn::create_sprite_animate_action_once(
         *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // 4 frame di sbuffo
-    gorund_pound_anim = bn::create_sprite_animate_action_once(
+    ground_pound_anim = bn::create_sprite_animate_action_once(
         *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 63, 64, 65, 66);
 
     box_dim = bn::fixed(8);
@@ -79,7 +75,6 @@ void dog::update()
 
             actionStacco->reset();
             stacco_anim_ticks = STACCO_ANIM_TICKS;
-
         }
         else if (wall_jump_acquisito && muro_lato != 0)
         {
@@ -91,7 +86,6 @@ void dog::update()
 
             actionWallJump->reset();
             wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
-
 
             polvere_anim->reset();
             polvere_sprite->set_visible(true);
@@ -124,10 +118,7 @@ void dog::update()
         chr_vy = MAX_FALL_SPEED;
     }
 
-    if (bn::keypad::r_pressed())
-    {
 
-    }
 
     bn::fixed runningExtraSpeed = bn::keypad::l_held() ? bn::fixed(.8) : ZERO;
 
@@ -140,8 +131,7 @@ void dog::update()
         chr_vx -= (onGround ? GROUND_ACCEL : AIR_ACCEL);
     }
 
-
-    if (bn::keypad::a_pressed() && g_bau->ticks == 0)
+    if (bn::keypad::a_pressed() && g_bau->ticks == 0 && dash_ticks == 0)
     {
         g_bau->do_spawn();
     }
@@ -271,7 +261,7 @@ void dog::update()
         polvere_sprite->set_visible(true);
         if (grond_pound_engaged) {
             polvere_sprite->set_x(chr_x - HALF_SCREEN_W + dir * box_dim);
-            gorund_pound_anim->reset();
+            ground_pound_anim->reset();
         }
         else {
             polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
@@ -297,19 +287,37 @@ void dog::update()
     if (!polvere_anim->done()) {
         polvere_anim->update();
     }
-    else if (!gorund_pound_anim->done())
+    else if (!ground_pound_anim->done())
     {
-        gorund_pound_anim->update();
+        ground_pound_anim->update();
     }
     else
         polvere_sprite->set_visible(false);
 
-    if (wall_jump_anim_ticks == 0)
+    if (wall_jump_anim_ticks == 0 && dash_ticks == 0)
         chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
     chr_x += chr_vx;
     apply_map();
-    // --- Fisica verticale ---
-    apply_friction();
+
+    if (((dash_acquisito && onGround) || (air_dash_acquisito && !onGround)) &&
+        dash_ticks == 0 && bn::keypad::r_pressed()) {
+        dash_ticks = DASH_TICKS;
+        polvere_sprite->set_visible(true);
+        polvere_sprite->set_vertical_flip(false);
+        polvere_sprite->set_rotation_angle_safe(0);
+        grond_pound_engaged = false;
+    }
+    if (dash_ticks > 0)
+    {
+        chr_vx = DASH_SPEED * dir;
+        if (polvere_anim->done())
+            polvere_anim->reset();
+        polvere_sprite->set_x(chr_x - HALF_SCREEN_W - dir * box_dim);
+        polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
+        dash_ticks--;
+    }
+    else apply_friction();
+
     apply_gravity();
 
     if (chr_vx == 0 && chr_vy == 0)
@@ -317,7 +325,6 @@ void dog::update()
     else {
         idle_ticks = 0;
         actionIdle->reset();
-        actionIdleB->reset();
     }
 
     // --- Sprite ---
@@ -337,6 +344,10 @@ void dog::update_animations() {
         if (!actionColpito->done())
             actionColpito->update();
     }
+    else if (dash_ticks > 0)
+    {
+        sprite->set_tiles(spriteItems->tiles_item(), 25);
+    }
     else if (atterraggio_anim_ticks > 0)
     {
         atterraggio_anim_ticks--;
@@ -352,12 +363,9 @@ void dog::update_animations() {
     else if (idle_ticks > 120) {
         if (!actionIdle->done())
             actionIdle->update();
-        if (!actionIdleB->done())
-            actionIdleB->update();
         if (idle_ticks > 360) {
             idle_ticks = 0;
             actionIdle->reset();
-            actionIdleB->reset();
         }
     }
     else if (wall_jump_anim_ticks > 0)
@@ -410,5 +418,11 @@ void dog::applica_powerup(uint8_t attributo)
     }
     if (attributo & POWERUP_WALL_JUMP) {
         wall_jump_acquisito = true;
+    }
+    if (attributo & POWERUP_DASH) {
+        dash_acquisito = true;
+    }
+    if (attributo & POWERUP_AIR_DASH) {
+        air_dash_acquisito = true;
     }
 }

@@ -21,6 +21,8 @@ class dog;
 #define POWERUP_RESISTENZA (1<<3)
 #define POWERUP_DOPPIO_SALTO (1<<4)
 #define POWERUP_WALL_JUMP (1<<5)
+#define POWERUP_DASH (1<<6)
+#define POWERUP_AIR_DASH (1<<7)
 
 // Definizione statica di un item posizionato in uno schema
 struct item_def
