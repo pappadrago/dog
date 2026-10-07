@@ -249,6 +249,8 @@ int main()
                 for (piattaforma_mobile* pm : *g_piattaforme_mobili)
                     pm->verifica_nuovo_aggancio();
 
+                g_dog->animations();
+
                 g_bau->update();
 
                 g_bau->update();

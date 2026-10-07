@@ -39,13 +39,22 @@ dog::dog()
     polvere_sprite->set_camera(g_camera);
     polvere_sprite->set_bg_priority(3);
     polvere_anim = bn::create_sprite_animate_action_once(
-        *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // placeholder: 4 frame di sbuffo
+        *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // 4 frame di sbuffo
 
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
     actionWallJump = bn::create_sprite_animate_action_once(
         *sprite, 3, spriteItems->tiles_item(), 20, 21, 22);
+
+    actionColpito = bn::create_sprite_animate_action_once(
+        *sprite, 3, spriteItems->tiles_item(), 13, 14, 15, 16, 17);
+
+    actionAtterraggio = bn::create_sprite_animate_action_once(
+        *sprite, 3, spriteItems->tiles_item(), 24, 25, 26, 27);
+
+    actionStacco = bn::create_sprite_animate_action_once(
+        *sprite, 3, spriteItems->tiles_item(), 21, 21);
 }
 
 void dog::update()
@@ -62,6 +71,9 @@ void dog::update()
             onGround = false;
             chr_vy = bn::fixed(-4.0) - bonus_salto;
             doppio_salto_disponibile = ha_doppio_salto;
+
+            actionStacco->reset();
+            stacco_anim_ticks = STACCO_ANIM_TICKS;
         }
         else if (ha_wall_jump && muro_lato != 0)
         {
@@ -224,6 +236,10 @@ void dog::update()
 
     if (atterrato_ora && velocita_atterraggio > CADUTA_DURA_SOGLIA)
     {
+
+        actionAtterraggio->reset();
+        atterraggio_anim_ticks = ATTERRAGGIO_ANIM_TICKS;
+
         stordito_ticks = STORDIMENTO_CADUTA_TICKS;
         polvere_anim->reset();
         polvere_sprite->set_visible(true);
@@ -268,10 +284,33 @@ void dog::update()
     sprite->set_y(chr_y - HALF_SCREEN_H);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
 
-    if (!onGround || chr_vx == 0)
+ 
+
+}
+
+void dog::animations(){
+       if (!onGround || chr_vx == 0)
         actionWalk->reset();
 
-    if (idle_ticks > 120) {
+    if (colpito_anim_ticks > 0)
+    {
+        colpito_anim_ticks--;
+        if (!actionColpito->done())
+            actionColpito->update();
+    }
+    else if (atterraggio_anim_ticks > 0)
+    {
+        atterraggio_anim_ticks--;
+        if (!actionAtterraggio->done())
+            actionAtterraggio->update();
+    }
+    else if (stacco_anim_ticks > 0)
+    {
+        stacco_anim_ticks--;
+        if (!actionStacco->done())
+            actionStacco->update();
+    }
+    else if (idle_ticks > 120) {
         actionIdle->update();
         if (idle_ticks > 360) {
             idle_ticks = 0;
@@ -285,7 +324,7 @@ void dog::update()
             actionWallJump->update();
     }
     else if (!onGround)
-        sprite->set_tiles(spriteItems->tiles_item(), 8 + (chr_vy > 0 ? 1 : 0));
+        sprite->set_tiles(spriteItems->tiles_item(),  (chr_vy > 0 ? 23 : 21));
     else if (onGround && chr_vx != 0)
         actionWalk->update();
     else
@@ -298,6 +337,8 @@ void dog::update()
 
 void dog::dog_damage(int amount)
 {
+    actionColpito->reset();
+    colpito_anim_ticks = COLPITO_ANIM_TICKS;
     life -= amount;
     if (life < 0)
         life = 0;

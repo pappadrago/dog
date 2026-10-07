@@ -124,13 +124,17 @@ void live_obj::apply_map() {
 
         int txd = (cx + margine) >> 4;
         int txs = (cx - margine) >> 4;
-        if (txd < 0) txd = 0; if (txd > map.columns - 1) txd = map.columns - 1;
-        if (txs < 0) txs = 0; if (txs > map.columns - 1) txs = map.columns - 1;
+        if (txd < 0) txd = 0; 
+        if (txd > map.columns - 1) txd = map.columns - 1;
+        if (txs < 0) txs = 0; 
+        if (txs > map.columns - 1) txs = map.columns - 1;
 
         int ty1 = (chr_y.integer() + bh) >> 4;
         int ty2 = (chr_y.integer() - 0) >> 4;
-        if (ty1 < 0) ty1 = 0; if (ty1 > map.rows - 1) ty1 = map.rows - 1;
-        if (ty2 < 0) ty2 = 0; if (ty2 > map.rows - 1) ty2 = map.rows - 1;
+        if (ty1 < 0) ty1 = 0; 
+        if (ty1 > map.rows - 1) ty1 = map.rows - 1;
+        if (ty2 < 0) ty2 = 0; 
+        if (ty2 > map.rows - 1) ty2 = map.rows - 1;
 
         bool muro_destra = map.data[ty1 * map.columns + txd] == 1 || map.data[ty2 * map.columns + txd] == 1;
         bool muro_sinistra = map.data[ty1 * map.columns + txs] == 1 || map.data[ty2 * map.columns + txs] == 1;

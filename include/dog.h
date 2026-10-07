@@ -39,6 +39,7 @@ public:
     int       bonus_resistenza = 0;
 
     void applica_powerup(uint8_t sotto_tipo);
+    void animations();
 
     bool porta_apribile() const { return chiavi_raccolte >= chiavi_richieste; }
 
@@ -59,4 +60,17 @@ public:
     bool ha_doppio_salto = false;
     bool ha_wall_jump = false;
     bool doppio_salto_disponibile = false;   // si consuma a ogni uso, si ricarica all'atterraggio
+
+
+#define COLPITO_ANIM_TICKS 18        // 6 frame, placeholder: regola in base alla velocità scelta per actionColpito
+#define ATTERRAGGIO_ANIM_TICKS 12   // stessa durata dello stordimento: finiscono insieme
+#define STACCO_ANIM_TICKS 12
+
+    bn::optional<bn::sprite_animate_action<6>> actionColpito;
+    bn::optional<bn::sprite_animate_action<4>> actionAtterraggio;   // placeholder: aggiorna il numero quando sai i frame reali
+    bn::optional<bn::sprite_animate_action<4>> actionStacco;        // idem
+
+    int colpito_anim_ticks = 0;
+    int atterraggio_anim_ticks = 0;
+    int stacco_anim_ticks = 0;
 };
