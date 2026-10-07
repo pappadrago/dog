@@ -9,7 +9,7 @@
 #include "game_constants.h"
 #include "obj.h"
 
-#define CADUTA_DURA_SOGLIA bn::fixed(4.0)   // velocità d'impatto oltre la quale scatta lo stordimento
+#define VELOCITA_VY_CADUTA_DURA bn::fixed(4.0)   // velocità d'impatto oltre la quale scatta lo stordimento
 #define STORDIMENTO_CADUTA_TICKS 30
 
 class ball;
@@ -33,9 +33,9 @@ public:
     void add_score(int points) { score += points; }
 
 
-    bn::fixed bonus_corsa = bn::fixed(0);
-    bn::fixed bonus_salto = bn::fixed(0);
-    bn::fixed bonus_bau = bn::fixed(0);
+    bn::fixed bonus_corsa = ZERO;
+    bn::fixed bonus_salto = ZERO;
+    bn::fixed bonus_bau = ZERO;
     int       bonus_resistenza = 0;
 
     void applica_powerup(uint8_t sotto_tipo);
@@ -50,12 +50,13 @@ public:
     bn::optional<bn::sprite_animate_action<4>> polvere_anim;
     bn::optional<bn::sprite_animate_action<4>> gorund_pound_anim;
 
-#define WALL_JUMP_VX bn::fixed(2.6)
-#define WALL_JUMP_VY bn::fixed(-2.6)   // meno negativa del salto normale (-4.0): più orizzontale che verticale
+#define WALL_JUMP_VX bn::fixed(2.5)
+#define WALL_JUMP_VY bn::fixed(-2.0)   // meno negativa del salto normale (-4.0): più orizzontale che verticale
 #define WALL_JUMP_ANIM_TICKS 14
 
     bn::optional<bn::sprite_animate_action<4>> actionWallJump;   // placeholder: aggiorna numero/indici frame quando pronti
     bn::optional<bn::sprite_animate_action<14>> actionIdle;   // placeholder: aggiorna numero/indici frame quando pronti
+    bn::optional<bn::sprite_animate_action<6>> actionIdleB;   // placeholder: aggiorna numero/indici frame quando pronti
     int wall_jump_anim_ticks = 0;
 
     bool doppio_salto_acquisito = false;

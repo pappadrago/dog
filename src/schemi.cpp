@@ -15,6 +15,7 @@
 #include "s2_piattaforme_mobili.h"
 
 #include "s1_lava.h"
+#include "s2_lava.h"
 
 // Per aggiungere uno schema: includere s2.h e gli sfondi s2/s2fg,
 // aggiungere una riga qui sotto, un case nelle due create_* e alzare NUM_SCHEMI.
@@ -198,8 +199,8 @@ const lava_zona_def* get_schema_lava(int schema, int& count)
         count = schema1_lava_count;
         return schema1_lava;
     case 2:
-        // count = schema2_lava_count;
-        // return schema2_lava;
+         count = schema2_lava_count;
+         return schema2_lava;
         count = 0;
         return nullptr;   // finché s2 non ha lava propria
     default:

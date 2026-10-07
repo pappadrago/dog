@@ -30,6 +30,8 @@ dog::dog()
 
     actionIdle = bn::create_sprite_animate_action_forever(
         *sprite, 5, spriteItems->tiles_item(), 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55);   // placeholder: idle con coda che si muove
+    actionIdleB = bn::create_sprite_animate_action_forever(
+        *sprite, 25, spriteItems->tiles_item(), 28, 29, 30, 31, 32, 33);   // placeholder: idle con coda che si muove
 
 
     g_dog->sprite->set_camera(g_camera);
@@ -258,7 +260,7 @@ void dog::update()
         doppio_salto_disponibile = doppio_salto_acquisito;
     }
 
-    if (atterrato_ora && velocita_atterraggio > CADUTA_DURA_SOGLIA)
+    if (atterrato_ora && velocita_atterraggio > VELOCITA_VY_CADUTA_DURA)
     {
 
         actionAtterraggio->reset();
@@ -315,6 +317,7 @@ void dog::update()
     else {
         idle_ticks = 0;
         actionIdle->reset();
+        actionIdleB->reset();
     }
 
     // --- Sprite ---
@@ -347,10 +350,14 @@ void dog::update_animations() {
             actionStacco->update();
     }
     else if (idle_ticks > 120) {
-        actionIdle->update();
+        if (!actionIdle->done())
+            actionIdle->update();
+        if (!actionIdleB->done())
+            actionIdleB->update();
         if (idle_ticks > 360) {
             idle_ticks = 0;
             actionIdle->reset();
+            actionIdleB->reset();
         }
     }
     else if (wall_jump_anim_ticks > 0)
