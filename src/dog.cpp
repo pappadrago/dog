@@ -61,8 +61,9 @@ void dog::update()
         {
             onGround = false;
             chr_vy = bn::fixed(-4.0) - bonus_salto;
+            doppio_salto_disponibile = ha_doppio_salto;
         }
-        else if (muro_lato != 0)
+        else if (ha_wall_jump && muro_lato != 0)
         {
             int direzione_spinta = (muro_lato == DIR_RIGHT) ? DIR_LEFT : DIR_RIGHT;
 
@@ -81,6 +82,22 @@ void dog::update()
             polvere_sprite->set_rotation_angle_safe(-90 * dir);
             polvere_sprite->set_vertical_flip(false);
             muro_lato = 0;   // consumato: serve toccare di nuovo un muro per un secondo wall jump
+            doppio_salto_disponibile = ha_doppio_salto;
+        }
+        else if (doppio_salto_disponibile)
+        {
+            chr_vy = bn::fixed(-2.5) - bonus_salto;
+            doppio_salto_disponibile = false;
+
+            actionWallJump->reset();   // riuso la stessa animazione del wall jump come "guizzo a mezz'aria"; vedi nota sotto
+            wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
+
+            polvere_anim->reset();
+            polvere_sprite->set_visible(true);
+            polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
+            polvere_sprite->set_y(chr_y - HALF_SCREEN_H);   // sopra la testa, non ai piedi
+            polvere_sprite->set_rotation_angle_safe(0);
+            polvere_sprite->set_vertical_flip(false);
         }
     }
 
@@ -202,6 +219,8 @@ void dog::update()
         }
     }
 
+    if (atterrato_ora)
+        doppio_salto_disponibile = ha_doppio_salto;
 
     if (atterrato_ora && velocita_atterraggio > CADUTA_DURA_SOGLIA)
     {
@@ -254,7 +273,7 @@ void dog::update()
 
     if (idle_ticks > 120) {
         actionIdle->update();
-        if(idle_ticks > 360){
+        if (idle_ticks > 360) {
             idle_ticks = 0;
             actionIdle->reset();
         }
@@ -274,8 +293,6 @@ void dog::update()
 
     if (invulnerability)
         sprite->set_visible(invulnerability % 2);
-
-
 
 }
 
@@ -303,5 +320,11 @@ void dog::applica_powerup(uint8_t attributo)
     if (attributo & POWERUP_RESISTENZA) {
         if (bonus_resistenza == bn::fixed(0))
             bonus_resistenza += 30;
+    }
+    if (attributo & POWERUP_DOPPIO_SALTO) {
+        ha_doppio_salto = true;
+    }
+    if (attributo & POWERUP_WALL_JUMP) {
+        ha_wall_jump = true;
     }
 }

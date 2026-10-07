@@ -55,4 +55,8 @@ public:
     bn::optional<bn::sprite_animate_action<4>> actionWallJump;   // placeholder: aggiorna numero/indici frame quando pronti
     bn::optional<bn::sprite_animate_action<14>> actionIdle;   // placeholder: aggiorna numero/indici frame quando pronti
     int wall_jump_anim_ticks = 0;
+
+    bool ha_doppio_salto = false;
+    bool ha_wall_jump = false;
+    bool doppio_salto_disponibile = false;   // si consuma a ogni uso, si ricarica all'atterraggio
 };
