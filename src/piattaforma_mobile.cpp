@@ -169,14 +169,14 @@ void piattaforma_mobile::trasporta_se_agganciato()
     {
         g_dog->chr_x += delta_x();
         g_dog->chr_y += delta_y();
-        g_dog->chr_vy = 0;
+        g_dog->chr_vy = ZERO;
         g_dog->onGround = true;
     }
     if (nemico_agganciato && !nemico_agganciato->distrutto)
     {
         nemico_agganciato->chr_x += delta_x();
         nemico_agganciato->chr_y += delta_y();
-        nemico_agganciato->chr_vy = 0;
+        nemico_agganciato->chr_vy = ZERO;
         nemico_agganciato->onGround = true;
     }
 }
@@ -188,7 +188,7 @@ bool piattaforma_mobile::continua_aggancio(live_obj& o)
     if (salta_via || fuori_x) return false;
 
     o.chr_y = (_y - META_ALTEZZA) - o.box_dim;
-    o.chr_vy = 0;
+    o.chr_vy = ZERO;
     o.onGround = true;
     return true;
 }
@@ -203,7 +203,7 @@ bool piattaforma_mobile::prova_nuovo_aggancio(live_obj& o)
     if (sopra_in_x && vicino_sopra && non_salta_su)
     {
         o.chr_y = (_y - META_ALTEZZA) - o.box_dim;
-        o.chr_vy = 0;
+        o.chr_vy = ZERO;
         o.onGround = true;
         return true;
     }
@@ -229,13 +229,13 @@ void piattaforma_mobile::verifica_nuovo_aggancio()
         else if (overlap_x < overlap_y)
         {
             g_dog->chr_x += (dx > 0) ? overlap_x : -overlap_x;
-            g_dog->chr_vx = 0;
+            g_dog->chr_vx = ZERO;
             dog_agganciato = false;
         }
         else if (dy < 0)
         {
             g_dog->chr_y = (_y - META_ALTEZZA) - g_dog->box_dim;
-            g_dog->chr_vy = 0;
+            g_dog->chr_vy = ZERO;
             g_dog->onGround = true;
             if (!dog_agganciato && def.ticks_dopo_salita >= 0 && _ticks_dopo_salita_rimanenti < 0)
                 _ticks_dopo_salita_rimanenti = def.ticks_dopo_salita;
@@ -244,7 +244,7 @@ void piattaforma_mobile::verifica_nuovo_aggancio()
         else
         {
             g_dog->chr_y = (_y + META_ALTEZZA) + g_dog->box_dim;
-            if (g_dog->chr_vy < 0) g_dog->chr_vy = 0;
+            if (g_dog->chr_vy < 0) g_dog->chr_vy = ZERO;
             dog_agganciato = false;
         }
     }

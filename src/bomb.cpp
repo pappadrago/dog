@@ -72,8 +72,8 @@ void bomb::explode()
 {
     exploded = true;
     explosion_ticks = BOMB_EXPLOSION_TICKS;
-    chr_vx = bn::fixed(0);
-    chr_vy = bn::fixed(0);
+    chr_vx = ZERO;
+    chr_vy = ZERO;
 
     // Danno al cane: stesso knockback usato per il contatto coi nemici
     if (g_dog->invulnerability == 0)

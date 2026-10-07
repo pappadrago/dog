@@ -40,6 +40,8 @@ dog::dog()
     polvere_sprite->set_bg_priority(3);
     polvere_anim = bn::create_sprite_animate_action_once(
         *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // 4 frame di sbuffo
+    gorund_pound_anim = bn::create_sprite_animate_action_once(
+        *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 63, 64, 65, 66);
 
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
@@ -68,17 +70,19 @@ void dog::update()
     {
         if (onGround)
         {
+            salto_in_corso = true;
             onGround = false;
             chr_vy = bn::fixed(-4.0) - bonus_salto;
-            doppio_salto_disponibile = ha_doppio_salto;
+            doppio_salto_disponibile = doppio_salto_acquisito;
 
             actionStacco->reset();
             stacco_anim_ticks = STACCO_ANIM_TICKS;
+
         }
-        else if (ha_wall_jump && muro_lato != 0)
+        else if (wall_jump_acquisito && muro_lato != 0)
         {
             int direzione_spinta = (muro_lato == DIR_RIGHT) ? DIR_LEFT : DIR_RIGHT;
-
+            salto_in_corso = true;
             chr_vx = WALL_JUMP_VX.multiplication(bn::fixed(direzione_spinta));
             chr_vy = WALL_JUMP_VY;
             dir = direzione_spinta;
@@ -94,23 +98,28 @@ void dog::update()
             polvere_sprite->set_rotation_angle_safe(-90 * dir);
             polvere_sprite->set_vertical_flip(false);
             muro_lato = 0;   // consumato: serve toccare di nuovo un muro per un secondo wall jump
-            doppio_salto_disponibile = ha_doppio_salto;
+            doppio_salto_disponibile = doppio_salto_acquisito;
         }
         else if (doppio_salto_disponibile)
         {
             chr_vy = bn::fixed(-2.5) - bonus_salto;
             doppio_salto_disponibile = false;
-
             actionWallJump->reset();   // riuso la stessa animazione del wall jump come "guizzo a mezz'aria"; vedi nota sotto
             wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
-
+            salto_in_corso = true;
             polvere_anim->reset();
             polvere_sprite->set_visible(true);
             polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
-            polvere_sprite->set_y(chr_y - HALF_SCREEN_H);   // sopra la testa, non ai piedi
+            polvere_sprite->set_y(chr_y - HALF_SCREEN_H + box_dim);   // ai piedi
             polvere_sprite->set_rotation_angle_safe(0);
-            polvere_sprite->set_vertical_flip(false);
+            polvere_sprite->set_vertical_flip(true);
         }
+    }
+
+    if (salto_in_corso && !onGround && chr_vy > 0 && bn::keypad::down_held())
+    {
+        grond_pound_engaged = true;
+        chr_vy = MAX_FALL_SPEED;
     }
 
     if (bn::keypad::r_pressed())
@@ -144,6 +153,20 @@ void dog::update()
         for (enemy* enem : *g_enemies)
         {
             if (enem->invulnerability == 0) {
+
+
+                if (grond_pound_engaged && enem->currentAction != ACTION_ATTACK) {
+                    bool hit = check_collision_16(*enem);
+                    if (hit)
+                    {
+                        BN_LOG("Dog hit enemy with power landing!");
+                        enem->beHitByDog();
+                        enem->invulnerability = 60;
+                        chr_vy = bn::fixed(-2.0);
+                        chr_vx = (enem->chr_x < chr_x) ? bn::fixed(2.0) : bn::fixed(-2.0);
+                        continue;
+                    }
+                }
 
                 bool hit;
                 bool hitByMelee = false;
@@ -231,8 +254,9 @@ void dog::update()
         }
     }
 
-    if (atterrato_ora)
-        doppio_salto_disponibile = ha_doppio_salto;
+    if (atterrato_ora) {
+        doppio_salto_disponibile = doppio_salto_acquisito;
+    }
 
     if (atterrato_ora && velocita_atterraggio > CADUTA_DURA_SOGLIA)
     {
@@ -241,12 +265,21 @@ void dog::update()
         atterraggio_anim_ticks = ATTERRAGGIO_ANIM_TICKS;
 
         stordito_ticks = STORDIMENTO_CADUTA_TICKS;
-        polvere_anim->reset();
+
         polvere_sprite->set_visible(true);
-        polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
+        if (grond_pound_engaged) {
+            polvere_sprite->set_x(chr_x - HALF_SCREEN_W + dir * box_dim);
+            gorund_pound_anim->reset();
+        }
+        else {
+            polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
+            polvere_anim->reset();
+        }
+
         polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
         polvere_sprite->set_vertical_flip(false);
         polvere_sprite->set_rotation_angle_safe(0);
+        grond_pound_engaged = false;
     }
     else if (testata_ora)
     {
@@ -259,8 +292,13 @@ void dog::update()
         polvere_sprite->set_rotation_angle_safe(0);
     }
 
-    if (!polvere_anim->done())
+    if (!polvere_anim->done()) {
         polvere_anim->update();
+    }
+    else if (!gorund_pound_anim->done())
+    {
+        gorund_pound_anim->update();
+    }
     else
         polvere_sprite->set_visible(false);
 
@@ -284,12 +322,10 @@ void dog::update()
     sprite->set_y(chr_y - HALF_SCREEN_H);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
 
- 
-
 }
 
-void dog::animations(){
-       if (!onGround || chr_vx == 0)
+void dog::update_animations() {
+    if (!onGround || chr_vx == 0)
         actionWalk->reset();
 
     if (colpito_anim_ticks > 0)
@@ -324,7 +360,7 @@ void dog::animations(){
             actionWallJump->update();
     }
     else if (!onGround)
-        sprite->set_tiles(spriteItems->tiles_item(),  (chr_vy > 0 ? 23 : 21));
+        sprite->set_tiles(spriteItems->tiles_item(), (chr_vy > 0 ? 23 : 21));
     else if (onGround && chr_vx != 0)
         actionWalk->update();
     else
@@ -363,9 +399,9 @@ void dog::applica_powerup(uint8_t attributo)
             bonus_resistenza += 30;
     }
     if (attributo & POWERUP_DOPPIO_SALTO) {
-        ha_doppio_salto = true;
+        doppio_salto_acquisito = true;
     }
     if (attributo & POWERUP_WALL_JUMP) {
-        ha_wall_jump = true;
+        wall_jump_acquisito = true;
     }
 }

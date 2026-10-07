@@ -78,7 +78,11 @@ void live_obj::apply_gravity()
                 chr_y = bn::fixed((ty << 4) + 16) + box_halfdim;
                 testata_ora = true;
             }
-            chr_vy = 0;
+            if(chr_vy != 0) {
+             salto_in_corso = false;
+            }
+            chr_vy = ZERO;
+            
         }
     }
 }

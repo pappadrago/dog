@@ -39,7 +39,7 @@ public:
     int       bonus_resistenza = 0;
 
     void applica_powerup(uint8_t sotto_tipo);
-    void animations();
+    void update_animations();
 
     bool porta_apribile() const { return chiavi_raccolte >= chiavi_richieste; }
 
@@ -48,6 +48,7 @@ public:
 
     bn::optional<bn::sprite_ptr> polvere_sprite;
     bn::optional<bn::sprite_animate_action<4>> polvere_anim;
+    bn::optional<bn::sprite_animate_action<4>> gorund_pound_anim;
 
 #define WALL_JUMP_VX bn::fixed(2.6)
 #define WALL_JUMP_VY bn::fixed(-2.6)   // meno negativa del salto normale (-4.0): più orizzontale che verticale
@@ -57,8 +58,8 @@ public:
     bn::optional<bn::sprite_animate_action<14>> actionIdle;   // placeholder: aggiorna numero/indici frame quando pronti
     int wall_jump_anim_ticks = 0;
 
-    bool ha_doppio_salto = false;
-    bool ha_wall_jump = false;
+    bool doppio_salto_acquisito = false;
+    bool wall_jump_acquisito = false;
     bool doppio_salto_disponibile = false;   // si consuma a ogni uso, si ricarica all'atterraggio
 
 
@@ -73,4 +74,11 @@ public:
     int colpito_anim_ticks = 0;
     int atterraggio_anim_ticks = 0;
     int stacco_anim_ticks = 0;
+
+    bool grond_pound_engaged = false;
+
+
+    // Getter e Setter per Power Land
+    [[nodiscard]] bool is_power_landing() const noexcept { return grond_pound_engaged; }
+    void set_power_landing(bool value) noexcept { grond_pound_engaged = value; }
 };

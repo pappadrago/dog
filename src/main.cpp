@@ -161,8 +161,8 @@ int main()
         {
             g_dog->chr_x = bn::fixed(dl.data[arrival_door].x);
             g_dog->chr_y = bn::fixed(dl.data[arrival_door].y);
-            g_dog->chr_vx = bn::fixed(0);
-            g_dog->chr_vy = bn::fixed(0);
+            g_dog->chr_vx = ZERO;
+            g_dog->chr_vy = ZERO;
             g_dog->invulnerability = 60;   // i nemici nascono a caso: un attimo di respiro
         }
 
@@ -249,7 +249,7 @@ int main()
                 for (piattaforma_mobile* pm : *g_piattaforme_mobili)
                     pm->verifica_nuovo_aggancio();
 
-                g_dog->animations();
+                g_dog->update_animations();
 
                 g_bau->update();
 

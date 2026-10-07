@@ -18,7 +18,7 @@
 // Costanti fisiche
 #define JUMP_VY       bn::fixed(-2.7)
 #define DOUBLE_JUMP_VY bn::fixed(-3.0)
-#define GRAVITY        bn::fixed(.2)
+#define GRAVITY        bn::fixed(.15)
 #define FRICTION_GROUND bn::fixed(-.1)
 #define FRICTION_AIR   bn::fixed(-.02)
 #define MAX_FALL_SPEED       bn::fixed(5.5)
