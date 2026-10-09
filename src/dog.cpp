@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "constanti_fisica.h"
 #include "dog.h"
 #include "bau.h"
 #include "enemy.h"
@@ -217,7 +218,7 @@ void dog::update()
     if (ground_pound_acquisito && salto_in_corso && salto_pieno && !onGround && chr_vy > 0 && bn::keypad::down_held())
     {
         ground_pound_engaged = true;
-        chr_vy = MAX_FALL_SPEED;
+        chr_vy = MAX_FALL;
     }
 
     bn::fixed runningExtraSpeed = bn::keypad::l_held() ? bn::fixed(.8) : ZERO;
@@ -438,6 +439,7 @@ void dog::update()
         polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
 
     }
+#define WALL_SLIDE_TILE 26            
 
 
     if (wall_sliding && chr_vy > WALL_SLIDE_VY - GRAVITY)

@@ -3,6 +3,7 @@
 #include "dog.h"
 #include "bn_math.h"
 #include "bn_sprite_items_weapons.h"
+#include "bn_sprite_items_explosion.h"
 
 bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounces) :
     max_bounces(_max_bounces)
@@ -19,6 +20,7 @@ bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounce
         x - HALF_SCREEN_W, y - HALF_SCREEN_H, BOMB_TILE_INDEX);
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
+
 }
 
 void bomb::update()
@@ -72,9 +74,8 @@ void bomb::explode()
 {
     exploded = true;
     explosion_ticks = BOMB_EXPLOSION_TICKS;
-    chr_vx = ZERO;
-    chr_vy = ZERO;
-
+    screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
+    chr_vx = chr_vy = ZERO;
 }
 
 void bomb::update_explosion()

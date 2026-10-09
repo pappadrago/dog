@@ -34,8 +34,8 @@ void live_obj::apply_gravity()
         testata_ora = false;
         chr_vy += GRAVITY;
         onGround = false;
-        if (chr_vy > MAX_FALL_SPEED)
-            chr_vy = MAX_FALL_SPEED;
+        if (chr_vy > MAX_FALL)
+            chr_vy = MAX_FALL;
         chr_y += chr_vy;
 
         int cx = chr_x.integer();

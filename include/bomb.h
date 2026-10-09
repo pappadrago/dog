@@ -25,7 +25,6 @@ private:
     int  age             = 0;
     int  explosion_ticks = 0;
     bool exploded        = false;
-
     void explode();
     void update_explosion();
 };

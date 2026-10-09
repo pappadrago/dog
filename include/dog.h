@@ -90,8 +90,6 @@ public:
     void set_power_landing(bool value) noexcept { ground_pound_engaged = value; }
 
 
-#define WALL_SLIDE_VY bn::fixed(0.8)   // velocità di discesa lungo il muro (contro MAX_FALL_SPEED = 5.5), da bilanciare
-#define WALL_SLIDE_TILE 26             // placeholder: indice del frame "appeso al muro", quando disponibile
 
     bool wall_sliding = false;
 

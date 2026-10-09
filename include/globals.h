@@ -10,6 +10,7 @@
 #include "cassa.h"
 #include "boss.h"
 #include "dog.h"
+#include "constanti_fisica.h"
 
 // Forward declaration di tutte le classi di gioco:
 // i .cpp che ne hanno bisogno includeranno i rispettivi header.
