@@ -61,3 +61,8 @@ int capzero(int val, int max);
 
 extern int g_schema;
 
+
+extern int g_shake_ticks;
+extern int g_shake_durata;
+extern int g_shake_ampiezza;
+void screen_shake(int ticks, int ampiezza);

@@ -23,12 +23,13 @@ class dog;
 #define POWERUP_WALL_JUMP (1<<5)
 #define POWERUP_DASH (1<<6)
 #define POWERUP_AIR_DASH (1<<7)
+#define POWERUP_GROUND_POUND (1<<8)
 
 // Definizione statica di un item posizionato in uno schema
 struct item_def
 {
     uint8_t tipo;       // ITEM_TIPO_*
-    uint8_t attributo; // usato solo per ITEM_TIPO_POWERUP -> POWERUP_*
+    uint16_t attributo; // usato solo per ITEM_TIPO_POWERUP -> POWERUP_*
     int16_t x;
     int16_t y;
 };
@@ -39,7 +40,7 @@ public:
 
     int      action = 0;
     uint8_t  tipo;
-    uint8_t  attributo;
+    uint16_t attributo;
     bn::fixed spawn_x, spawn_y;
     bool     raccolto = false;
 

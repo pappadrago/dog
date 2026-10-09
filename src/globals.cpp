@@ -39,3 +39,13 @@ int capzero(int val, int max) {
     if (val < 0) val = 0;
     return val;
 }
+
+int g_shake_ticks = 0;
+int g_shake_durata = 1;      // mai 0: serve da divisore
+int g_shake_ampiezza = 0;
+
+void screen_shake(int ticks, int ampiezza)
+{
+    g_shake_ticks = g_shake_durata = ticks;
+    g_shake_ampiezza = ampiezza;
+}

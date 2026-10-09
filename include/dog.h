@@ -17,7 +17,8 @@ class ball;
 class human;
 class bau;
 class enemy;
-
+#define GROUND_POUND_SHAKE_TICKS 20
+#define GROUND_POUND_SHAKE_AMP 3
 class dog : public live_obj
 {
 public:
@@ -38,8 +39,8 @@ public:
     bn::fixed bonus_salto = ZERO;
     bn::fixed bonus_bau = ZERO;
     int       bonus_resistenza = 0;
-
-    void applica_powerup(uint8_t sotto_tipo);
+    int charge_ticks = 0;
+    void applica_powerup(uint16_t attributo);
     void update_animations();
 
     bool porta_apribile() const { return chiavi_raccolte >= chiavi_richieste; }
@@ -56,14 +57,16 @@ public:
 #define WALL_JUMP_VY bn::fixed(-2.0)   // meno negativa del salto normale (-4.0): più orizzontale che verticale
 #define WALL_JUMP_ANIM_TICKS 14
 
-    bn::optional<bn::sprite_animate_action<4>> actionWallJump;   
-    bn::optional<bn::sprite_animate_action<14>> actionIdle;  
+    bn::optional<bn::sprite_animate_action<4>> actionWallJump;
+    bn::optional<bn::sprite_animate_action<14>> actionIdle;
     int wall_jump_anim_ticks = 0;
 
     bool doppio_salto_acquisito = false;
     bool wall_jump_acquisito = false;
     bool dash_acquisito = false;
     bool air_dash_acquisito = false;
+    bool ground_pound_acquisito = false;
+
     bool doppio_salto_disponibile = false;   // si consuma a ogni uso, si ricarica all'atterraggio
 
 
@@ -79,10 +82,26 @@ public:
     int atterraggio_anim_ticks = 0;
     int stacco_anim_ticks = 0;
 
-    bool grond_pound_engaged = false;
+    bool ground_pound_engaged = false;
 
 
     // Getter e Setter per Power Land
-    [[nodiscard]] bool is_power_landing() const noexcept { return grond_pound_engaged; }
-    void set_power_landing(bool value) noexcept { grond_pound_engaged = value; }
+    [[nodiscard]] bool is_power_landing() const noexcept { return ground_pound_engaged; }
+    void set_power_landing(bool value) noexcept { ground_pound_engaged = value; }
+
+
+#define WALL_SLIDE_VY bn::fixed(0.8)   // velocità di discesa lungo il muro (contro MAX_FALL_SPEED = 5.5), da bilanciare
+#define WALL_SLIDE_TILE 26             // placeholder: indice del frame "appeso al muro", quando disponibile
+
+    bool wall_sliding = false;
+
+#define COYOTE_TICKS 6                       // ~100 ms
+#define JUMP_BUFFER_TICKS 6
+#define SALTO_TAGLIO_VY bn::fixed(-2.0)      // velocità a cui viene tagliato il salto al rilascio (~13px di salto minimo)
+
+    int  coyote_ticks = 0;
+    int  jump_buffer_ticks = 0;
+    bool salto_tenuto = false;
+    bool salto_pieno = false;   // true se il salto non è stato accorciato rilasciando il tasto in salita
+    void start_polvere_anim(bn::fixed x, bn::fixed y, bool groundPound, bool vertical_flip, int rotation_angle);
 };

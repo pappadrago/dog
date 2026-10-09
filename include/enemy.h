@@ -80,7 +80,7 @@ public:
     virtual void update();
     virtual ~enemy() = default;  // distruttore virtual obbligatorio
 
-    void beHitByBark();
+    void beHitByBark(int _dir, bn::fixed power = 0);
     void beHitByDog();
 
     int     contact_damage = 1;     // danno per semplice contatto

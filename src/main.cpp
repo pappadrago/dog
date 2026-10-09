@@ -15,6 +15,16 @@
 #include "common_variable_8x16_sprite_font.h"
 #include "bn_log.h"
 
+
+#include "bn_color.h"
+#include "bn_regular_bg_ptr.h"
+#include "bn_regular_bg_actions.h"
+#include "bn_bg_palette_actions.h"
+
+// Includi l'asset dello sfondo d'introduzione generato nella cartella graphics/
+#include "bn_regular_bg_items_intro.h"
+#include "bn_regular_bg_items_megadog.h"
+
 #include "globals.h"
 #include "game_constants.h"
 #include "hud.h"
@@ -75,6 +85,16 @@ namespace
         if (cam_y < 0) cam_y = 0;
         if (cam_y > bn::fixed(map.map_h) - SCREEN_H) cam_y = bn::fixed(map.map_h) - SCREEN_H;
 
+
+        if (g_shake_ticks > 0)
+        {
+            int amp = g_shake_ampiezza * g_shake_ticks / g_shake_durata;   // si smorza fino a spegnersi
+            if (amp < 1) amp = 1;
+            cam_x += (g_shake_ticks & 1) ? amp : -amp;                      // oscilla a ogni frame
+            cam_y += ((g_shake_ticks >> 1) & 1) ? amp / 2 : -(amp / 2);     // più lento e più piccolo in verticale
+            g_shake_ticks--;
+        }
+
         g_camera->set_x(cam_x.integer());
         g_camera->set_y(cam_y.integer());
 
@@ -88,19 +108,55 @@ namespace
     }
 }
 
-
-void qualche_funzione()
+void show_intro_screen()
 {
+    // 1. Crea il background statico dell'intro
+    bn::regular_bg_ptr intro_bg = bn::regular_bg_items::intro.create_bg(0, 0);
+    bn::regular_bg_ptr mega_bg = bn::regular_bg_items::megadog.create_bg(0, 0);
 
+    // 2. Imposta inizialmente la sfumatura della palette a nero totale (intensità 1.0)
+  //  intro_bg.palette().set_fade_color(bn::color(0, 0, 0));
+  //  intro_bg.palette().set_fade_intensity(1.0);
 
+    // --- FADE IN ---
+    // Sfumatura da nero al colore originale (intensità 0.0) in 60 frame (~1 secondo)
+    //bn::regular_bg_palette_fade_to_action fade_in(intro_bg.palette(), 60, 0.0);
 
+   // while(!fade_in.done())
+   // {
+   //     fade_in.update();
+   //     bn::core::update();
+   // }
+
+    // --- ATTESA (HOLD) ---
+    // Mantiene l'immagine visibile su schermo per 120 frame (~2 secondi)
+    intro_bg.set_y(48);   // scorrimento lento verso sinistra
+    for (int i = 0; i < 96 * 2; ++i)
+    {
+        bn::core::update();
+        intro_bg.set_y(intro_bg.y() - bn::fixed(0.5));   // scorrimento lento verso sinistra
+
+        mega_bg.set_x(mega_bg.x() - bn::fixed(1));
+    }
+
+    // --- FADE OUT ---
+    // Sfumatura dal colore originale a nero totale (intensità 1.0) in 60 frame (~1 secondo)
+    //bn::regular_bg_palette_fade_to_action fade_out(intro_bg.palette(), 60, 1.0);
+
+    //while(!fade_out.done())
+    //{
+    //    fade_out.update();
+    //    bn::core::update();
+    //}
+
+    // Quando la funzione termina, intro_bg va fuori dallo scope e la memoria VRAM viene liberata.
 }
 
 int main()
 {
     bn::core::init();
 
-
+    //show_intro_screen();
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);

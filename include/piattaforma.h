@@ -10,7 +10,7 @@ struct piattaforma_def
     uint16_t tile_hw_solido[4];
     uint16_t tile_hw_vuoto[4];
     uint8_t  stato_iniziale;
-    uint8_t  attiva_con;
+    uint16_t attiva_con;
 };
 
 class piattaforma

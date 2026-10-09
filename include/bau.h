@@ -3,27 +3,26 @@
 #include "bn_optional.h"
 #include "bn_sprite_ptr.h"
 #include "bn_fixed.h"
+#include "obj.h"
 #include "game_constants.h"
 
 #define BAU_DURATA 60
 #define BAU_FLICK_TIME 15
 
-class bau
+#define BAU_CHARGE_MAX 60   // frame di pressione per la carica massima (1 s)
+
+class bau: public obj
 {
 public:
-    bn::optional<bn::sprite_ptr> sprite;
-    bn::fixed chr_x;
-    bn::fixed chr_vx;
-    bn::fixed chr_y;
+
+    bn::fixed power = 0;      // 0..1, calcolata allo sparo
+    bn::fixed hit_half = 8;   // mezza hitbox, cresce con la carica
 
     int value = -1;
     int ticks = 0;
 
-    bn::fixed bau_speed = bn::fixed(2.0);
-    bn::fixed bau_speed_neg = bn::fixed(-2.0);
-
     bau();
 
-    void do_spawn();
+    void do_spawn(int charge = 0);
     void update();
 };

@@ -503,10 +503,11 @@ void enemy::update()
     }
 }
 
-void enemy::beHitByBark()
+void enemy::beHitByBark(int _dir, bn::fixed power)
 {
-    chr_vy = bn::fixed(-3.0);
-    chr_vx = g_bau->chr_vx > 0 ? bn::fixed(2.0) : bn::fixed(-2.0);
+    chr_vy = bn::fixed(-4.0) - power.multiplication(bn::fixed(1.5));
+    chr_vx = (bn::fixed(2.0) + power.multiplication(bn::fixed(2.0))).multiplication(_dir);
+
     chr_accx = bn::fixed(0);
 
     if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)

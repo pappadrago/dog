@@ -75,20 +75,6 @@ void bomb::explode()
     chr_vx = ZERO;
     chr_vy = ZERO;
 
-    // Danno al cane: stesso knockback usato per il contatto coi nemici
-    if (g_dog->invulnerability == 0)
-    {
-        bn::fixed dx = g_dog->chr_x - chr_x;
-        bn::fixed dy = (g_dog->chr_y + 6) - chr_y;   // hitbox del cane, come in collision.cpp
-
-        if (bn::abs(dx) < BOMB_EXPLOSION_RADIUS + 8 &&
-            bn::abs(dy) < BOMB_EXPLOSION_RADIUS + 13)
-        {
-            g_dog->chr_vx = (dx < 0) ? bn::fixed(-2.0) : bn::fixed(2.0);
-            g_dog->chr_vy = bn::fixed(-3.0);
-            g_dog->invulnerability = 60;
-        }
-    }
 }
 
 void bomb::update_explosion()
@@ -107,4 +93,20 @@ void bomb::update_explosion()
     bn::fixed elapsed(BOMB_EXPLOSION_TICKS - explosion_ticks);
     sprite->set_scale(bn::fixed(1) + elapsed.multiplication(bn::fixed(0.08)));
     sprite->set_visible(explosion_ticks % 3 != 0);
+
+    // Danno al cane: stesso knockback usato per il contatto coi nemici
+    if (g_dog->invulnerability == 0)
+    {
+        bn::fixed dx = g_dog->chr_x - chr_x;
+        bn::fixed dy = (g_dog->chr_y + 6) - chr_y;   // hitbox del cane, come in collision.cpp
+
+        if (bn::abs(dx) < BOMB_EXPLOSION_RADIUS + 8 &&
+            bn::abs(dy) < BOMB_EXPLOSION_RADIUS + 13)
+        {
+            g_dog->chr_vx = (dx < 0) ? bn::fixed(-2.0) : bn::fixed(2.0);
+            g_dog->chr_vy = bn::fixed(-3.0);
+            g_dog->invulnerability = 60;
+        }
+    }
+
 }
