@@ -34,7 +34,7 @@ namespace
     constexpr int NUM_CAMEO_LOOKS = sizeof(CAMEO_LOOKS) / sizeof(CAMEO_LOOKS[0]);
 }
 
-int dog_selection_screen(bn::sprite_text_generator& text_generator)
+void dog_selection_screen(bn::sprite_text_generator& text_generator)
 {
     static constexpr int NUM_DOGS = 1;
     static constexpr int SPACING = 40;
@@ -153,12 +153,13 @@ int dog_selection_screen(bn::sprite_text_generator& text_generator)
             cameo_anim->update();
         }
 
-        if (bn::keypad::start_pressed()) return 1;
+        if (bn::keypad::start_pressed())
+            return;
 
         int n = g_rng.get_int();
         n++;
-        bg0.set_x(bn::fixed(-0.1 )+bg0.x());
-        bg1.set_x(bn::fixed(-0.2 )+bg1.x());
+        bg0.set_x(bn::fixed(-0.1) + bg0.x());
+        bg1.set_x(bn::fixed(-0.2) + bg1.x());
         bn::core::update();
     }
 }

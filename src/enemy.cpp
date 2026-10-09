@@ -161,7 +161,7 @@ void enemy::init(const enemy_def& def)
     ticks2action = def.delay;
 
     if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
-        chr_vx = bn::fixed(1.5);
+        chr_vx = SLOW_VX_R * dir;
         ticks2action = 80;
     }
 
@@ -383,7 +383,7 @@ void enemy::update()
                 {
                 case TIPO_NEMICO_DRUIDO_DINAMICO:
                     dir = chr_x > g_dog->chr_x ? DIR_LEFT : DIR_RIGHT;
-                    chr_vy = bn::fixed(-4.0);
+                    chr_vy = ENEMY_BIG_JUMP_VY;
                     chr_accx = bn::fixed(0.3).multiplication(dir);
                     max_vx = g_rng.get_fixed(bn::fixed(1.0)) + bn::fixed(0.5);
                     break;
@@ -391,7 +391,7 @@ void enemy::update()
                     dir = -dir;
                     chr_accx = bn::fixed(0.2).multiplication(dir);
                     max_vx = bn::fixed(1.0);
-                    chr_vy = bn::fixed(-1.5);
+                    chr_vy = ENEMY_SMALL_JUMP_VY;
                     break;
                 case TIPO_NEMICO_SPADACCINO_PATTUGLIATORE:
                     dir = -dir;
@@ -406,7 +406,7 @@ void enemy::update()
                 case TIPO_NEMICO_ZOMBIE:
                 case TIPO_NEMICO_PUGILE:
                     dir = (g_dog->chr_x > chr_x) ? DIR_RIGHT : DIR_LEFT;   // insegue il cane
-                    chr_vx = bn::fixed(0);
+                    chr_vx = ZERO;
                     chr_accx = bn::fixed(0.2).multiplication(dir);
                     max_vx = bn::fixed(1.0);
                     ticks2action = 60;
@@ -488,7 +488,7 @@ void enemy::update()
         sprite->set_visible(invulnerability % 2);
     else if (currentAction == ACTION_STUN)
         sprite->set_visible(ticks2action % 2);
-    else         if (vita_residua_ticks > 0 && vita_residua_ticks < 60)   // ultimo secondo: lampeggia, avvisa che sta per sparire
+    else if (vita_residua_ticks > 0 && vita_residua_ticks < 60)   // ultimo secondo: lampeggia, avvisa che sta per sparire
         sprite->set_visible(vita_residua_ticks % 2);
     else
         sprite->set_visible(true);
@@ -505,8 +505,8 @@ void enemy::update()
 
 void enemy::beHitByBark(int _dir, bn::fixed power)
 {
-    chr_vy = bn::fixed(-4.0) - power.multiplication(bn::fixed(1.5));
-    chr_vx = (bn::fixed(2.0) + power.multiplication(bn::fixed(2.0))).multiplication(_dir);
+    chr_vy = ENEMY_MEDIUM_JUMP_VY - power.multiplication(bn::fixed(1.5));
+    chr_vx = (SMALL_VX_R + power.multiplication(SMALL_VX_R)).multiplication(_dir);
 
     chr_accx = bn::fixed(0);
 
@@ -517,25 +517,32 @@ void enemy::beHitByBark(int _dir, bn::fixed power)
     ticks2action =
         invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
 
-    if (vita_residua_ticks)
-        vita_residua_ticks = invulnerability;
+
+    life -= power.integer();
+    if (life <= 0) {
+        //if (vita_residua_ticks)
+            vita_residua_ticks = invulnerability;
+    }
 }
 
 void enemy::beHitByDog()
 {
-     // questo è il contatto fisico con il cane, non un colpo di arma: il nemico viene respinto e stordito
-    chr_vy = bn::fixed(-3.0);
-    chr_vx = g_dog->chr_vx > 0 ? bn::fixed(2.0) : bn::fixed(-2.0);
+    // questo è il contatto fisico con il cane, non un colpo di arma: il nemico viene respinto e stordito
+    chr_vy = ENEMY_MEDIUM_JUMP_VY;
+    chr_vx = g_dog->chr_vx > 0 ? SMALL_VX_R : SMALL_VX_L;
     chr_accx = bn::fixed(0);
 
     if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
         weaponTicks = 0;   // la sua arma è "attaccata" al corpo: si ferma insieme a lui
 
     currentAction = ACTION_STUN;
-    ticks2action =
-        invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+    ticks2action = invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
 
-
+    life -= 10;    
+    if (life <= 0) {
+        //if (vita_residua_ticks)
+            vita_residua_ticks = invulnerability;
+    }
 }
 
 void enemy::throw_bomb()

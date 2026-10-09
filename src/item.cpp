@@ -14,7 +14,7 @@ static constexpr int TILE_ENERGIA = 11;
 static constexpr int TILE_SBLOCCO = 30;
 static constexpr int TILE_POWERUP_BASE = 0; // + sotto_tipo (4 varianti consecutive)
 
-static int tile_per_item(uint8_t tipo, uint8_t sotto_tipo)
+static int tile_per_item(uint8_t tipo)
 {
     switch (tipo)
     {
@@ -36,7 +36,7 @@ item::item(const item_def& def)
     chr_x = spawn_x;
     chr_y = spawn_y;
 
-    sprite = bn::sprite_items::items.create_sprite(chr_x, chr_y, tile_per_item(tipo, attributo));
+    sprite = bn::sprite_items::items.create_sprite(chr_x, chr_y, tile_per_item(tipo));
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
 
@@ -78,7 +78,7 @@ void item::raccogli()
     if (raccolto) return;
     raccolto = true;
     g_dog->add_score(10);
-    chr_vy = bn::fixed(-4.0);
+    chr_vy = SMALL_JUMP_VY;
     ticks2action = 30;
     switch (tipo)
     {

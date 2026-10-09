@@ -163,7 +163,7 @@ int main()
 
     //bn::music_items::qwak.play(0.25);
 
-    int skin_selezionato = dog_selection_screen(text_generator);
+    dog_selection_screen(text_generator);
 
     // Costruzione oggetti di gioco in ordine di dipendenza
     g_camera.emplace(bn::camera_ptr::create(0, 0));

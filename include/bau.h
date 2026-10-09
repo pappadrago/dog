@@ -6,7 +6,7 @@
 #include "obj.h"
 #include "game_constants.h"
 
-#define BAU_DURATA 60
+#define BAU_DURATA 90
 #define BAU_FLICK_TIME 15
 
 #define BAU_CHARGE_MAX 60   // frame di pressione per la carica massima (1 s)

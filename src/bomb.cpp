@@ -48,7 +48,7 @@ void bomb::update()
             return;
         }
 
-        chr_vy = (bounces == 0) ? bn::fixed(-3.0) : bn::fixed(-2.0);
+        chr_vy = (bounces == 0) ? ENEMY_MEDIUM_JUMP_VY : ENEMY_SMALL_JUMP_VY;
         chr_vx = chr_vx.multiplication(bn::fixed(0.75));
         bounces++;
     }
@@ -105,7 +105,7 @@ void bomb::update_explosion()
             bn::abs(dy) < BOMB_EXPLOSION_RADIUS + 13)
         {
             g_dog->chr_vx = (dx < 0) ? bn::fixed(-2.0) : bn::fixed(2.0);
-            g_dog->chr_vy = bn::fixed(-3.0);
+            g_dog->chr_vy = MEDIUM_JUMP_VY;
             g_dog->invulnerability = 60;
         }
     }

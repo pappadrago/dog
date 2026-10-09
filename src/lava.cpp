@@ -67,7 +67,7 @@ void lava_zona::update()
     bool dog_inside = dog_dentro();
     if (dog_inside && g_dog->invulnerability == 0)
     {
-        g_dog->chr_vy = bn::fixed(-3.5);
+        g_dog->chr_vy = DOG_RIMBALZO_LAVA;
         g_dog->dir = g_rng.get_bool() ? DIR_LEFT : DIR_RIGHT;
         g_dog->invulnerability = 60;
         g_dog->dog_damage(def.danno);

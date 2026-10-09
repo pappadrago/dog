@@ -16,7 +16,7 @@
 
 
 void dog::start_polvere_anim(bn::fixed x, bn::fixed y, bool groundPound, bool vertical_flip, int rotation_angle) {
-    polvere_anim->reset();
+    groundPound ? ground_pound_anim->reset() : polvere_anim->reset();
     polvere_sprite->set_visible(true);
     polvere_sprite->set_x(x);
     polvere_sprite->set_y(y);
@@ -74,58 +74,8 @@ void dog::update()
     //  resettare qui a ogni frame e lasciare che un'eventuale zona di lava la rialzi più tardi nello stesso giro 
     // produce il comportamento corretto
     sprite->set_bg_priority(1);
-    /*
-        if (bn::keypad::b_pressed())
-        {
-            if (onGround)
-            {
-                salto_in_corso = true;
-                onGround = false;
-                chr_vy = bn::fixed(-4.0) - bonus_salto;
-                doppio_salto_disponibile = doppio_salto_acquisito;
 
-                actionStacco->reset();
-                stacco_anim_ticks = STACCO_ANIM_TICKS;
-            }
-            else if (wall_jump_acquisito && muro_lato != 0)
-            {
-                int direzione_spinta = (muro_lato == DIR_RIGHT) ? DIR_LEFT : DIR_RIGHT;
-                salto_in_corso = true;
-                chr_vx = WALL_JUMP_VX.multiplication(bn::fixed(direzione_spinta));
-                chr_vy = WALL_JUMP_VY;
-                dir = direzione_spinta;
-
-                actionWallJump->reset();
-                wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
-
-                polvere_anim->reset();
-                polvere_sprite->set_visible(true);
-                polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
-                polvere_sprite->set_y(chr_y - HALF_SCREEN_H);   // sopra la testa, non ai piedi
-                polvere_sprite->set_rotation_angle_safe(-90 * dir);
-                polvere_sprite->set_vertical_flip(false);
-                muro_lato = 0;   // consumato: serve toccare di nuovo un muro per un secondo wall jump
-                doppio_salto_disponibile = doppio_salto_acquisito;
-            }
-            else if (doppio_salto_disponibile)
-            {
-                chr_vy = bn::fixed(-2.5) - bonus_salto;
-                doppio_salto_disponibile = false;
-                actionWallJump->reset();   // riuso la stessa animazione del wall jump come "guizzo a mezz'aria"; vedi nota sotto
-                wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
-                salto_in_corso = true;
-                polvere_anim->reset();
-                polvere_sprite->set_visible(true);
-                polvere_sprite->set_x(chr_x - HALF_SCREEN_W);
-                polvere_sprite->set_y(chr_y - HALF_SCREEN_H + box_dim);   // ai piedi
-                polvere_sprite->set_rotation_angle_safe(0);
-                polvere_sprite->set_vertical_flip(true);
-            }
-        }
-        */
-
-
-        // --- Timer di tolleranza ---
+    // --- Timer di tolleranza ---
     if (onGround)
         coyote_ticks = COYOTE_TICKS;
     else if (coyote_ticks > 0)
@@ -155,7 +105,7 @@ void dog::update()
         salto_tenuto = true;
         salto_pieno = false;    // si sapra' solo all'apice (o al rilascio del tasto) se e' stato intero
         onGround = false;
-        chr_vy = bn::fixed(-4.0) - bonus_salto;
+        chr_vy = JUMP_VY - bonus_salto;
         doppio_salto_disponibile = doppio_salto_acquisito;
 
         actionStacco->reset();
@@ -187,7 +137,7 @@ void dog::update()
             jump_buffer_ticks = 0;
             salto_tenuto = false;
             salto_pieno = true;
-            chr_vy = bn::fixed(-2.5) - bonus_salto;
+            chr_vy = MEDIUM_JUMP_VY - bonus_salto;
             doppio_salto_disponibile = false;
             actionWallJump->reset();
             wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
@@ -234,6 +184,11 @@ void dog::update()
         }
     }
 
+    if (g_bau->ticks == 0 && charge_ticks == 0 && bn::keypad::a_pressed())
+    {
+        g_bau->do_spawn(10);
+        charge_ticks++;
+    }
     if (g_bau->ticks == 0 && bn::keypad::a_held())
     {
         if (charge_ticks < BAU_CHARGE_MAX)
@@ -265,8 +220,8 @@ void dog::update()
                         screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
                         enem->beHitByDog();
                         enem->invulnerability = 60;
-                        chr_vy = bn::fixed(-2.0);
-                        chr_vx = (enem->chr_x < chr_x) ? bn::fixed(2.0) : bn::fixed(-2.0);
+                        chr_vy = SMALL_JUMP_VY;
+                        chr_vx = (enem->chr_x < chr_x) ? SMALL_JUMP_VY : -SMALL_JUMP_VY;
                         continue;
                     }
                 }
@@ -283,7 +238,7 @@ void dog::update()
                 if (hit)
                 {
                     bn::fixed new_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
-                    chr_vy = bn::fixed(-2.0);
+                    chr_vy = SMALL_JUMP_VY;
                     invulnerability = 60;
 
                     if (hitByMelee) {
@@ -302,8 +257,8 @@ void dog::update()
                 bool hit = check_collision_16(*enem->weaponSprite);
                 if (hit)
                 {
-                    chr_vx = (chr_x < enem->wx_base) ? bn::fixed(-2.0) : bn::fixed(2.0);
-                    chr_vy = bn::fixed(-2.0);
+                    chr_vx = (chr_x < enem->wx_base) ? SMALL_VX_L : SMALL_VX_R;
+                    chr_vy = SMALL_JUMP_VY;
                     invulnerability = 60;
                     if (enem->weaponSprite)
                         enem->weaponTicks = 0;
@@ -333,8 +288,8 @@ void dog::update()
 
             if (hit)
             {
-                bn::fixed new_vx = (chr_x < g_boss->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
-                chr_vy = bn::fixed(-2.0);
+                bn::fixed new_vx = (chr_x < g_boss->chr_x) ? SMALL_VX_L : SMALL_VX_R;
+                chr_vy = SMALL_JUMP_VY;
                 invulnerability = 60;
                 dog_damage(hitByMelee ? g_boss->melee_damage : g_boss->contact_damage);
                 chr_vx = new_vx;
@@ -343,8 +298,8 @@ void dog::update()
                 hit = check_collision_16(*g_boss->weaponSprite);
                 if (hit)
                 {
-                    chr_vx = (chr_x < g_boss->wx_base) ? bn::fixed(-2.0) : bn::fixed(2.0);
-                    chr_vy = bn::fixed(-2.0);
+                    chr_vx = (chr_x < g_boss->wx_base) ? SMALL_VX_L : SMALL_VX_R;
+                    chr_vy = SMALL_JUMP_VY;
                     invulnerability = 60;
                     if (g_boss->weaponSprite) {
                         g_boss->weaponTicks = 0;
@@ -408,6 +363,7 @@ void dog::update()
         polvere_sprite->set_vertical_flip(false);
         polvere_sprite->set_rotation_angle_safe(0);
         ground_pound_engaged = false;
+        if(wall_sliding)
         if (muro_lato == DIR_RIGHT)
             dir = DIR_LEFT;
         else if (muro_lato == DIR_LEFT)

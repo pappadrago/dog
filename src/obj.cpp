@@ -13,16 +13,16 @@
 
 void live_obj::apply_friction()
 {
-    if (chr_vx > 0) {
+    if (chr_vx > ZERO) {
         chr_vx -= onGround ? GROUND_FRICTION : AIR_FRICTION;
-        if (chr_vx < bn::fixed(0)) chr_vx = bn::fixed(0);
+        if (chr_vx < ZERO) chr_vx = ZERO;
     }
-    else if (chr_vx < 0) {
+    else if (chr_vx < ZERO) {
         chr_vx += onGround ? GROUND_FRICTION : AIR_FRICTION;
-        if (chr_vx > bn::fixed(0)) chr_vx = bn::fixed(0);
+        if (chr_vx > ZERO) chr_vx = ZERO;
     }
     if (bn::abs(chr_vx) < bn::fixed(0.01)) {
-        chr_vx = bn::fixed(0);
+        chr_vx = ZERO;
     }
 }
 
@@ -106,16 +106,16 @@ void live_obj::apply_map() {
         if ((tile_side1 == 1 || tile_side2 == 1))
         {
             chr_x -= chr_vx;
-            chr_vx = bn::fixed(0);
+            chr_vx = ZERO;
         }
     }
 
 
-    if (chr_x <= 0) { chr_x = bn::fixed(0);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
-    if (chr_x >= bn::fixed(map.columns << 4)) { chr_x = bn::fixed(map.columns << 4);chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
+    if (chr_x <= 0) { chr_x = chr_vx = chr_accx = ZERO; }
+    if (chr_x >= bn::fixed(map.columns << 4)) { chr_x = bn::fixed(map.columns << 4);chr_vx = chr_accx = ZERO; }
 
-    if (chr_x <= 0) { chr_x = bn::fixed(0); chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
-    if (chr_x >= bn::fixed(map.columns << 4)) { chr_x = bn::fixed(map.columns << 4); chr_vx = bn::fixed(0); chr_accx = bn::fixed(0); }
+    if (chr_x <= 0) { chr_x = chr_vx = chr_accx = ZERO; }
+    if (chr_x >= bn::fixed(map.columns << 4)) { chr_x = bn::fixed(map.columns << 4); chr_vx = ZERO; chr_accx = ZERO; }
 
     // Rileva un muro adiacente indipendentemente dalla direzione di marcia: serve al wall jump,
     // che deve valere anche restando fermi contro il muro, non solo premendo verso di esso.

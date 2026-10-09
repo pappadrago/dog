@@ -53,8 +53,7 @@ public:
     bn::optional<bn::sprite_animate_action<4>> polvere_anim;
     bn::optional<bn::sprite_animate_action<4>> ground_pound_anim;
 
-#define WALL_JUMP_VX bn::fixed(2.5)
-#define WALL_JUMP_VY bn::fixed(-2.0)   // meno negativa del salto normale (-4.0): più orizzontale che verticale
+  // meno negativa del salto normale (-4.0): più orizzontale che verticale
 #define WALL_JUMP_ANIM_TICKS 14
 
     bn::optional<bn::sprite_animate_action<4>> actionWallJump;

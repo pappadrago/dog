@@ -28,16 +28,16 @@ void bau::do_spawn(int charge)
     power = bn::fixed(charge).division(BAU_CHARGE_MAX);   // 0..1
 
     // se il cane è attaccato al muro, il bau parte in direzione opposta a quella del cane
-    int bau_dir = g_dog->muro_lato ? -g_dog->dir : g_dog->dir;
+    int bau_dir = (g_dog->muro_lato && g_dog->wall_sliding) ? -g_dog->dir : g_dog->dir;
 
     chr_x = g_dog->chr_x + bn::fixed(16).multiplication(bau_dir);
     chr_y = g_dog->chr_y;
     sprite->set_tiles(bn::sprite_items::fox1632.tiles_item(), charge < BAU_CHARGE_MAX / 2 ? 61 : 62);
 
-    bn::fixed speed = bn::fixed(1.5) + power.multiplication(bn::fixed(1.5));  // 1.5 -> 3.0
+    bn::fixed speed = bn::fixed(.5) + power.multiplication(bn::fixed(1.0));  // .5 -> 1.5
     chr_vx = speed.multiplication(bau_dir);
 
-    ticks = BAU_DURATA + (power.multiplication(bn::fixed(30))).integer(); // 30 -> 60
+    ticks = BAU_DURATA + (power.multiplication(BAU_DURATA)).integer(); // 30 -> 60
     hit_half = bn::fixed(8) + power.multiplication(bn::fixed(6));         // 8 -> 14
     sprite->set_scale(bn::fixed(1) + power.multiplication(bn::fixed(0.75)));
 

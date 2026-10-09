@@ -145,13 +145,13 @@ void boss::update()
     apply_gravity();
 
     // --- Saltello periodico, solo mentre pattuglia liberamente ---
-    if (currentAction == ACTION_MOVE && onGround && chr_vx == bn::fixed(0))
+    if (currentAction == ACTION_MOVE && onGround && chr_vx == ZERO)
     {
         if (ticks_prossimo_saltello > 0)
             ticks_prossimo_saltello--;
         else
         {
-            chr_vy = bn::fixed(-4.0);
+            chr_vy = ENEMY_BIG_JUMP_VY;
             onGround = false;
             ticks_prossimo_saltello = 90 + g_rng.get_int(60);
         }
@@ -232,8 +232,7 @@ void boss::avvia_summon()
 {
     in_summon = true;
     summon_ticks = 120;   // ~2 secondi a 60fps
-    chr_vx = bn::fixed(0);
-    chr_accx = bn::fixed(0);
+    chr_vx = chr_accx = ZERO;
     if (actionSummon.has_value())
         actionSummon->reset();
 }
@@ -252,8 +251,8 @@ void boss::completa_summon()
     enemy* nuovo = new enemy(def);
 
     nuovo->chr_y = chr_y - 16;
-    nuovo->chr_vy = bn::fixed(-3);
-    nuovo->chr_vx = bn::fixed(3 * dir);
+    nuovo->chr_vy = ENEMY_MEDIUM_JUMP_VY;
+    nuovo->chr_vx = dir * MEDIUM_VX_R;
     nuovo->vita_residua_ticks = 600;   // 10 secondi a 60fps
 
     g_enemies->push_back(nuovo);
