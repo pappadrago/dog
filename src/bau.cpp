@@ -74,7 +74,7 @@ void bau::update()
         bn::fixed reach = hit_half + 8;   // 8 = mezza hitbox del nemico
         for (enemy* enem : *g_enemies)
         {
-            if (enem->invulnerability > 0) continue;
+            if (enem->invulnerability > 0 || enem->is_dead()) continue;
 
             bool hit = bn::abs(enem->sprite->x() - sprite->x()) < reach &&
                 bn::abs(enem->sprite->y() - sprite->y()) < reach;

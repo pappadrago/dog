@@ -1,6 +1,7 @@
 #include "lava.h"
 #include "globals.h"
 #include "dog.h"
+#include "healthbar.h"
 #include "enemy.h"
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_log.h"
@@ -78,9 +79,7 @@ void lava_zona::update()
         if (e->distrutto) continue;
         if (dentro(e->chr_x, e->chr_y + 6))
         {
-            e->distrutto = true;
-            if (e->sprite) e->sprite->set_visible(false);
-            if (e->weaponSprite) e->weaponSprite->set_visible(false);
+            e->takeDamage(e->life);
         }
     }
 }

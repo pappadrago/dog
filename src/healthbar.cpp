@@ -2,6 +2,7 @@
 #include "healthbar.h"
 #include "enemy.h"
 #include "bn_sprite_items_healthbar.h"
+#include "bn_log.h"
 
 healthbar::healthbar()
 {
@@ -33,9 +34,13 @@ void healthbar::update()
     }
 
     // frame in base alla vita: arrotonda per eccesso, così con life>0 si vede sempre almeno 1 segmento
+
+
+
     int f = (target->life * (HEALTHBAR_FRAMES - 1) + START_LIFE - 1) / START_LIFE;
     if (f < 0) f = 0;
     if (f > HEALTHBAR_FRAMES - 1) f = HEALTHBAR_FRAMES - 1;
+
     sprite->set_tiles(bn::sprite_items::healthbar.tiles_item(), f);
 
     // sopra la testa del nemico (sprite 16x16 centrato su chr_x/chr_y)

@@ -265,14 +265,19 @@ void enemy::update_pattugliatore()
 void enemy::update()
 {
 
+    if (is_dead())
+    {
+        if (deathTicks > 0 || sprite->visible())
+            update_death();
+        return;
+    }
+
     if (vita_residua_ticks >= 0)
     {
         vita_residua_ticks--;
         if (vita_residua_ticks <= 0)
         {
-            distrutto = true;
-            sprite->set_visible(false);
-            if (weaponSprite) weaponSprite->set_visible(false);
+            die(dir);
             return;
         }
 
@@ -510,6 +515,7 @@ void enemy::takeDamage(int damage) {
     if (life <= 0) {
         //if (vita_residua_ticks)
         vita_residua_ticks = invulnerability;
+        die(-dir);
     }
     g_healthbar->show(this);
 }
@@ -595,4 +601,58 @@ void enemy::beHitByShockwave(int _dir)
     currentAction = ACTION_STUN;
     ticks2action = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
     takeDamage(5);
+}
+
+
+void enemy::die(int _dir)
+{
+    vita_residua_ticks = 0;
+    currentAction = ACTION_DEAD;
+    deathTicks = ENEMY_DEATH_FRAMES;
+    invulnerability = 0;
+    weaponTicks = 0;
+    chr_accx = ZERO;
+    chr_vx = ENEMY_SMALL_JUMP_VY.multiplication(_dir);
+    chr_vy = ENEMY_MEDIUM_JUMP_VY;
+
+    if (weaponSprite)
+        weaponSprite->set_visible(false);
+
+    sprite->set_visible(true);
+}
+
+void enemy::update_death()
+{
+    // l'enemy continua a seguire la fisica (parabola + rimbalzo sul terreno)
+    chr_x += chr_vx;
+    apply_gravity();
+    apply_map();
+    if (onGround)
+        chr_vx = chr_vx.multiplication(bn::fixed(0.9));
+
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+
+    if (deathTicks > 0)
+        deathTicks--;
+
+    // rotazione: gira nel verso in cui è stato colpito
+    int elapsed = ENEMY_DEATH_FRAMES - deathTicks;
+    sprite->set_rotation_angle_safe(bn::fixed(elapsed * (chr_vx >= 0 ? -31 : 31)));
+
+    // ultimi frame: si rimpicciolisce e lampeggia
+    if (deathTicks < ENEMY_DEATH_SHRINK)
+    {
+        bn::fixed s = bn::fixed(deathTicks) / ENEMY_DEATH_SHRINK;
+        if (s < bn::fixed(0.1)) s = bn::fixed(0.1);   // scala 0 non è valida
+        sprite->set_scale(s);
+        sprite->set_visible(deathTicks % 2);
+    }
+
+    if (deathTicks == 0)
+    {
+        distrutto = true;
+        sprite->set_visible(false);
+        sprite->remove_affine_mat();   // libera l'affine mat (sono solo 32 sulla GBA)
+    }
 }

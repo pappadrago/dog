@@ -305,7 +305,7 @@ int main()
                     enemy* e = (*g_enemies)[i];
                     if (e->distrutto)
                     {
-                        if (e->def_origine && !da_rinascere.full())
+                        if ((e->attributo&ATTRIBUTO_RESPAWN) && e->def_origine && !da_rinascere.full())
                             da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
                         delete e;
                         g_enemies->erase(g_enemies->begin() + i);

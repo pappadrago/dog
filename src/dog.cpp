@@ -217,15 +217,15 @@ void dog::update()
     {
         for (enemy* enem : *g_enemies)
         {
-            if (enem->invulnerability == 0) {
+            if (enem->invulnerability == 0 && !enem->is_dead()) {
 
 
                 if (ground_pound_engaged && enem->currentAction != ACTION_ATTACK) {
                     bool hit = check_collision_16(*enem);
                     if (hit)
                     {
-                        screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
                         enem->beHitByDog();
+                        enem->takeDamage(10);
                         enem->invulnerability = 60;
                         chr_vy = SMALL_JUMP_VY;
                         chr_vx = (enem->chr_x < chr_x) ? SMALL_JUMP_VY : -SMALL_JUMP_VY;

@@ -33,16 +33,23 @@ class dog;
 #define ATTRIBUTO_PATROL (1<<3)
 #define ATTRIBUTO_FIREBALL (1<<4)
 #define ATTRIBUTO_SUMMON (1<<5)
+#define ATTRIBUTO_RESPAWN (1<<6)
 
 #define ACTION_STAND 0
 #define ACTION_MOVE 1
 #define ACTION_ATTACK 2
 #define ACTION_STUN 3
+#define ACTION_DEAD 4
 
 #define MELEE_NONE     0
 #define MELEE_WINDUP   1
 #define MELEE_ACTIVE   2
 #define MELEE_RECOVERY 3
+
+
+#define ENEMY_DEATH_FRAMES 90
+#define ENEMY_DEATH_SHRINK 60   // ultimi frame in cui si rimpicciolisce
+
 
 // Definizione statica di un nemico posizionato in uno schema.
 // Le tabelle per schema stanno in <schema>_enemies.h (es. s1_enemies.h)
@@ -95,8 +102,18 @@ public:
     int  vita_residua_ticks = -1;   // -1 = nessun limite; >=0 = nemico evocato, sparisce a 0
     bool distrutto = false;         // true quando la magia si esaurisce: va rimosso da g_enemies
     const enemy_def* def_origine = nullptr;   // != nullptr: nemico di tabella, rinasce dopo l'eliminazione
+
+
+        uint8_t deathTicks = 0;
+
+    bool is_dead() const { return currentAction == ACTION_DEAD; }
+    void die(int _dir);
+    void update_death();
+
 private:
     void init(const enemy_def& def);
     void update_fantasma();
     void update_pattugliatore();
+
+
 };

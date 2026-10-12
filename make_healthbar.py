@@ -1,7 +1,7 @@
 # tools/make_healthbar.py
 from PIL import Image
 
-FRAMES = 9          # 0..8 segmenti verdi
+FRAMES = 10          # 0..8 segmenti verdi
 W, H = 16, 8
 img = Image.new("P", (W, H * FRAMES), 0)
 pal = [255, 0, 255,   # 0 = trasparente (magenta)
