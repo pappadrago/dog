@@ -174,7 +174,7 @@ void dog::update()
         chr_vy = MAX_FALL;
     }
 
-    bn::fixed runningExtraSpeed = bn::keypad::l_held() ? bn::fixed(.8) : ZERO;
+    bn::fixed runningExtraSpeed = bn::keypad::l_held() ? RUN_EXTRA_SPEED : ZERO;
 
     if (dash_ticks == 0) {
         if (bn::keypad::right_held()) {
@@ -504,7 +504,7 @@ void dog::applica_powerup(uint16_t attributo)
 {
     if (attributo & POWERUP_CORSA) {
         if (bonus_corsa == bn::fixed(0))
-            bonus_corsa = bn::fixed(0.8);
+            bonus_corsa = bn::fixed(0.5);
     }
     if (attributo & POWERUP_SALTO) {
         if (bonus_salto == bn::fixed(0))

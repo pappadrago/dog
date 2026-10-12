@@ -14,6 +14,8 @@ static constexpr bn::fixed AIR_FRICTION = bn::fixed(0.02);
 static constexpr bn::fixed GROUND_ACCEL = bn::fixed(0.15);
 static constexpr bn::fixed GROUND_FRICTION = bn::fixed(0.08);
 
+static constexpr bn::fixed RUN_EXTRA_SPEED = bn::fixed(0.5);
+
 static constexpr bn::fixed ZERO = bn::fixed(0.0);
 
 class obj

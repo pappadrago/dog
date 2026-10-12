@@ -75,37 +75,70 @@ namespace
 
     // Camera e parallasse: la posizione e' clampata ai bordi della mappa,
     // cosi' funziona subito anche dopo un cambio schema.
-    void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
-        bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg)
-    {
-        bn::fixed cam_x = g_dog->chr_x - HALF_SCREEN_W;
-        bn::fixed cam_y = g_dog->chr_y - HALF_SCREEN_H;
-        const collision_map_info& map = get_collision_map(g_schema);
-        if (cam_x < 0) cam_x = 0;
-        if (cam_x > bn::fixed(map.map_w) - SCREEN_W) cam_x = bn::fixed(map.map_w) - SCREEN_W;
-        if (cam_y < 0) cam_y = 0;
-        if (cam_y > bn::fixed(map.map_h) - SCREEN_H) cam_y = bn::fixed(map.map_h) - SCREEN_H;
+#include <climits>
 
+    BN_CODE_IWRAM   // opzionale: esegue la funzione dalla IWRAM (più veloce della ROM)
+        void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
+            bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg)
+    {
+        // Offset costanti del foreground: -(MAP_HALF) - HALF_SCREEN
+        static constexpr int FG_OFF_X = -(MAP_HALF_W + 120);
+        static constexpr int FG_OFF_Y = -(MAP_HALF_H + 80);
+
+        static int s_schema = -1;
+        static int s_max_x = 0, s_max_y = 0;
+        static int s_last_x = INT_MIN, s_last_y = INT_MIN;
+
+        // Ricalcola i limiti solo quando cambia lo schema
+        if (s_schema != g_schema)
+        {
+            const collision_map_info& map = get_collision_map(g_schema);
+            s_max_x = map.map_w - 240;
+            s_max_y = map.map_h - 160;
+            s_schema = g_schema;
+            s_last_x = s_last_y = INT_MIN;   // forza il refresh
+        }
+
+        // Tutto in interi: l'hardware lavora a pixel interi
+        int cx = g_dog->chr_x.integer() - 120;
+        int cy = g_dog->chr_y.integer() - 80;
+
+        if (cx < 0) cx = 0; else if (cx > s_max_x) cx = s_max_x;
+        if (cy < 0) cy = 0; else if (cy > s_max_y) cy = s_max_y;
 
         if (g_shake_ticks > 0)
         {
-            int amp = g_shake_ampiezza * g_shake_ticks / g_shake_durata;   // si smorza fino a spegnersi
+            // Se puoi, precalcola all'avvio dello shake:
+            //   g_shake_amp_q8 = (g_shake_ampiezza << 8) / g_shake_durata;
+            // e qui usa: int amp = (g_shake_amp_q8 * g_shake_ticks) >> 8;
+            int amp = g_shake_ampiezza * g_shake_ticks / g_shake_durata;
             if (amp < 1) amp = 1;
-            cam_x += (g_shake_ticks & 1) ? amp : -amp;                      // oscilla a ogni frame
-            cam_y += ((g_shake_ticks >> 1) & 1) ? amp / 2 : -(amp / 2);     // più lento e più piccolo in verticale
+
+            cx += (g_shake_ticks & 1) ? amp : -amp;
+            cy += ((g_shake_ticks >> 1) & 1) ? (amp >> 1) : -(amp >> 1);
             g_shake_ticks--;
         }
 
-        g_camera->set_x(cam_x.integer());
-        g_camera->set_y(cam_y.integer());
+        // Aggiorna solo ciò che è cambiato
+        if (cx != s_last_x)
+        {
+            s_last_x = cx;
+            g_camera->set_x(cx);
+            bg0.set_x(-(cx >> 2));            // * -0.25
+            bg1.set_x(-(cx >> 1));            // * -0.5
+            const int fx = FG_OFF_X - cx;     // * -1.0
+            foreground.set_x(fx);
+            foregroundfg.set_x(fx);
+        }
 
-        bg0.set_x(cam_x * bn::fixed(-0.25));
-        bg1.set_x(cam_x * bn::fixed(-0.5));
-
-        foreground.set_x(cam_x * bn::fixed(-1.0) - bn::fixed(MAP_HALF_W) - HALF_SCREEN_W);
-        foreground.set_y(cam_y * bn::fixed(-1.0) - bn::fixed(MAP_HALF_H) - HALF_SCREEN_H);
-        foregroundfg.set_x(foreground.x());
-        foregroundfg.set_y(foreground.y());
+        if (cy != s_last_y)
+        {
+            s_last_y = cy;
+            g_camera->set_y(cy);
+            const int fy = FG_OFF_Y - cy;
+            foreground.set_y(fy);
+            foregroundfg.set_y(fy);
+        }
     }
 }
 
@@ -129,15 +162,15 @@ void show_intro_screen()
    //     bn::core::update();
    // }
 
-    // --- ATTESA (HOLD) ---
     // Mantiene l'immagine visibile su schermo per 120 frame (~2 secondi)
-    intro_bg.set_y(48);   // scorrimento lento verso sinistra
-    for (int i = 0; i < 96 * 2; ++i)
+    intro_bg.set_y(-48);   // scorrimento lento verso sinistra
+    mega_bg.set_y(48);   // scorrimento lento verso sinistra
+    for (int i = 0; i < 180 * 2; ++i)
     {
         bn::core::update();
-        intro_bg.set_y(intro_bg.y() - bn::fixed(0.5));   // scorrimento lento verso sinistra
+        intro_bg.set_y(intro_bg.y() + bn::fixed(0.25));   // scorrimento lento verso sinistra
 
-        mega_bg.set_x(mega_bg.x() - bn::fixed(1));
+        mega_bg.set_y(mega_bg.y() - bn::fixed(0.125));
     }
 
     // --- FADE OUT ---
@@ -157,7 +190,7 @@ int main()
 {
     bn::core::init();
 
-    // show_intro_screen();
+    show_intro_screen();
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);
@@ -305,7 +338,7 @@ int main()
                     enemy* e = (*g_enemies)[i];
                     if (e->distrutto)
                     {
-                        if ((e->attributo&ATTRIBUTO_RESPAWN) && e->def_origine && !da_rinascere.full())
+                        if ((e->attributo & ATTRIBUTO_RESPAWN) && e->def_origine && !da_rinascere.full())
                             da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
                         delete e;
                         g_enemies->erase(g_enemies->begin() + i);
