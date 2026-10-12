@@ -29,6 +29,7 @@ extern bn::random              g_rng;
 extern bn::optional<bn::camera_ptr> g_camera;
 
 extern bn::optional<bau>       g_bau;
+extern bn::optional<bau> g_bau_carico;     
 extern bn::optional<dog>       g_dog;
 extern bn::optional<game_timer> g_timer;
 
@@ -56,7 +57,7 @@ bn::fixed cap(bn::fixed val, bn::fixed max);
 bn::fixed capzero(bn::fixed val, bn::fixed max);
 int capzero(int val, int max);
 
-#define MAP_HALF_W 768
+#define MAP_HALF_W 1536
 #define MAP_HALF_H 256
 
 
@@ -67,3 +68,6 @@ extern int g_shake_ticks;
 extern int g_shake_durata;
 extern int g_shake_ampiezza;
 void screen_shake(int ticks, int ampiezza);
+
+class healthbar;
+extern bn::optional<healthbar> g_healthbar;

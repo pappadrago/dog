@@ -82,6 +82,10 @@ public:
 
     void beHitByBark(int _dir, bn::fixed power = 0);
     void beHitByDog();
+    void beHitByShockwave(int _dir);   // _dir: direzione in cui il nemico viene spinto (opposta al cane)
+
+
+    void takeDamage(int damage);
 
     int     contact_damage = 1;     // danno per semplice contatto
     int     melee_damage = 0;     // 0 = non è un nemico melee
@@ -90,7 +94,7 @@ public:
 
     int  vita_residua_ticks = -1;   // -1 = nessun limite; >=0 = nemico evocato, sparisce a 0
     bool distrutto = false;         // true quando la magia si esaurisce: va rimosso da g_enemies
-
+    const enemy_def* def_origine = nullptr;   // != nullptr: nemico di tabella, rinasce dopo l'eliminazione
 private:
     void init(const enemy_def& def);
     void update_fantasma();

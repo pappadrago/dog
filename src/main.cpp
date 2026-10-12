@@ -41,6 +41,7 @@
 #include "platform_map.h"
 #include <bn_blending.h>
 #include "piattaforma.h"
+#include "healthbar.h"
 
 
 namespace
@@ -156,7 +157,7 @@ int main()
 {
     bn::core::init();
 
-    //show_intro_screen();
+    // show_intro_screen();
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);
@@ -168,6 +169,7 @@ int main()
     // Costruzione oggetti di gioco in ordine di dipendenza
     g_camera.emplace(bn::camera_ptr::create(0, 0));
     g_bau.emplace();
+    g_bau_carico.emplace();
     g_enemies.emplace();
     g_items.emplace();
     g_piattaforme.emplace();
@@ -175,6 +177,7 @@ int main()
     g_timer.emplace();
     g_dog.emplace();
     g_piattaforme_mobili.emplace();
+    g_healthbar.emplace();
 
     g_schema = 1;
     int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
@@ -212,6 +215,8 @@ int main()
         for (int i = 0; i < dl.count; ++i)
             doors.push_back(new door(dl.data[i]));
 
+        bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
+
         // Il cane compare sopra la porta di arrivo
         if (arrival_door >= 0 && arrival_door < dl.count)
         {
@@ -229,7 +234,9 @@ int main()
 
             for (int i = 0; i < n_enemies; ++i) {
                 enemy* new_enemy = new enemy(edefs[i]);
+                new_enemy->def_origine = &edefs[i];
                 g_enemies->push_back(new_enemy);
+
             }
         }
         // Spawn oggetti
@@ -291,16 +298,34 @@ int main()
                 g_dog->update();
                 for (enemy* e : *g_enemies)
                     e->update();
-
+                g_healthbar->update();
 
                 for (int i = g_enemies->size() - 1; i >= 0; --i)
                 {
-                    if ((*g_enemies)[i]->distrutto)
+                    enemy* e = (*g_enemies)[i];
+                    if (e->distrutto)
                     {
-                        delete (*g_enemies)[i];
+                        if (e->def_origine && !da_rinascere.full())
+                            da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
+                        delete e;
                         g_enemies->erase(g_enemies->begin() + i);
                     }
                 }
+
+                // Respawn: quando il punto di nascita è fuori portata da dog
+                for (int i = da_rinascere.size() - 1; i >= 0; --i)
+                {
+                    const enemy_def* d = da_rinascere[i];
+                    if (!g_enemies->full() &&
+                        bn::abs(bn::fixed(d->x) - g_dog->chr_x) > ENEMY_RESPAWN_RANGE_X)
+                    {
+                        enemy* nuovo = new enemy(*d);
+                        nuovo->def_origine = d;
+                        g_enemies->push_back(nuovo);
+                        da_rinascere.erase(da_rinascere.begin() + i);
+                    }
+                }
+
 
                 for (piattaforma_mobile* pm : *g_piattaforme_mobili)
                     pm->verifica_nuovo_aggancio();
@@ -308,8 +333,8 @@ int main()
                 g_dog->update_animations();
 
                 g_bau->update();
+                g_bau_carico->update();
 
-                g_bau->update();
                 if (g_boss.has_value())
                     g_boss->update();
 
@@ -378,6 +403,9 @@ int main()
         // eventuale bau in volo
         g_bau->ticks = 0;
         g_bau->sprite->set_visible(false);
+
+        g_bau_carico->ticks = 0;
+        g_bau_carico->sprite->set_visible(false);
 
         g_schema = used_door->dest_schema;
         arrival_door = used_door->dest_door;

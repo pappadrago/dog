@@ -16,13 +16,16 @@ bau::bau()
 
 void bau::do_spawn(int charge)
 {
+    if(g_dog->ticks2anotherBau > 0) return;
     if (ticks > 0) return;
+
+
+    g_dog->ticks2anotherBau = BAU_TICKS_BETWEEN_BAU; // 0.5 sec minimo tra uno e l'altro
 
     bn::fixed x = g_dog->chr_x + bn::fixed(16).multiplication(g_dog->dir);
     bn::fixed bordo = x + box_halfdim.multiplication(bn::fixed(g_dog->dir));
     if (is_solid_at(bordo, g_dog->chr_y, g_schema))
         x = g_dog->chr_x;   // cane contro il muro: parte dalla sua posizione, non dentro la parete
-
 
     if (charge > BAU_CHARGE_MAX) charge = BAU_CHARGE_MAX;
     power = bn::fixed(charge).division(BAU_CHARGE_MAX);   // 0..1
@@ -34,10 +37,12 @@ void bau::do_spawn(int charge)
     chr_y = g_dog->chr_y;
     sprite->set_tiles(bn::sprite_items::fox1632.tiles_item(), charge < BAU_CHARGE_MAX / 2 ? 61 : 62);
 
-    bn::fixed speed = bn::fixed(.5) + power.multiplication(bn::fixed(1.0));  // .5 -> 1.5
-    chr_vx = speed.multiplication(bau_dir);
+    bn::fixed durata = BAU_DURATA - power.multiplication(15);
 
-    ticks = BAU_DURATA + (power.multiplication(BAU_DURATA)).integer(); // 30 -> 60
+    bn::fixed speed = BAU_RANGE.division(durata);
+    chr_vx = speed.multiplication(bau_dir);
+    ticks = durata.ceil_integer(); 
+
     hit_half = bn::fixed(8) + power.multiplication(bn::fixed(6));         // 8 -> 14
     sprite->set_scale(bn::fixed(1) + power.multiplication(bn::fixed(0.75)));
 
@@ -47,6 +52,7 @@ void bau::do_spawn(int charge)
 
 void bau::update()
 {
+
     if (ticks > 0)
     {
         if (chr_vx != 0)

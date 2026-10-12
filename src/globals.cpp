@@ -13,6 +13,7 @@ bn::random                             g_rng;
 bn::optional<bn::camera_ptr>           g_camera;
 
 bn::optional<bau>                      g_bau;
+bn::optional<bau> g_bau_carico;            // globals.cpp
 bn::optional<dog>                      g_dog;
 bn::optional<boss>                      g_boss;
 bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
@@ -49,3 +50,6 @@ void screen_shake(int ticks, int ampiezza)
     g_shake_ticks = g_shake_durata = ticks;
     g_shake_ampiezza = ampiezza;
 }
+
+#include "healthbar.h"
+bn::optional<healthbar> g_healthbar;

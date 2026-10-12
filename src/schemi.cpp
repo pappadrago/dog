@@ -115,7 +115,7 @@ bn::regular_bg_ptr create_schema_foreground(int schema)
     }
 }
 
-static constexpr int MAX_COLLISION_CELLE = 96 * 32;   // in tile di gioco (16px), non hardware
+static constexpr int MAX_COLLISION_CELLE = 192 * 32;   // in tile di gioco (16px), non hardware
 static uint8_t s_collision_runtime[MAX_COLLISION_CELLE];
 static int s_schema_caricato = -1;
 static collision_map_info s_attiva;

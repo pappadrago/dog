@@ -34,3 +34,4 @@
 
 
 #define MAX_DOORS 4 
+#define ENEMY_RESPAWN_RANGE_X bn::fixed(260)

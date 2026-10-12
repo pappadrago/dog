@@ -3,6 +3,7 @@
 #include "bau.h"
 #include "dog.h"
 #include "schemi.h"
+#include "healthbar.h"
 #include "bn_random.h"
 #include "bn_sprite_items_weapons.h"
 #include "bn_sprite_items_enemies.h"
@@ -18,6 +19,7 @@ static bool weapon_hits_map(bn::fixed x, bn::fixed y, int schema)
     return is_solid_at(x - HITBOX_SIZE, y - HITBOX_SIZE, schema) || is_solid_at(x + HITBOX_SIZE, y - HITBOX_SIZE, schema) ||
         is_solid_at(x - HITBOX_SIZE, y + HITBOX_SIZE, schema) || is_solid_at(x + HITBOX_SIZE, y + HITBOX_SIZE, schema);
 }
+
 enemy::enemy(const enemy_def& def)
 {
     tipo = def.tipo;
@@ -503,6 +505,15 @@ void enemy::update()
     }
 }
 
+void enemy::takeDamage(int damage) {
+    life -= damage;
+    if (life <= 0) {
+        //if (vita_residua_ticks)
+        vita_residua_ticks = invulnerability;
+    }
+    g_healthbar->show(this);
+}
+
 void enemy::beHitByBark(int _dir, bn::fixed power)
 {
     chr_vy = ENEMY_MEDIUM_JUMP_VY - power.multiplication(bn::fixed(1.5));
@@ -518,11 +529,8 @@ void enemy::beHitByBark(int _dir, bn::fixed power)
         invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
 
 
-    life -= power.integer();
-    if (life <= 0) {
-        //if (vita_residua_ticks)
-            vita_residua_ticks = invulnerability;
-    }
+    int damage = (BAU_DAMAGE + power.multiplication(BAU_DAMAGE)).integer();
+    takeDamage(damage);
 }
 
 void enemy::beHitByDog()
@@ -538,11 +546,8 @@ void enemy::beHitByDog()
     currentAction = ACTION_STUN;
     ticks2action = invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
 
-    life -= 10;    
-    if (life <= 0) {
-        //if (vita_residua_ticks)
-            vita_residua_ticks = invulnerability;
-    }
+    takeDamage(10);
+    g_healthbar->show(this);
 }
 
 void enemy::throw_bomb()
@@ -576,4 +581,18 @@ void enemy::throw_shell()
 bool enemy::dog_in_melee_range() const
 {
     return bn::abs(g_dog->chr_x - chr_x) < 48;
+}
+
+void enemy::beHitByShockwave(int _dir)
+{
+    chr_vy = ENEMY_MEDIUM_JUMP_VY;                          // saltello
+    chr_vx = SMALL_VX_R.multiplication(bn::fixed(_dir));    // lontano dal cane
+    chr_accx = bn::fixed(0);
+
+    if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
+        weaponTicks = 0;
+
+    currentAction = ACTION_STUN;
+    ticks2action = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
+    takeDamage(5);
 }

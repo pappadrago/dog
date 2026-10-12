@@ -75,6 +75,9 @@ void dog::update()
     // produce il comportamento corretto
     sprite->set_bg_priority(1);
 
+    if(ticks2anotherBau>0)
+        ticks2anotherBau--;
+
     // --- Timer di tolleranza ---
     if (onGround)
         coyote_ticks = COYOTE_TICKS;
@@ -184,20 +187,24 @@ void dog::update()
         }
     }
 
-    if (g_bau->ticks == 0 && charge_ticks == 0 && bn::keypad::a_pressed())
+
+
+    if (bn::keypad::a_pressed())
     {
-        g_bau->do_spawn(10);
-        charge_ticks++;
+        if (g_bau->ticks == 0)
+            g_bau->do_spawn(10);      // primo bau: parte subito, potenza minima
+        charge_ticks = 1;             // la carica comincia subito, anche con il primo bau ancora in volo
     }
-    if (g_bau->ticks == 0 && bn::keypad::a_held())
+    else if (bn::keypad::a_held())
     {
-        if (charge_ticks < BAU_CHARGE_MAX)
+        if (charge_ticks > 0 && charge_ticks < BAU_CHARGE_MAX)
             charge_ticks++;
     }
+
     if (bn::keypad::a_released())
     {
-        if (charge_ticks > 0 && g_bau->ticks == 0)
-            g_bau->do_spawn(charge_ticks);
+        if (charge_ticks >= BAU_CHARGE_MIN_RILASCIO && g_bau_carico->ticks == 0)
+            g_bau_carico->do_spawn(charge_ticks);
         charge_ticks = 0;
     }
 
@@ -327,6 +334,17 @@ void dog::update()
         if (ground_pound_engaged) {
             start_polvere_anim(chr_x - HALF_SCREEN_W + dir * box_dim, chr_y - HALF_SCREEN_H, true, false, 0);
             screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
+            for (enemy* enem : *g_enemies)
+            {
+                if (enem->distrutto || enem->invulnerability > 0) continue;
+
+                if (bn::abs(enem->chr_x - chr_x) < GROUND_POUND_ONDA_RAGGIO_X &&
+                    bn::abs(enem->chr_y - chr_y) < GROUND_POUND_ONDA_RAGGIO_Y)
+                {
+                    int allontana = (enem->chr_x < chr_x) ? DIR_LEFT : DIR_RIGHT;
+                    enem->beHitByShockwave(allontana);
+                }
+            }
         }
         else {
             start_polvere_anim(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, false, false, 0);
@@ -363,11 +381,11 @@ void dog::update()
         polvere_sprite->set_vertical_flip(false);
         polvere_sprite->set_rotation_angle_safe(0);
         ground_pound_engaged = false;
-        if(wall_sliding)
-        if (muro_lato == DIR_RIGHT)
-            dir = DIR_LEFT;
-        else if (muro_lato == DIR_LEFT)
-            dir = DIR_RIGHT;
+        if (wall_sliding)
+            if (muro_lato == DIR_RIGHT)
+                dir = DIR_LEFT;
+            else if (muro_lato == DIR_LEFT)
+                dir = DIR_RIGHT;
     }
     if (dash_ticks > 0)
     {
