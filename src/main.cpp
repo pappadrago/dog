@@ -171,8 +171,11 @@ void show_intro_screen()
         intro_bg.set_y(intro_bg.y() + bn::fixed(0.25));   // scorrimento lento verso sinistra
 
         mega_bg.set_y(mega_bg.y() - bn::fixed(0.125));
+        if (bn::keypad::start_pressed())
+            break;
     }
-
+ fade_screen(true);
+  
     // --- FADE OUT ---
     // Sfumatura dal colore originale a nero totale (intensità 1.0) in 60 frame (~1 secondo)
     //bn::regular_bg_palette_fade_to_action fade_out(intro_bg.palette(), 60, 1.0);

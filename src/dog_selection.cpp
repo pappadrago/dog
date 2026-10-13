@@ -106,7 +106,7 @@ void dog_selection_screen(bn::sprite_text_generator& text_generator)
         };
 
     spawn_cameo(true, 0);
-
+    g_fade_screen(false);
     while (true)
     {
         if (input_delay > 0) input_delay--;

@@ -3,6 +3,7 @@
 #include "dog.h"
 #include "bn_math.h"
 #include "bn_sprite_items_weapons.h"
+#include "bn_sprite_items_diecloud.h"
 
 bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounces) :
     max_bounces(_max_bounces)
@@ -15,10 +16,14 @@ bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounce
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
-    sprite = bn::sprite_items::weapons.create_sprite(
-        x - HALF_SCREEN_W, y - HALF_SCREEN_H, BOMB_TILE_INDEX);
+    sprite = bn::sprite_items::diecloud.create_sprite(
+        x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
+
+    int B =9 ;
+    actionExplode = bn::create_sprite_animate_action_once(
+        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B+0,B+ 1, B+2,B+ 3,B+ 4,B+ 5,B+ 6,B+ 7,B+ 8);
 
 }
 
@@ -75,6 +80,8 @@ void bomb::explode()
     explosion_ticks = BOMB_EXPLOSION_TICKS;
     screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
     chr_vx = chr_vy = ZERO;
+    sprite->set_visible(true);
+    actionExplode->reset();
 }
 
 void bomb::update_explosion()
@@ -90,9 +97,12 @@ void bomb::update_explosion()
 
     // Placeholder grafico: la bomba si ingrandisce e sfarfalla.
     // Sostituibile con un vero sprite/animazione di esplosione.
-    bn::fixed elapsed(BOMB_EXPLOSION_TICKS - explosion_ticks);
-    sprite->set_scale(bn::fixed(1) + elapsed.multiplication(bn::fixed(0.08)));
-    sprite->set_visible(explosion_ticks % 3 != 0);
+    //bn::fixed elapsed(BOMB_EXPLOSION_TICKS - explosion_ticks);
+    //sprite->set_scale(bn::fixed(1) + elapsed.multiplication(bn::fixed(0.08)));
+    //sprite->set_visible(explosion_ticks % 3 != 0);
+    if (!actionExplode->done()){
+        actionExplode->update();
+    }
 
     // Danno al cane: stesso knockback usato per il contatto coi nemici
     if (g_dog->invulnerability == 0)

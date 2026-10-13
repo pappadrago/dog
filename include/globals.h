@@ -4,6 +4,15 @@
 #include "bn_camera_ptr.h"
 #include "bn_optional.h"
 #include "bn_vector.h"
+#include "bn_bg_palettes.h"
+#include "bn_sprite_palettes.h"
+#include "bn_colors.h"
+#include "bn_core.h"
+#include "bn_random.h"
+#include "bn_keypad.h"
+#include "bn_camera_ptr.h"
+#include "bn_music_items.h"
+
 #include "game_constants.h"
 #include "math.h"
 #include "bau.h"
@@ -71,3 +80,6 @@ void screen_shake(int ticks, int ampiezza);
 
 class healthbar;
 extern bn::optional<healthbar> g_healthbar;
+
+
+void g_fade_screen(bool to_black);
