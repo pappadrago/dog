@@ -3,7 +3,6 @@
 #include "dog.h"
 #include "bn_math.h"
 #include "bn_sprite_items_weapons.h"
-#include "bn_sprite_items_explosion.h"
 
 bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounces) :
     max_bounces(_max_bounces)
