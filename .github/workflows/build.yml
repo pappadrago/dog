@@ -20,7 +20,7 @@ jobs:
 
       - name: Compila
         working-directory: dog
-        run: make -j$(nproc)
+        run: make -j$(nproc)  LIBBUTANO=$GITHUB_WORKSPACE/butano/butano
 
       - uses: actions/upload-artifact@v4
         with:
