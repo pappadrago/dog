@@ -33,9 +33,9 @@
 #---------------------------------------------------------------------------------------------------------------------
 TARGET      	:=  $(notdir $(CURDIR))
 BUILD       	:=  build
-LIBBUTANO   	:=  ../../butano
 PYTHON      	:=  python
-COMMON   		:= $(LIBBUTANO)/../common
+LIBBUTANO := ../butano/butano
+COMMON    := ../butano/common
 SOURCES  		:= src $(COMMON)/src
 INCLUDES 		:= include $(COMMON)/include
 GRAPHICS 		:= graphics $(COMMON)/graphics
