@@ -1,0 +1,28 @@
+# .github/workflows/build.yml
+name: Build ROM
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:latest
+    steps:
+      - name: Dipendenze
+        run: apt-get update && apt-get install -y python3 git make
+
+      - uses: actions/checkout@v4
+        with:
+          path: dog
+          submodules: recursive
+
+      - name: Butano (accanto al progetto)
+        run: git clone --depth 1 https://github.com/GValiente/butano.git butano
+
+      - name: Compila
+        working-directory: dog
+        run: make -j$(nproc)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rom
+          path: dog/*.gba
