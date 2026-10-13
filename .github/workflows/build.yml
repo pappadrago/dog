@@ -17,13 +17,10 @@ jobs:
 
       - name: Butano (accanto al progetto)
         run: git clone --depth 1 https://github.com/GValiente/butano.git butano
-      - name: Debug percorsi
-        run: |
-          ls $GITHUB_WORKSPACE/butano
-          ls $GITHUB_WORKSPACE/butano/common/include
+
       - name: Compila
         working-directory: dog
-        run: make -j$(nproc)  LIBBUTANO=$GITHUB_WORKSPACE/butano/butano
+        run: make -j$(nproc) 
 
       - uses: actions/upload-artifact@v4
         with:
