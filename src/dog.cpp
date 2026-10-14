@@ -260,19 +260,7 @@ void dog::update()
                 }
             }
 
-            if (enem->weaponSprite && enem->weaponTicks > 0) {
-                bool hit = check_collision_16(*enem->weaponSprite);
-                if (hit)
-                {
-                    chr_vx = (chr_x < enem->wx_base) ? SMALL_VX_L : SMALL_VX_R;
-                    chr_vy = SMALL_JUMP_VY;
-                    invulnerability = 60;
-                    if (enem->weaponSprite)
-                        enem->weaponTicks = 0;
 
-                    dog_damage(3);
-                }
-            }
         }
 
         for (item* _item : *g_items)

@@ -12,28 +12,39 @@ class ball;
 class bau;
 class dog;
 
+
+// ---------- TIPO = movimento ----------
+enum enemy_tipo : uint8_t
+{
+    MOVE_STATIC = 0,       // fermo
+    MOVE_STATIC_JUMP,      // fermo, salta ogni tanto
+    MOVE_PATROL,           // avanti/indietro entro patrol_range da home_x
+    MOVE_CHASE,            // insegue sempre dog (entro sight_range)
+    MOVE_CHASE_SHY,        // stile Boo: insegue solo se dog NON lo guarda
+    MOVE_MELEE             // si avvicina fino a melee_range, poi si ferma e attacca
+};
+
+// ---------- ATTRIBUTO = bitmask attacco/difese ----------
+enum enemy_attr : int16_t
+{
+    ATTR_NONE = 0,
+    ATTR_CONTACT = 1 << 0,   // danno per scontro fisico (nessuna arma)
+    ATTR_MELEE = 1 << 1,   // arma a mano (spada che ruota)
+    ATTR_ARROW = 1 << 2,   // proiettile dritto, non rimbalza, muore sul muro
+    ATTR_BOMB = 1 << 3,   // parabola + gravità + N rimbalzi + esplosione
+    ATTR_SHELL = 1 << 4,   // scivola a terra, rimbalza sui muri
+    ATTR_FIREBALL = 1 << 5,   // rimbalza sul pavimento, non sui muri
+    ATTR_AIM = 1 << 6,   // modificatore: mira a dog (altrimenti dritto)
+    ATTR_SHIELD = 1 << 7,   // para il bau se frontale
+    ATTR_SUMMON = 1 << 8,
+    ATTR_RESPAWN = 1 << 9,
+    ATTR_PATROL = 1 << 10,
+    ATTR_BASH = 1 << 11,
+    ATTR_PROJ_MASK = ATTR_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL
+    // bit 15 = segno di int16_t: usa solo bit 0..14
+};
+
 #define WEAPON_FLICK_TIME 25
-
-#define TIPO_NEMICO_GENERICO 0
-#define TIPO_NEMICO_DRUIDO_DINAMICO 1
-#define TIPO_NEMICO_DRUIDO_STATICO 2
-#define TIPO_NEMICO_ARCIERE_STATICO 3
-#define TIPO_NEMICO_BLOB_PATTUGLIATORE 4
-#define TIPO_NEMICO_SPADACCINO_PATTUGLIATORE 5
-#define TIPO_NEMICO_BOMBAROLO 6
-#define TIPO_NEMICO_MORTAIO 10
-#define TIPO_NEMICO_PATTUGLIATORE 11
-#define TIPO_NEMICO_PUGILE 12
-#define TIPO_NEMICO_ZOMBIE 13
-
-#define ATTRIBUTO_NO 0
-#define ATTRIBUTO_AIM (1<<0)
-#define ATTRIBUTO_MELEE (1<<1)
-#define ATTRIBUTO_BASH (1<<2)
-#define ATTRIBUTO_PATROL (1<<3)
-#define ATTRIBUTO_FIREBALL (1<<4)
-#define ATTRIBUTO_SUMMON (1<<5)
-#define ATTRIBUTO_RESPAWN (1<<6)
 
 #define ACTION_STAND 0
 #define ACTION_MOVE 1
@@ -56,11 +67,10 @@ class dog;
 struct enemy_def
 {
     uint8_t  tipo;             // TIPO_NEMICO_*
-    uint8_t  attributo;        // ATTRIBUTO_*
+    uint16_t  attributo;        // enemy_attr::ATTR_*
     int16_t  x;                // posizione iniziale (coordinate mondo)
-    int8_t   dir;              // DIR_LEFT / DIR_RIGHT iniziale
+    int16_t  y;                // posizione iniziale (coordinate mondo)
     uint16_t delay;            // ticks2action iniziale, prima del primo cambio di stato
-    uint8_t  variante = 0;     // usato solo da TIPO_NEMICO_GENERICO: skin (0-9) e tipo di arma
 };
 
 class enemy : public live_obj
@@ -69,18 +79,27 @@ public:
     bn::optional<bomb> bomba;   // creata al lancio, distrutta a esplosione finita
     void throw_bomb();
     void throw_shell();   // variante mortaio: arco alto, esplode al primo impatto
+    void throw_arrow();
+    void throw_fireball();
 
-    bn::optional<bn::sprite_ptr>               weaponSprite;
     bn::optional<bn::sprite_animate_action<10>> actionMelee;
 
-    bn::fixed wx_base = 0, wy_base = 0;
-    bn::fixed wpn_vx = 0, wpn_vy = 0;
-    bn::fixed weapon_time = bn::fixed(120.0);
-    int weaponDir = DIR_RIGHT;
     uint8_t tipo = 0;
-    uint8_t attributo = 0;
-    uint8_t currentAction = ACTION_STAND;
-    uint16_t weaponTicks = 0;
+    uint16_t attributo = 0;
+
+    uint8_t   activeProj = 0;     // quale bit ATTR_* è in volo
+
+    bn::fixed sight_range = 100;
+    bn::fixed melee_range = 24;
+    uint16_t  jump_period = 90; // frame tra due salti (STATIC_JUMP)
+    uint16_t  attack_period = 120;// frame tra due attacchi
+
+    // --- stato ---
+    uint8_t   currentAction;      // ACTION_STAND/MOVE/ATTACK/STUN
+    uint16_t  attack_cd = 0;
+    uint16_t  jump_cd = 0;
+
+
 
     explicit enemy(const enemy_def& def);
 
@@ -94,8 +113,8 @@ public:
 
     void takeDamage(int damage);
 
-    int     contact_damage = 1;     // danno per semplice contatto
-    int     melee_damage = 0;     // 0 = non è un nemico melee
+    int contact_damage = 1;     // danno per semplice contatto
+    int melee_damage = 0;     // 0 = non è un nemico melee
     int meleeTicks;
     bool dog_in_melee_range() const;
 
@@ -104,16 +123,39 @@ public:
     const enemy_def* def_origine = nullptr;   // != nullptr: nemico di tabella, rinasce dopo l'eliminazione
 
 
-        uint8_t deathTicks = 0;
+    uint8_t deathTicks = 0;
 
     bool is_dead() const { return currentAction == ACTION_DEAD; }
     void die(int _dir);
     void update_death();
 
+    bool has(int16_t a) const { return (attributo & a) != 0; }
+    bool blocks_bark(int from_dir) const;     // hook per bau::update()
 private:
     void init(const enemy_def& def);
     void update_fantasma();
     void update_pattugliatore();
 
+    void update_physics();
+    void update_movement();
+    void update_attack();
+    void update_projectile();
+    void update_graphics();
+
+    // movimenti
+    void move_static();
+    void move_static_jump();
+    void move_patrol();
+    void move_chase();
+    void move_chase_shy();
+    void move_melee();
+    // helper
+    bool  dog_in_sight() const;
+    bool  dog_is_looking_at_me() const;
+    bn::fixed dist_to_dog() const;
+    void  face_dog();
+    void  walk_towards(int d, bn::fixed accel, bn::fixed vmax);
+    void  fire(int16_t proj_type);
+    int16_t pick_projectile() const;
 
 };

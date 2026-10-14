@@ -174,8 +174,8 @@ void show_intro_screen()
         if (bn::keypad::start_pressed())
             break;
     }
- fade_screen(true);
-  
+    fade_screen(true);
+
     // --- FADE OUT ---
     // Sfumatura dal colore originale a nero totale (intensità 1.0) in 60 frame (~1 secondo)
     //bn::regular_bg_palette_fade_to_action fade_out(intro_bg.palette(), 60, 1.0);
@@ -193,7 +193,7 @@ int main()
 {
     bn::core::init();
 
-    show_intro_screen();
+    //show_intro_screen();
 
     bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
     update_text_init(&text_generator);
@@ -317,7 +317,7 @@ int main()
         // ------------------------------------------------------------
         const door_info* used_door = nullptr;
 
-        //        g_boss.emplace(400, 100, 10, ATTRIBUTO_FIREBALL | ATTRIBUTO_BASH | ATTRIBUTO_MELEE | ATTRIBUTO_SUMMON);
+        //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
 
         // Un frame di gioco (senza bn::core::update)
         auto game_step = [&]()
@@ -341,7 +341,7 @@ int main()
                     enemy* e = (*g_enemies)[i];
                     if (e->distrutto)
                     {
-                        if ((e->attributo & ATTRIBUTO_RESPAWN) && e->def_origine && !da_rinascere.full())
+                        if ((e->attributo & enemy_attr::ATTR_RESPAWN) && e->def_origine && !da_rinascere.full())
                             da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
                         delete e;
                         g_enemies->erase(g_enemies->begin() + i);
@@ -393,6 +393,10 @@ int main()
 
                 update_text_tick();
                 hud_update();
+
+                //BN_LOG("cpu ", bn::core::last_cpu_usage());
+                // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
+                // BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
             };
 
         // Fade-in a gioco attivo: gli sprite prendono la posizione giusta

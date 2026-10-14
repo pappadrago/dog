@@ -11,19 +11,36 @@
 #define BOMB_EXPLOSION_FRAME_TICKS  3   // durata dell'esplosione (frame)
 #define BOMB_EXPLOSION_RADIUS 20   // raggio del danno (px)
 #define BOMB_TILE_INDEX       11    // frame di bn::sprite_items::weapons usato per la bomba (da adattare)
+
+
+struct bomb_def
+{
+    bn::fixed x, y, vx, vy;
+    bool ignoreGravity, ignoreWalls;
+    int max_bounces, ttl;
+    uint8_t tileIndex;
+    bn::fixed angle;
+};
+
+
 class bomb : public live_obj
 {
 public:
     bool finished = false;
 
     bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int max_bounces = BOMB_MAX_BOUNCES);
+
+    explicit bomb(const bomb_def& def);
+
     bn::optional<bn::sprite_animate_action<9>> actionExplode;
     void update();
 
 private:
+    bool ignoreGravity = false, ignoreWalls = false;
     int  max_bounces;
     int  bounces = 0;
     int  age = 0;
+    int ttl = 0;
     int  explosion_ticks = 0;
     bool exploded = false;
     void explode();

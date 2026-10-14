@@ -70,7 +70,3 @@ endif
 #---------------------------------------------------------------------------------------------------------------------
 include $(LIBBUTANOABS)/butano.mak
 
-
-$(info LIBBUTANO = $(LIBBUTANO))
-$(info COMMON    = $(COMMON))
-$(info INCLUDES  = $(INCLUDES))

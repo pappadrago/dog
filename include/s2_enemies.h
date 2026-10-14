@@ -2,11 +2,11 @@
 #include "enemy.h"
 
 constexpr enemy_def schema2_enemies[] = {
-    { TIPO_NEMICO_SPADACCINO_PATTUGLIATORE, ATTRIBUTO_NO,  400, DIR_RIGHT, 80  },
-    { TIPO_NEMICO_GENERICO,                 ATTRIBUTO_AIM, 200, DIR_LEFT,  150, 2 },
-    { TIPO_NEMICO_GENERICO,                 ATTRIBUTO_AIM, 600, DIR_RIGHT, 210, 5 },
-    { TIPO_NEMICO_DRUIDO_DINAMICO,          ATTRIBUTO_AIM, 900, DIR_LEFT,  180 },
-    { TIPO_NEMICO_ARCIERE_STATICO,          ATTRIBUTO_AIM, 1200, DIR_RIGHT, 240 },
-    { TIPO_NEMICO_BLOB_PATTUGLIATORE,       ATTRIBUTO_NO,  1400, DIR_LEFT,  120 },
+    { enemy_tipo::MOVE_STATIC, enemy_attr::ATTR_NONE,  400, 400,0 },
+    { enemy_tipo::MOVE_CHASE,                 enemy_attr::ATTR_AIM, 200,400,   150 },
+    { enemy_tipo::MOVE_CHASE_SHY,                 enemy_attr::ATTR_AIM, 600, 400, 210},
+    { enemy_tipo::MOVE_PATROL,          enemy_attr::ATTR_BOMB, 900, 400,  180 },
+    { enemy_tipo::MOVE_STATIC,          enemy_attr::ATTR_SHELL, 1200, 400, 240 },
+    { enemy_tipo::MOVE_STATIC_JUMP,       enemy_attr::ATTR_BOMB,  1400, 400,  120 },
 };
 constexpr int schema2_enemies_count = sizeof(schema2_enemies) / sizeof(schema2_enemies[0]);

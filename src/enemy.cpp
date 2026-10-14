@@ -12,13 +12,6 @@
 #include "bn_math.h"
 #include "bn_log.h"
 
-// Controlla i 4 angoli di una hitbox di 3x3 centrata sull'arma
-static bool weapon_hits_map(bn::fixed x, bn::fixed y, int schema)
-{
-    static constexpr int HITBOX_SIZE = 3;
-    return is_solid_at(x - HITBOX_SIZE, y - HITBOX_SIZE, schema) || is_solid_at(x + HITBOX_SIZE, y - HITBOX_SIZE, schema) ||
-        is_solid_at(x - HITBOX_SIZE, y + HITBOX_SIZE, schema) || is_solid_at(x + HITBOX_SIZE, y + HITBOX_SIZE, schema);
-}
 
 enemy::enemy(const enemy_def& def)
 {
@@ -27,8 +20,7 @@ enemy::enemy(const enemy_def& def)
 
     switch (tipo)
     {
-    case TIPO_NEMICO_DRUIDO_DINAMICO:
-    case TIPO_NEMICO_DRUIDO_STATICO:
+    case enemy_tipo::MOVE_CHASE:
     {
         int N = 3 * 3;
         sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
@@ -37,10 +29,10 @@ enemy::enemy(const enemy_def& def)
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 8, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
 
-        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, 23);
+
         break;
     }
-    case TIPO_NEMICO_ARCIERE_STATICO:
+    case enemy_tipo::MOVE_CHASE_SHY:
     {
         int N = 7 * 3;
         sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
@@ -48,11 +40,9 @@ enemy::enemy(const enemy_def& def)
             *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 8, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
-        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, 3);
         break;
     }
-    case TIPO_NEMICO_MORTAIO:
+    case enemy_tipo::MOVE_PATROL:
     {
         int N = 2 * 3;
         sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
@@ -60,10 +50,9 @@ enemy::enemy(const enemy_def& def)
             *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-        // niente weaponSprite: l'arma è il colpo di mortaio (bomba)
         break;
     }
-    case TIPO_NEMICO_BLOB_PATTUGLIATORE:
+    case enemy_tipo::MOVE_STATIC:
     {
         int N = 5 * 3;
         sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
@@ -75,7 +64,7 @@ enemy::enemy(const enemy_def& def)
         max_vx = bn::fixed(1.0);
         break;
     }
-    case TIPO_NEMICO_SPADACCINO_PATTUGLIATORE:
+    case enemy_tipo::MOVE_STATIC_JUMP:
     {
         int N = 0;
         sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
@@ -84,71 +73,24 @@ enemy::enemy(const enemy_def& def)
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 8, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
 
-        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, 2);
-        break;
-    }
-    case TIPO_NEMICO_BOMBAROLO:
-    {
-        int N = 0;
-        sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 4, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-        // niente weaponSprite: l'arma è l'oggetto bomb
-        break;
-    }
-    case TIPO_NEMICO_PATTUGLIATORE:
-    {
-        sprite = bn::sprite_items::king.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::king.tiles_item(), 0, 1, 2, 3);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 8, bn::sprite_items::king.tiles_item(), 4, 5, 6, 7, 8, 9);
-        // nessuna weaponSprite: danno solo da contatto
-        max_vx = bn::fixed(0.8);
-        if (attributo & ATTRIBUTO_MELEE) {
-            actionMelee = bn::create_sprite_animate_action_once(
-                *sprite, 2, bn::sprite_items::king.tiles_item(), 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
-            contact_damage = 1;
-            melee_damage = 5;
-        }
         break;
     }
 
-    case TIPO_NEMICO_ZOMBIE:
-    {
-        int N = 1 * 3;
-        sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 3, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
-        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, def.variante % 10);
-        break;
-    }
 
     default: // TIPO_NEMICO_GENERICO
     {
-        int N = (def.variante % 10) * 3;
+        int N = 3;
         sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
         actionStand = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
         actionWalk = bn::create_sprite_animate_action_forever(
             *sprite, 3, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
-        weaponSprite = bn::sprite_items::weapons.create_sprite(chr_x, chr_y, def.variante % 10);
         break;
     }
     }
 
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
-    if (weaponSprite) {
-        weaponSprite->set_bg_priority(1);
-        weaponSprite->set_camera(g_camera);
-    }
 
     init(def);
     box_dim = bn::fixed(8);
@@ -157,109 +99,10 @@ enemy::enemy(const enemy_def& def)
 
 void enemy::init(const enemy_def& def)
 {
-    chr_y = 100;
+    chr_y = bn::fixed(def.y);
     chr_x = bn::fixed(def.x);
-    dir = def.dir;
     ticks2action = def.delay;
-
-    if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE) {
-        chr_vx = SLOW_VX_R * dir;
-        ticks2action = 80;
-    }
-
-    currentAction = (tipo == TIPO_NEMICO_PATTUGLIATORE || tipo == TIPO_NEMICO_BLOB_PATTUGLIATORE) ? ACTION_MOVE : ACTION_STAND;
-
-    sprite->set_x(chr_x);
-    sprite->set_y(chr_y);
-    if (weaponSprite) {
-        weaponSprite->set_x(chr_x);
-        weaponSprite->set_y(chr_y);
-
-    }
-}
-
-void enemy::update_pattugliatore()
-{
-    const collision_map_info& mappa = get_collision_map(g_schema);
-    if (currentAction == ACTION_MOVE) {
-        // Punto di controllo: un po' oltre il "muso", nella direzione di marcia
-        bn::fixed x_avanti = chr_x + bn::fixed(8 * dir);
-        bn::fixed y_sotto = chr_y + box_halfdim + bn::fixed(4);   // poco sotto i piedi
-
-        bool muro_o_bordo = (x_avanti <= 0) || (x_avanti >= bn::fixed(mappa.map_w))
-            || is_solid_at(x_avanti, chr_y, g_schema);
-
-        bool gradino = !is_solid_at(x_avanti, y_sotto, g_schema);   // niente terreno sotto: è un bordo di piattaforma
-
-        if (muro_o_bordo || gradino) {
-            dir = -dir;
-        }
-
-        chr_accx = GROUND_ACCEL;
-    }
-    chr_vx += chr_accx.multiplication(dir);
-    bool cane_a_destra = chr_x < g_dog->chr_x;
-
-    // il cane "lo guarda" se il fantasma è dalla parte verso cui il cane è rivolto
-    bool sees_dog = (cane_a_destra && dir == DIR_RIGHT) ||
-        (!cane_a_destra && dir == DIR_LEFT);
-
-    chr_vx = cap(chr_vx, (sees_dog && dog_in_melee_range() && (attributo & ATTRIBUTO_BASH)) ? (max_vx + max_vx) : max_vx);
-    chr_x += chr_vx;
-
-    if (currentAction == ACTION_MOVE && (attributo & ATTRIBUTO_MELEE)
-        && bn::abs(chr_x - g_dog->chr_x) < (28)
-        && bn::abs(chr_y - g_dog->chr_y) < 24) {
-        dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
-        currentAction = ACTION_ATTACK;
-        actionMelee->reset();
-        meleeTicks = 16;
-        ticks2action = 30;
-        chr_accx = bn::fixed(0);
-    }
-
-    if (meleeTicks > 0)meleeTicks--;
-
-    apply_map();
-    apply_friction();
-    apply_gravity();
-
-    ticks2action--;
-    if (ticks2action == 0) {
-        switch (currentAction)
-        {
-        case ACTION_STUN:
-        case ACTION_ATTACK:
-            currentAction = ACTION_MOVE;
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H);
-    sprite->set_horizontal_flip(dir == DIR_LEFT);
-
-    if (currentAction == ACTION_ATTACK) {
-        if (!actionMelee->done())
-            actionMelee->update();
-    }
-    else if (onGround) {
-        actionWalk->update();
-    }
-    else {
-        actionStand->update();
-    }
-
-    if (invulnerability > 0)
-    {
-        invulnerability--;
-        sprite->set_visible(invulnerability % 2);
-    }
-    else
-        sprite->set_visible(true);
+    currentAction = ACTION_MOVE;
 }
 
 void enemy::update()
@@ -280,14 +123,170 @@ void enemy::update()
             die(dir);
             return;
         }
-
     }
+
+    // il dog stordito/invulnerabile non cambia nulla qui; lo STUN invece blocca IA e attacco
+    update_physics();
+
+    if (currentAction != ACTION_STUN)
+    {
+        update_movement();
+        update_attack();
+    }
+    else if (--ticks2action <= 0)
+        currentAction = ACTION_STAND;
+
+    update_projectile();
+    update_graphics();
+}
+
+void enemy::update_physics()
+{
+    apply_friction();
+    chr_vx += chr_accx;
+    chr_vx = cap(chr_vx, max_vx);
+    chr_x += chr_vx;
+    apply_map();
+    apply_gravity();
+
+    if (invulnerability > 0) invulnerability--;
+}
+
+// ---------------------------------------------------------------
+void enemy::update_graphics()
+{
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_LEFT);
+
+    if (onGround && chr_vx.integer() == 0) actionStand->update();
+    else                                   actionWalk->update();
+
+    // lampeggi (invulnerabilità, stun, proiettile in scadenza)
+    if (invulnerability > 0)               sprite->set_visible(invulnerability % 2);
+    else if (currentAction == ACTION_STUN) sprite->set_visible(ticks2action % 2);
+    else                                   sprite->set_visible(true);
+
+}
+// ---------------------------------------------------------------
+void enemy::update_projectile()
+{
 
     if (bomba) {
         bomba->update();
         if (bomba->finished)
             bomba.reset();
     }
+
+
+
+}
+
+
+void enemy::update_movement()
+{
+    switch (tipo)
+    {
+    case MOVE_STATIC:       move_static();      break;
+    case MOVE_STATIC_JUMP:  move_static_jump(); break;
+    case MOVE_PATROL:       move_patrol();      break;
+    case MOVE_CHASE:        move_chase();       break;
+    case MOVE_CHASE_SHY:    move_chase_shy();   break;
+    case MOVE_MELEE:        move_melee();       break;
+    default: break;
+    }
+}
+
+void enemy::move_static()
+{
+    chr_accx = 0;
+    if (dog_in_sight()) face_dog();
+}
+
+void enemy::move_static_jump()
+{
+    chr_accx = 0;
+    if (dog_in_sight()) face_dog();
+    if (jump_cd > 0) jump_cd--;
+    else if (onGround) { chr_vy = bn::fixed(-3.5); jump_cd = jump_period; }
+}
+
+void enemy::move_patrol()
+{
+    // inverti se sbatte contro un muro o se gradino
+
+    const collision_map_info& mappa = get_collision_map(g_schema);
+    // Punto di controllo: un po' oltre il "muso", nella direzione di marcia
+    bn::fixed x_avanti = chr_x + bn::fixed(8 * dir);
+    bn::fixed y_sotto = chr_y + box_halfdim + bn::fixed(4);   // poco sotto i piedi
+
+    bool muro_o_bordo = (x_avanti <= 0) || (x_avanti >= bn::fixed(mappa.map_w))
+        || is_solid_at(x_avanti, chr_y, g_schema);
+
+    bool gradino = !is_solid_at(x_avanti, y_sotto, g_schema);   // niente terreno sotto: è un bordo di piattaforma
+
+    if (muro_o_bordo || gradino) {
+        dir = -dir;
+    }
+
+    walk_towards(dir, bn::fixed(0.2), bn::fixed(1.0));
+}
+
+void enemy::move_chase()
+{
+    if (!dog_in_sight()) { chr_accx = 0; return; }
+    face_dog();
+    walk_towards(dir, bn::fixed(0.15), bn::fixed(1.2));
+}
+
+void enemy::move_chase_shy()
+{
+    // Boo: si ferma se dog lo sta guardando, avanza solo se gli dà le spalle
+    if (!dog_in_sight() || dog_is_looking_at_me()) { chr_accx = 0; chr_vx = 0; return; }
+    face_dog();
+    walk_towards(dir, bn::fixed(0.15), bn::fixed(0.8));
+}
+
+void enemy::move_melee()
+{
+    if (!dog_in_sight()) { chr_accx = 0; return; }
+    face_dog();
+    if (dist_to_dog() > melee_range)
+        walk_towards(dir, bn::fixed(0.2), bn::fixed(1.3));
+    else
+        chr_accx = 0;          // in range: si pianta e lascia fare ad update_attack()
+}
+
+void enemy::update_attack()
+{
+    // ATTR_CONTACT non fa nulla qui: il danno da contatto lo gestisce dog::update()
+    // con check_collision_16(*enem->sprite, *this) quando weaponSprite è assente/inattivo.
+
+    if (attack_cd > 0) { attack_cd--; return; }
+    if (!(attributo & (ATTR_PROJ_MASK | ATTR_MELEE))) return;
+    if (!dog_in_sight()) return;
+
+    // per MOVE_MELEE attacca solo quando è in range
+    if (tipo == MOVE_MELEE && dist_to_dog() > melee_range) return;
+
+    currentAction = ACTION_ATTACK;
+    face_dog();
+
+    if (has(ATTR_MELEE)) {
+        activeProj = ATTR_MELEE;
+    }
+    else {
+        fire(pick_projectile());
+    }
+    attack_cd = attack_period;
+}
+
+/*
+void update_old()
+{
+
+
+
 
     // A: calcola le nuove posizioni di enemy e weapon (se c'è)
     if (weaponSprite && weaponTicks > 0) {
@@ -453,7 +452,7 @@ void enemy::update()
                     if (tipo == TIPO_NEMICO_ARCIERE_STATICO)
                         gittata = gittata.multiplication(1.5); // stessa durata maggior gittata -> più velocità
 
-                    if (attributo & ATTRIBUTO_AIM) {
+                    if (attributo & enemy_attr::ATTR_AIM) {
                         bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
 
                         wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time + weapon_time);
@@ -509,6 +508,7 @@ void enemy::update()
         }
     }
 }
+*/
 
 void enemy::takeDamage(int damage) {
     life -= damage;
@@ -527,9 +527,6 @@ void enemy::beHitByBark(int _dir, bn::fixed power)
 
     chr_accx = bn::fixed(0);
 
-    if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
-        weaponTicks = 0;   // la sua arma è "attaccata" al corpo: si ferma insieme a lui
-
     currentAction = ACTION_STUN;
     ticks2action =
         invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
@@ -545,9 +542,6 @@ void enemy::beHitByDog()
     chr_vy = ENEMY_MEDIUM_JUMP_VY;
     chr_vx = g_dog->chr_vx > 0 ? SMALL_VX_R : SMALL_VX_L;
     chr_accx = bn::fixed(0);
-
-    if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
-        weaponTicks = 0;   // la sua arma è "attaccata" al corpo: si ferma insieme a lui
 
     currentAction = ACTION_STUN;
     ticks2action = invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
@@ -584,6 +578,60 @@ void enemy::throw_shell()
     bomba.emplace(chr_x, chr_y - 4, vx, vy, /*max_bounces=*/0);
 }
 
+void enemy::throw_arrow()
+{
+    if (bomba) return;   // un colpo alla volta
+
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
+    bn::fixed  speed = bn::fixed(2.0);
+    bn::fixed vx;
+    bn::fixed vy = ZERO;
+    bn::fixed angle = 0;
+    bool aim = has(ATTR_AIM);
+    if (aim) {
+        bn::fixed dy = g_dog->chr_y - chr_y;
+        angle = bn::degrees_atan2(dy.integer(), dx.integer());
+
+        vx = bn::degrees_lut_cos_safe(angle).multiplication(speed);
+        vy = bn::degrees_lut_sin_safe(angle).multiplication(speed);
+    }
+    else {
+        vx = speed.multiplication(dir);
+    }
+    bomb_def def = { chr_x, chr_y - 4, vx, vy, true, false, 0, 120, 4, -angle - 90 };
+
+    bomba.emplace(def);
+}
+
+void enemy::throw_fireball()
+{
+    if (bomba) return;   // un colpo alla volta
+
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
+
+    bn::fixed speed = bn::fixed(1.5);
+    bn::fixed vx;
+    bn::fixed vy = ZERO;
+    bn::fixed angle = ZERO;
+    bool aim = has(ATTR_AIM);
+    if (aim) {
+        bn::fixed dy = g_dog->chr_y - chr_y;
+        angle = bn::degrees_atan2(dy.integer(), dx.integer());
+
+        vx = bn::degrees_lut_cos_safe(angle).multiplication(speed);
+        vy = bn::degrees_lut_sin_safe(angle).multiplication(speed);
+    }
+    else {
+        vx = speed.multiplication(dir);
+    }
+    bomb_def def = { chr_x, chr_y - 4, vx, vy, true, true, 0, 120, 23, -angle - 90 };
+
+    bomba.emplace(def);
+}
+
+
 bool enemy::dog_in_melee_range() const
 {
     return bn::abs(g_dog->chr_x - chr_x) < 48;
@@ -594,9 +642,6 @@ void enemy::beHitByShockwave(int _dir)
     chr_vy = ENEMY_MEDIUM_JUMP_VY;                          // saltello
     chr_vx = SMALL_VX_R.multiplication(bn::fixed(_dir));    // lontano dal cane
     chr_accx = bn::fixed(0);
-
-    if (tipo == TIPO_NEMICO_SPADACCINO_PATTUGLIATORE)
-        weaponTicks = 0;
 
     currentAction = ACTION_STUN;
     ticks2action = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
@@ -610,13 +655,9 @@ void enemy::die(int _dir)
     currentAction = ACTION_DEAD;
     deathTicks = ENEMY_DEATH_FRAMES;
     invulnerability = 0;
-    weaponTicks = 0;
     chr_accx = ZERO;
     chr_vx = ENEMY_SMALL_JUMP_VY.multiplication(_dir);
     chr_vy = ENEMY_MEDIUM_JUMP_VY;
-
-    if (weaponSprite)
-        weaponSprite->set_visible(false);
 
     sprite->set_visible(true);
 }
@@ -655,4 +696,66 @@ void enemy::update_death()
         sprite->set_visible(false);
         sprite->remove_affine_mat();   // libera l'affine mat (sono solo 32 sulla GBA)
     }
+}
+
+
+// Helper
+bool enemy::dog_in_sight() const { return dist_to_dog() <= sight_range; }
+bn::fixed enemy::dist_to_dog() const { return bn::abs(g_dog->chr_x - chr_x); }
+void enemy::face_dog() { dir = (g_dog->chr_x > chr_x) ? DIR_RIGHT : DIR_LEFT; }
+
+bool enemy::dog_is_looking_at_me() const
+{
+    // dog guarda a destra e io sono a destra, o viceversa
+    return (g_dog->dir == DIR_RIGHT && chr_x > g_dog->chr_x) ||
+        (g_dog->dir == DIR_LEFT && chr_x < g_dog->chr_x);
+}
+
+void enemy::walk_towards(int d, bn::fixed accel, bn::fixed vmax)
+{
+    dir = d;
+    chr_accx = accel.multiplication(d);
+    max_vx = vmax;
+}
+
+// Scudo: chiamato da bau::update() prima di beHitByBark()
+bool enemy::blocks_bark(int from_dir) const
+{
+    // il bau arriva da from_dir (lato dog); para se il nemico guarda verso di lui
+    return has(ATTR_SHIELD) && dir == -from_dir && currentAction != ACTION_STUN;
+}
+
+
+// ---------------------------------------------------------------
+int16_t enemy::pick_projectile() const
+{
+    // se più bit sono accesi, scegli a caso tra quelli disponibili
+    int16_t avail[4]; int n = 0;
+    if (has(ATTR_ARROW))    avail[n++] = ATTR_ARROW;
+    if (has(ATTR_BOMB))     avail[n++] = ATTR_BOMB;
+    if (has(ATTR_SHELL))    avail[n++] = ATTR_SHELL;
+    if (has(ATTR_FIREBALL)) avail[n++] = ATTR_FIREBALL;
+    return n ? avail[g_rng.get_int(n)] : 0;
+}
+
+void enemy::fire(int16_t type)
+{
+    switch (type) {
+    case ATTR_BOMB:
+        throw_bomb();
+        return;
+    case ATTR_SHELL:
+        throw_shell();
+        return;
+    case ATTR_ARROW:
+        throw_arrow();
+        return;
+    case ATTR_FIREBALL:
+        throw_fireball();
+        return;
+    default:
+        activeProj = type;  // durata massima in volo
+        break;
+    }
+
 }

@@ -5,7 +5,7 @@
 #include "obj.h"
 #include "dog.h"
 #include "globals.h"
-#include "enemy.h"   // per ATTRIBUTO_*/ACTION_*, condivisi con enemy
+#include "enemy.h"   // per enemy_attr::ATTR_*/ACTION_*, condivisi con enemy
 
 class boss : public live_obj
 {
@@ -14,7 +14,7 @@ public:
     int colpi_totali;
     bn::fixed dimensione;   // lato dello sprite (o del bounding box), non più una macro fissa
 
-    uint8_t attributo = ATTRIBUTO_NO;      // ATTRIBUTO_BASH, ATTRIBUTO_MELEE (bitmask)
+    uint8_t attributo = enemy_attr::ATTR_NONE;    // enemy_attr::ATTR_BASH, enemy_attr::ATTR_MELEE (bitmask)
     uint8_t currentAction = ACTION_MOVE;
 
     bn::optional<bn::sprite_ptr> weaponSprite;
@@ -32,7 +32,7 @@ public:
     int contact_damage = 2;
     int melee_damage = 0;   // 0 = niente attacco melee configurato
 
-    boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t attributo = ATTRIBUTO_NO, bn::fixed dimensione = 32);
+    boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t attributo = enemy_attr::ATTR_NONE, bn::fixed dimensione = 32);
     void update();
 
     void subisci_colpo() { if (colpi_rimasti > 0) { colpi_rimasti--; invulnerability = 30; } }

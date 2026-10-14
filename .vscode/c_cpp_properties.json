@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include/**",
-                "/home/kids/gba/butano-master/butano/include/**"
+                "/home/kids/gba/butano/butano/include/**"
             ],
             "defines": [
                 "GBA",

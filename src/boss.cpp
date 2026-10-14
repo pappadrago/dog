@@ -30,7 +30,7 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t _attributo, bn::fixe
     actionWalk = bn::create_sprite_animate_action_forever(
         *sprite, 5, bn::sprite_items::zombie.tiles_item(), 4, 5, 6, 7, 8, 9, 10);
 
-    if (attributo & ATTRIBUTO_MELEE)
+    if (attributo & enemy_attr::ATTR_MELEE)
     {
         actionMelee = bn::create_sprite_animate_action_forever(
             *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14);   // placeholder: frame dedicati
@@ -99,7 +99,7 @@ void boss::update()
 
         chr_accx = GROUND_ACCEL;
 
-        if ((attributo & ATTRIBUTO_MELEE) && dist_x < RANGE_MELEE && onGround)
+        if ((attributo & enemy_attr::ATTR_MELEE) && dist_x < RANGE_MELEE && onGround)
         {
             // Priorità 1: abbastanza vicino, avanza dritto per colpire
             if (bn::abs(chr_y - g_dog->chr_y) < 32)
@@ -111,14 +111,14 @@ void boss::update()
                 chr_accx = bn::fixed(0);
             }
         }
-        else if ((attributo & ATTRIBUTO_SUMMON) && dist_x < RANGE_SUMMON && ticks_prossimo_summon <= 0 && onGround && weaponTicks == 0)
+        else if ((attributo & enemy_attr::ATTR_SUMMON) && dist_x < RANGE_SUMMON && ticks_prossimo_summon <= 0 && onGround && weaponTicks == 0)
         {
             // Priorità 2: troppo lontano per colpire, ma nel raggio del summon
             dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
             chr_accx = bn::fixed(0);
             avvia_summon();
         }
-        else if (attributo & ATTRIBUTO_PATROL)
+        else if (attributo & enemy_attr::ATTR_PATROL)
         {
             // Priorità 3: troppo lontano da entrambi, pattuglia avanti e indietro
             if (onGround)
@@ -133,7 +133,7 @@ void boss::update()
     chr_vx += chr_accx.multiplication(dir);
 
     bool sees_dog = (cane_a_destra && dir == DIR_RIGHT) || (!cane_a_destra && dir == DIR_LEFT);
-    bool bash_attivo = sees_dog && dog_in_bash_range() && (attributo & ATTRIBUTO_BASH);
+    bool bash_attivo = sees_dog && dog_in_bash_range() && (attributo & enemy_attr::ATTR_BASH);
     chr_vx = cap(chr_vx, bash_attivo ? (max_vx + max_vx + max_vx) : max_vx);
     chr_x += chr_vx;
 
@@ -157,7 +157,7 @@ void boss::update()
         }
     }
 
-    if (attributo & ATTRIBUTO_FIREBALL) {
+    if (attributo & enemy_attr::ATTR_FIREBALL) {
         if (currentAction == ACTION_MOVE || currentAction == ACTION_STAND)
         {
             if (ticks_prossimo_attacco > 0)
@@ -246,7 +246,7 @@ void boss::interrompi_summon()
 
 void boss::completa_summon()
 {
-    enemy_def def{ TIPO_NEMICO_ZOMBIE, ATTRIBUTO_AIM,
+    enemy_def def{ enemy_tipo::MOVE_CHASE, enemy_attr::ATTR_AIM,
                    int16_t(chr_x.integer() + 10 * dir), int8_t(-dir), 60 };
     enemy* nuovo = new enemy(def);
 
