@@ -394,9 +394,9 @@ int main()
                 update_text_tick();
                 hud_update();
 
-                //BN_LOG("cpu ", bn::core::last_cpu_usage());
+                // BN_LOG("cpu ", bn::core::last_cpu_usage());
                 // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
-                // BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
+                //  BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
             };
 
         // Fade-in a gioco attivo: gli sprite prendono la posizione giusta

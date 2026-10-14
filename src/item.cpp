@@ -43,42 +43,65 @@ item::item(const item_def& def)
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
-    ticks2action = -g_rng.get_int(100);
+    ticks2action = 0;
+    active = true;
+    animAngle = g_rng.get_int(100);
 }
 
 void item::update()
 {
-
-    static constexpr bn::fixed ITEM_ACTIVATION_RANGE_X = 240;
-    // Da qui in poi: corpo del nemico e decisioni AI, congelabili se lontano dal cane
-    if (bn::abs(chr_x - g_dog->chr_x) > ITEM_ACTIVATION_RANGE_X)
+    if (!active)
         return;
-
-
-    if (raccolto && ticks2action == 0)
+    if (ticks2action > 0) {
+        ticks2action--;
+        if (ticks2action == 0)
+        {
+            active = false;
+            sprite->set_visible(false);
+            sprite->remove_affine_mat(); 
+            return;
+        }
+    }
+    if (is_drop)
     {
-        sprite->set_visible(false);
-        return;
+        if (--ttl <= 0)
+        {
+            active = false;
+            sprite->set_visible(false);
+            sprite->remove_affine_mat(); 
+            return;
+        }
     }
     apply_gravity();
 
-    ticks2action--;
+    static constexpr bn::fixed ITEM_ACTIVATION_RANGE_X = 240;
+    // congelato se lontano dal cane
+    if (bn::abs(chr_x - g_dog->chr_x) > ITEM_ACTIVATION_RANGE_X)
+        return;
 
-    bn::fixed dy = bn::degrees_lut_sin_safe(ticks2action << 3) * 4 - 2;
-    bn::fixed dx = bn::degrees_lut_cos_safe(ticks2action << 2) * 6 - 2;
+    animAngle++;
+    bn::fixed dy = bn::degrees_lut_sin_safe(animAngle << 3) * 4 - 2;
+    bn::fixed dx = bn::degrees_lut_cos_safe(animAngle << 2) * 6 - 2;
     sprite->set_x(chr_x + dx - HALF_SCREEN_W);
     sprite->set_y(chr_y + dy - HALF_SCREEN_H);
-    sprite->set_visible(ticks2action > 0 ? (ticks2action % 2) : true);
+
+    if (is_drop)
+    {
+        sprite->set_visible(ttl > DROP_BLINK_TIME || ttl % 4 < 2);
+    }
+    else {
+
+        sprite->set_visible(ticks2action > 0 ? (ticks2action % 2) : true);
+    }
     if (ticks2action > 0)
         sprite->set_scale(bn::fixed(2) - bn::fixed(ticks2action).division(30));
 }
 
 void item::raccogli()
 {
-    if (raccolto) return;
-    raccolto = true;
+    if (!active) return;
     g_dog->add_score(10);
-    chr_vy = SMALL_JUMP_VY;
+    chr_vy = MEDIUM_JUMP_VY;
     ticks2action = 30;
     switch (tipo)
     {
@@ -106,4 +129,20 @@ void item::raccogli()
     default:
         break;
     }
+}
+
+
+void item::drop_at(bn::fixed x, bn::fixed y)
+{
+    is_drop = true;
+    active = true;
+    ttl = DROP_LIFETIME;
+    chr_x = x;
+    chr_y = y;
+    chr_vx = ZERO;
+    chr_vy = BIG_JUMP_VY;
+    ticks2action = 0;
+    sprite->set_tiles(bn::sprite_items::items.tiles_item(), g_rng.get_int(10));
+    sprite->set_visible(true);
+
 }

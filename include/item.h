@@ -41,9 +41,13 @@ public:
     int      action = 0;
     uint8_t  tipo;
     uint16_t attributo;
-    bn::fixed spawn_x, spawn_y;
-    bool     raccolto = false;
 
+    bool is_drop = false;   // item lasciato da un nemico
+    bool active  = true;    // false = slot libero (solo per i drop)
+    int  ttl = 0;
+    int animAngle = 0;
+
+    bn::fixed spawn_x, spawn_y;
     explicit item(const item_def& def);
 
     virtual void update();
@@ -51,4 +55,5 @@ public:
 
     // Applica l'effetto (chiave/powerup/energia) e marca l'item come raccolto.
     void raccogli();
+    void drop_at(bn::fixed x, bn::fixed y);
 };

@@ -2,6 +2,7 @@
 #include "enemy.h"
 #include "bau.h"
 #include "dog.h"
+#include "item.h"
 #include "schemi.h"
 #include "healthbar.h"
 #include "bn_random.h"
@@ -12,6 +13,24 @@
 #include "bn_math.h"
 #include "bn_log.h"
 
+
+static void spawn_drop(bn::fixed x, bn::fixed y)
+{
+    item* it = nullptr;
+
+    // riusa un drop inattivo, altrimenti ne crea uno nuovo se c'è posto
+    for (item* i : *g_items)
+        if (i->is_drop && !i->active) { it = i; break; }
+
+    if (!it)
+    {
+        if (g_items->full()) return;
+        item_def def = { ITEM_TIPO_ENERGIA, 0, 0, 0 };
+        it = new item(def);
+        g_items->push_back(it);
+    }
+    it->drop_at(x, y);
+}
 
 enemy::enemy(const enemy_def& def)
 {
@@ -273,7 +292,7 @@ void enemy::update_attack()
     face_dog();
 
     if (has(ATTR_MELEE)) {
-        activeProj = ATTR_MELEE;
+        
     }
     else {
         fire(pick_projectile());
@@ -660,6 +679,9 @@ void enemy::die(int _dir)
     chr_vy = ENEMY_MEDIUM_JUMP_VY;
 
     sprite->set_visible(true);
+
+        // if (g_rng.get_int(100) < ENEMY_DROP_CHANCE)
+        spawn_drop(chr_x, chr_y - 8);
 }
 
 void enemy::update_death()
@@ -754,7 +776,6 @@ void enemy::fire(int16_t type)
         throw_fireball();
         return;
     default:
-        activeProj = type;  // durata massima in volo
         break;
     }
 

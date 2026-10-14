@@ -25,8 +25,8 @@
 #define MAX_BULLETS       8
 #define MAX_ENEMY_BOMBS   4
 #define MAX_ENEMIES       24
+#define MAX_ITEMS       16
 
-#define MAX_BONUSES       3
 
 #define MAX_CASSE 3
 #define PIATTAFORMA_X bn::fixed(400)   // coordinate fisse della piattaforma in alto: da adattare all'arena reale
@@ -35,3 +35,9 @@
 
 #define MAX_DOORS 4 
 #define ENEMY_RESPAWN_RANGE_X bn::fixed(260)
+
+// drop dei bonus item
+#define ENEMY_DROP_CHANCE  30    // percentuale
+#define DROP_LIFETIME      600   // frame prima che sparisca (10 s)
+#define DROP_BLINK_TIME    120
+#define DROP_HEAL          25

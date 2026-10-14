@@ -11,6 +11,7 @@
 #include "bn_log.h"
 #include "schemi.h"
 
+/*
 void live_obj::apply_friction()
 {
     if (chr_vx > ZERO) {
@@ -166,3 +167,4 @@ bool is_solid_at(bn::fixed x, bn::fixed y, int schema)
 
     return map.data[ty * map.columns + tx] == 1;
 }
+    */

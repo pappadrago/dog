@@ -56,21 +56,21 @@ bn::optional<healthbar> g_healthbar;
 
 
 
-   // Dissolvenza verso il nero (true) o dal nero (false).
-    // Usa il fade delle palette: agisce su tutti gli sprite e gli sfondi,
-    // senza dover abilitare il blending oggetto per oggetto.
-    void g_fade_screen(bool to_black)
+// Dissolvenza verso il nero (true) o dal nero (false).
+ // Usa il fade delle palette: agisce su tutti gli sprite e gli sfondi,
+ // senza dover abilitare il blending oggetto per oggetto.
+void g_fade_screen(bool to_black)
+{
+    static constexpr int FRAMES = 60;
+
+    for (int i = 1; i <= FRAMES; ++i)
     {
-        static constexpr int FRAMES = 60;
 
-        for (int i = 1; i <= FRAMES; ++i)
-        {
+        bn::fixed intensity = to_black ? bn::fixed(i) / FRAMES
+            : bn::fixed(FRAMES - i) / FRAMES;
 
-            bn::fixed intensity = to_black ? bn::fixed(i) / FRAMES
-                : bn::fixed(FRAMES - i) / FRAMES;
-
-            bn::bg_palettes::set_fade(bn::colors::black, intensity);
-            bn::sprite_palettes::set_fade(bn::colors::black, intensity);
-            bn::core::update();
-        }
+        bn::bg_palettes::set_fade(bn::colors::black, intensity);
+        bn::sprite_palettes::set_fade(bn::colors::black, intensity);
+        bn::core::update();
     }
+}

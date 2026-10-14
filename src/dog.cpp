@@ -108,7 +108,7 @@ void dog::update()
         salto_tenuto = true;
         salto_pieno = false;    // si sapra' solo all'apice (o al rilascio del tasto) se e' stato intero
         onGround = false;
-        chr_vy = JUMP_VY - bonus_salto;
+        chr_vy = BIG_JUMP_VY - bonus_salto;
         doppio_salto_disponibile = doppio_salto_acquisito;
 
         actionStacco->reset();
@@ -265,7 +265,7 @@ void dog::update()
 
         for (item* _item : *g_items)
         {
-            if (_item->raccolto) continue;
+            if (!_item->active || _item->ticks2action) continue;
             bool hit = check_collision_16(*_item->sprite);
             if (hit)
                 _item->raccogli();
@@ -369,11 +369,12 @@ void dog::update()
         polvere_sprite->set_vertical_flip(false);
         polvere_sprite->set_rotation_angle_safe(0);
         ground_pound_engaged = false;
-        if (wall_sliding)
+        if (wall_sliding){
             if (muro_lato == DIR_RIGHT)
                 dir = DIR_LEFT;
             else if (muro_lato == DIR_LEFT)
                 dir = DIR_RIGHT;
+        }
     }
     if (dash_ticks > 0)
     {

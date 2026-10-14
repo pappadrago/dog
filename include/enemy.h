@@ -87,8 +87,6 @@ public:
     uint8_t tipo = 0;
     uint16_t attributo = 0;
 
-    uint8_t   activeProj = 0;     // quale bit ATTR_* è in volo
-
     bn::fixed sight_range = 100;
     bn::fixed melee_range = 24;
     uint16_t  jump_period = 90; // frame tra due salti (STATIC_JUMP)
@@ -99,8 +97,6 @@ public:
     uint16_t  attack_cd = 0;
     uint16_t  jump_cd = 0;
 
-
-
     explicit enemy(const enemy_def& def);
 
     virtual void update();
@@ -109,7 +105,6 @@ public:
     void beHitByBark(int _dir, bn::fixed power = 0);
     void beHitByDog();
     void beHitByShockwave(int _dir);   // _dir: direzione in cui il nemico viene spinto (opposta al cane)
-
 
     void takeDamage(int damage);
 
