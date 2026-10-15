@@ -177,11 +177,6 @@ void bomb::update_explosion()
         return;
     }
 
-    // Placeholder grafico: la bomba si ingrandisce e sfarfalla.
-    // Sostituibile con un vero sprite/animazione di esplosione.
-    //bn::fixed elapsed(BOMB_EXPLOSION_TICKS - explosion_ticks);
-    //sprite->set_scale(bn::fixed(1) + elapsed.multiplication(bn::fixed(0.08)));
-    //sprite->set_visible(explosion_ticks % 3 != 0);
     if (!actionExplode->done()) {
         actionExplode->update();
     }

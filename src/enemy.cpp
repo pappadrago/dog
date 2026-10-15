@@ -377,14 +377,14 @@ namespace enemy_config {
 
 void enemy::throw_arrow()
 {
-    throw_aimed_projectile(ATTR_ARROW, enemy_config::ARROW_TILE_INDEX,
+    throw_aimed_projectile(BOMB_ARROW, enemy_config::ARROW_TILE_INDEX,
                            /*ignoreGravity=*/true, /*ignoreWalls=*/false,
                            enemy_config::ARROW_SPEED);
 }
 
 void enemy::throw_fireball()
 {
-    throw_aimed_projectile(ATTR_FIREBALL, enemy_config::FIREBALL_TILE_INDEX,
+    throw_aimed_projectile(BOMB_FIREBALL, enemy_config::FIREBALL_TILE_INDEX,
                            /*ignoreGravity=*/true, /*ignoreWalls=*/true,
                            enemy_config::FIREBALL_SPEED);
 }
