@@ -52,13 +52,16 @@ void item::update()
 {
     if (!active)
         return;
-    if (ticks2action > 0) {
+    update_physics();
+    update_graphics();
+}
+
+void item::update_physics(){
+ if (ticks2action > 0) {
         ticks2action--;
         if (ticks2action == 0)
         {
-            active = false;
-            sprite->set_visible(false);
-            sprite->remove_affine_mat(); 
+            hide_and_finish(); 
             return;
         }
     }
@@ -66,14 +69,21 @@ void item::update()
     {
         if (--ttl <= 0)
         {
-            active = false;
-            sprite->set_visible(false);
-            sprite->remove_affine_mat(); 
+            hide_and_finish(); 
             return;
         }
     }
     apply_gravity();
+}
 
+void item::hide_and_finish()
+{
+    sprite->set_visible(false);
+    sprite->remove_affine_mat();
+    active = false;
+}
+
+void item::update_graphics(){
     static constexpr bn::fixed ITEM_ACTIVATION_RANGE_X = 240;
     // congelato se lontano dal cane
     if (bn::abs(chr_x - g_dog->chr_x) > ITEM_ACTIVATION_RANGE_X)

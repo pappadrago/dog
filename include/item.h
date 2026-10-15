@@ -56,4 +56,9 @@ public:
     // Applica l'effetto (chiave/powerup/energia) e marca l'item come raccolto.
     void raccogli();
     void drop_at(bn::fixed x, bn::fixed y);
+
+    private:
+    void update_physics();
+    void update_graphics();
+    void hide_and_finish();
 };
