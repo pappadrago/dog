@@ -13,12 +13,13 @@
 #include "bn_math.h"
 #include "bn_log.h"
 
-
+// genera un nuovo bonus item e lo droppa nel mondo
 static void spawn_drop(bn::fixed x, bn::fixed y)
 {
     item* it = nullptr;
 
     // riusa un drop inattivo, altrimenti ne crea uno nuovo se c'è posto
+    // nel vettore g_items
     for (item* i : *g_items)
         if (i->is_drop && !i->active) { it = i; break; }
 
@@ -37,77 +38,35 @@ enemy::enemy(const enemy_def& def)
     tipo = def.tipo;
     attributo = def.attributo;
 
+    int N = 0;
+
     switch (tipo)
     {
     case enemy_tipo::MOVE_CHASE:
-    {
-        int N = 3 * 3;
-        sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 8, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
-
+        N = 3 * 3;
         break;
-    }
     case enemy_tipo::MOVE_CHASE_SHY:
-    {
-        int N = 7 * 3;
-        sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 8, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+         N = 7 * 3;
         break;
-    }
     case enemy_tipo::MOVE_PATROL:
-    {
-        int N = 2 * 3;
-        sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+        N = 2 * 3;
         break;
-    }
     case enemy_tipo::MOVE_STATIC:
-    {
-        int N = 5 * 3;
-        sprite = bn::sprite_items::enemies2.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies2.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-        // no weapon
-        max_vx = bn::fixed(1.0);
+        N = 5 * 3;
         break;
-    }
     case enemy_tipo::MOVE_STATIC_JUMP:
-    {
-        int N = 0;
-        sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 8, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-
+        N = 0;
+        break;
+    default: 
+        N = 1 * 3;
         break;
     }
 
-
-    default: // TIPO_NEMICO_GENERICO
-    {
-        int N = 3;
-        sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
-        actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
-        actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 3, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
-        break;
-    }
-    }
-
+    sprite = bn::sprite_items::enemies.create_sprite(chr_x, chr_y, 0);
+    actionStand = bn::create_sprite_animate_action_forever(
+        *sprite, 6, bn::sprite_items::enemies.tiles_item(), N + 1, N + 1);
+    actionWalk = bn::create_sprite_animate_action_forever(
+        *sprite, 3, bn::sprite_items::enemies.tiles_item(), N + 0, N + 1, N + 2, N + 1);
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
 
@@ -165,9 +124,10 @@ void enemy::update_physics()
     chr_vx += chr_accx;
     chr_vx = cap(chr_vx, max_vx);
     chr_x += chr_vx;
-    apply_map();
-    apply_gravity();
-
+    if(tipo != MOVE_GHOST && tipo != MOVE_GHOST_SHY){
+        apply_map();
+        apply_gravity();
+    }
     if (invulnerability > 0) invulnerability--;
 }
 
@@ -211,6 +171,8 @@ void enemy::update_movement()
     case MOVE_PATROL:       move_patrol();      break;
     case MOVE_CHASE:        move_chase();       break;
     case MOVE_CHASE_SHY:    move_chase_shy();   break;
+    case MOVE_GHOST:        move_ghost();       break;
+    case MOVE_GHOST_SHY:    move_ghost_shy();   break;
     case MOVE_MELEE:        move_melee();       break;
     default: break;
     }
@@ -255,7 +217,7 @@ void enemy::move_chase()
 {
     if (!dog_in_sight()|| g_dog->invulnerability) { chr_accx = 0; return; }
 
-    if (dist_to_dog() < melee_range) { chr_accx = 0; return; }
+    if (dist_to_dog() < chase_range) { chr_accx = 0; return; }
 
     if (jump_cd > 0) {
         jump_cd--;
@@ -271,10 +233,35 @@ void enemy::move_chase()
 
 void enemy::move_chase_shy()
 {
-    // Boo: si ferma se dog lo sta guardando, avanza solo se gli dà le spalle
+    // come Boo: si ferma se dog lo sta guardando, avanza solo se gli dà le spalle
     if (!dog_in_sight() || dog_is_looking_at_me()|| g_dog->invulnerability) { chr_accx = 0; chr_vx = 0; return; }
     move_chase();
 }
+
+
+void enemy::move_ghost()
+{
+    if (!dog_in_sight()|| g_dog->invulnerability) { chr_accx = 0; return; }
+
+    if (dist_to_dog() < chase_range) { chr_accx = 0; return; }
+
+    if (jump_cd > 0) {
+        jump_cd--;
+        if (jump_cd == 0) {
+            face_dog();
+            jump_cd = 30; // rendo il nemico più lento a seguire la direzione di dog, per rendere più facile la fuga
+        }
+    }
+    walk_towards(dir, bn::fixed(0.15));
+}
+
+void enemy::move_ghost_shy()
+{
+    // come Boo: si ferma se dog lo sta guardando, avanza solo se gli dà le spalle
+    if (!dog_in_sight() || dog_is_looking_at_me()|| g_dog->invulnerability) { chr_accx = 0; chr_vx = 0; return; }
+    move_ghost();
+}
+
 
 void enemy::move_melee()
 {

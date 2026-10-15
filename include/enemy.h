@@ -20,8 +20,10 @@ enum enemy_tipo : uint8_t
     MOVE_STATIC_JUMP,      // fermo, salta ogni tanto
     MOVE_PATROL,           // avanti/indietro entro patrol_range da home_x
     MOVE_CHASE,            // insegue sempre dog (entro sight_range)
-    MOVE_CHASE_SHY,        // stile Boo: insegue solo se dog NON lo guarda
-    MOVE_MELEE             // si avvicina fino a melee_range, poi si ferma e attacca
+    MOVE_CHASE_SHY,        // insegue solo se dog NON lo guarda
+    MOVE_MELEE,            // si avvicina fino a melee_range, poi si ferma e attacca
+    MOVE_GHOST,            // si avvicina passando attraverso i muri
+    MOVE_GHOST_SHY         // si avvicina passando attraverso i muri solo se dog NON lo guarda
 };
 
 // ---------- ATTRIBUTO = bitmask attacco/difese ----------
@@ -147,6 +149,8 @@ private:
     void move_chase();
     void move_chase_shy();
     void move_melee();
+    void move_ghost();
+    void move_ghost_shy();
     // helper
     bool  dog_in_sight() const;
     bool  dog_is_looking_at_me() const;

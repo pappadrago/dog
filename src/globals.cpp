@@ -9,13 +9,13 @@
 #include "game_timer.h"
 
 
-bn::random                             g_rng;
-bn::optional<bn::camera_ptr>           g_camera;
+bn::random g_rng;
+bn::optional<bn::camera_ptr> g_camera;
 
-bn::optional<bau>                      g_bau;
-bn::optional<bau> g_bau_carico;            // globals.cpp
-bn::optional<dog>                      g_dog;
-bn::optional<boss>                      g_boss;
+bn::optional<bau> g_bau;
+bn::optional<bau> g_bau_carico;  
+bn::optional<dog> g_dog;
+bn::optional<boss> g_boss;
 bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
 bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 bn::optional<game_timer> g_timer;
