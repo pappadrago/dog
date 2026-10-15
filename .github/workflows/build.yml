@@ -20,7 +20,7 @@ jobs:
 
       - name: Cache Butano engine
         id: cache-butano
-        uses: actions/cache@v4
+        uses: actions/cache@v5.1.0
         with:
           path: butano
           # Usa una chiave basata su un identificativo o un file di lock/versione, 
