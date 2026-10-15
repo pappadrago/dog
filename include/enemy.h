@@ -159,7 +159,7 @@ private:
     void  walk_towards(int d, bn::fixed accel);
     void  fire(int16_t proj_type);
     int16_t pick_projectile() const;
-    void throw_aimed_projectile(int8_t tipoProjec, uint8_t tileIndex,
+    void throw_aimed_projectile(uint8_t tipoProjec, uint8_t tileIndex,
                             bool ignoreGravity, bool ignoreWalls,
                             bn::fixed speed);
 };

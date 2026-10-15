@@ -389,7 +389,7 @@ void enemy::throw_fireball()
                            enemy_config::FIREBALL_SPEED);
 }
 
-void enemy::throw_aimed_projectile(u_int8_t tipoProjec, uint8_t tileIndex,
+void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t tileIndex,
                                    bool ignoreGravity, bool ignoreWalls,
                                    bn::fixed speed)
 {
