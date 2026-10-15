@@ -343,6 +343,13 @@ int main()
                     {
                         if ((e->attributo & enemy_attr::ATTR_RESPAWN) && e->def_origine && !da_rinascere.full())
                             da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
+                        if (g_healthbar->target == e) { 
+                            g_healthbar->target = nullptr; 
+                            g_healthbar->ticks = 0; 
+                            g_healthbar->sprite->set_visible(false); 
+                        }
+                        for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                            if (pm->nemico_agganciato == e) pm->nemico_agganciato = nullptr;                        
                         delete e;
                         g_enemies->erase(g_enemies->begin() + i);
                     }

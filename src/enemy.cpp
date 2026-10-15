@@ -156,9 +156,6 @@ void enemy::update_projectile()
         if (bomba->finished)
             bomba.reset();
     }
-
-
-
 }
 
 
