@@ -17,6 +17,11 @@
 #include "s1_lava.h"
 #include "s2_lava.h"
 
+#include "enemy.h"
+#include "s1_enemies.h"
+#include "s2_enemies.h"
+
+
 // Per aggiungere uno schema: includere s2.h e gli sfondi s2/s2fg,
 // aggiungere una riga qui sotto, un case nelle due create_* e alzare NUM_SCHEMI.
 static constexpr collision_map_info s_maps[NUM_SCHEMI] =
@@ -220,6 +225,22 @@ const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& cou
     case 2:
         count = schema2_piattaforme_mobili_count;
         return schema2_piattaforme_mobili;
+    default:
+        count = 0;
+        return nullptr;
+    }
+}
+
+const enemy_def* get_schema_enemies(int schema, int& count)
+{
+    switch (schema)
+    {
+    case 1:
+        count = schema1_enemies_count;
+        return schema1_enemies;
+    case 2:
+        count = schema2_enemies_count;
+        return schema2_enemies;
     default:
         count = 0;
         return nullptr;
