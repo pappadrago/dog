@@ -101,6 +101,11 @@ BN_CODE_IWRAM void live_obj::apply_map() {
         int ty1 = ((chr_y).integer() + box_halfdim.integer()) >> 4;
         int ty2 = ((chr_y).integer() - 0) >> 4;
 
+        if (ty1 < 0) ty1 = 0;
+        if (ty1 > map.rows - 1) ty1 = map.rows - 1;
+        if (ty2 < 0) ty2 = 0;
+        if (ty2 > map.rows - 1) ty2 = map.rows - 1;
+
         uint8_t tile_side1 = map.data[ty1 * map.columns + tx];
         uint8_t tile_side2 = map.data[ty2 * map.columns + tx];
         if ((tile_side1 == 1 || tile_side2 == 1))
@@ -119,7 +124,6 @@ BN_CODE_IWRAM void live_obj::apply_map() {
 
     // Rileva un muro adiacente indipendentemente dalla direzione di marcia: serve al wall jump,
     // che deve valere anche restando fermi contro il muro, non solo premendo verso di esso.
-// src/obj.cpp, dentro apply_map(), al posto del blocco muro_lato che avevi
     muro_lato = 0;
     {
         int cx = chr_x.integer();
