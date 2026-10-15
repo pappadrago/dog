@@ -423,7 +423,7 @@ void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t tileIndex,
     // L'angolo di rotazione del sprite segue la traiettoria:
     //   0° = rivolto a destra, quindi rotazione = -90° - angle.
     bomb_def def;
-    def.tipoProject = tipoProjec;
+    def.tipoProjec  = tipoProjec;
     def.x           = chr_x;
     def.y           = chr_y + enemy_config::SPAWN_Y_OFFSET;
     def.vx          = vx;
