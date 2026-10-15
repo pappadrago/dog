@@ -7,16 +7,32 @@ jobs:
     runs-on: ubuntu-latest
     container: devkitpro/devkitarm:latest
     steps:
+
+
+    
       - name: Dipendenze
         run: apt-get update && apt-get install -y python3 git make
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5.1.0
         with:
           path: dog
           submodules: recursive
 
-      - name: Butano (accanto al progetto)
-        run: git clone --depth 1 https://github.com/GValiente/butano.git butano
+      - name: Cache Butano engine
+        id: cache-butano
+        uses: actions/cache@v4
+        with:
+          path: butano
+          # Usa una chiave basata su un identificativo o un file di lock/versione, 
+          # oppure un prefisso fisso se vuoi aggiornarlo manualmente/settimanalmente.
+          key: butano-${{ runner.os }}-${{ hashFiles('butano/.git/refs/heads/main') }}
+          restore-keys: |
+            butano-${{ runner.os }}-
+
+      - name: Clone Butano (if not cached)
+        if: steps.cache-butano.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://github.com/GValiente/butano.git butano
 
       - name: Compila
         working-directory: dog
@@ -24,5 +40,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: rom
+          name: lillix
           path: dog/*.gba
