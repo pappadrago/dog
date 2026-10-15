@@ -42,7 +42,8 @@ enum enemy_attr : int16_t
     ATTR_RESPAWN = 1 << 9,
     ATTR_PATROL = 1 << 10,
     ATTR_BASH = 1 << 11,
-    ATTR_PROJ_MASK = ATTR_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL
+    ATTR_GRAVITY_ARROW = 1 << 12,
+    ATTR_PROJ_MASK = ATTR_ARROW |ATTR_GRAVITY_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL
     // bit 15 = segno di int16_t: usa solo bit 0..14
 };
 
@@ -82,6 +83,7 @@ public:
     void throw_bomb();
     void throw_shell();   // variante mortaio: arco alto, esplode al primo impatto
     void throw_arrow();
+    void throw_gravity_arrow();
     void throw_fireball();
 
     void melee();

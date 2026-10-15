@@ -375,6 +375,13 @@ namespace enemy_config {
     constexpr bn::fixed SPAWN_Y_OFFSET = bn::fixed(-4);
 }
 
+void enemy::throw_gravity_arrow()
+{
+    throw_aimed_projectile(BOMB_ARROW, enemy_config::ARROW_TILE_INDEX,
+                           /*ignoreGravity=*/false, /*ignoreWalls=*/false,
+                           enemy_config::ARROW_SPEED);
+}
+
 void enemy::throw_arrow()
 {
     throw_aimed_projectile(BOMB_ARROW, enemy_config::ARROW_TILE_INDEX,
@@ -573,6 +580,9 @@ void enemy::fire(int16_t type)
         return;
     case ATTR_ARROW:
         throw_arrow();
+        return;
+    case ATTR_GRAVITY_ARROW:
+        throw_gravity_arrow();
         return;
     case ATTR_FIREBALL:
         throw_fireball();
