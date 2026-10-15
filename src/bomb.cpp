@@ -25,12 +25,12 @@ bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounce
     actionExplode = bn::create_sprite_animate_action_once(
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
 
-    tipo = BOMB_BOMB;
+    tipoProjec = BOMB_BOMB;
 }
 
 bomb::bomb(const bomb_def& def)
 {
-    tipo = def.tipo;
+    tipoProjec = def.tipo;
     chr_x = def.x;
     chr_y = def.y;
     chr_vx = def.vx;
@@ -133,7 +133,7 @@ void bomb::update()
         g_dog->chr_vx = (g_dog->chr_x < chr_x) ? SMALL_VX_L : SMALL_VX_R;
         g_dog->chr_vy = SMALL_JUMP_VY;
         g_dog->invulnerability = 60;
-        if (tipo != BOMB_DAGGER) {
+        if (tipoProjec != BOMB_DAGGER) {
             hide_and_finish();
         }
         g_dog->dog_damage(3);
@@ -144,7 +144,7 @@ void bomb::update()
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
 
-    if (tipo == BOMB_DAGGER) {
+    if (tipoProjec == BOMB_DAGGER) {
         sprite->set_rotation_angle_safe(-dir * age << 4);
     }
 
