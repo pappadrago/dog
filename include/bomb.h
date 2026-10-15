@@ -49,7 +49,7 @@ private:
     int  max_bounces;
     int  bounces = 0;
     int  age = 0;
-    int ttl = 0;
+    int  ttl = 0;
     int  explosion_ticks = 0;
     bool exploded = false;
     void explode();
