@@ -23,7 +23,7 @@ enum bomb_tipo : uint8_t
 
 struct bomb_def
 {
-    u_int8_t tipo;
+    u_int8_t tipoProjec;
     bn::fixed x, y, vx, vy;
     bool ignoreGravity, ignoreWalls;
     int max_bounces, ttl;

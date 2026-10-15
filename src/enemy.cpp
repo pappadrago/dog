@@ -35,26 +35,26 @@ static void spawn_drop(bn::fixed x, bn::fixed y)
 
 enemy::enemy(const enemy_def& def)
 {
-    tipoProjec = def.tipoProjec;
+    tipo = def.tipo;
     attributo = def.attributo;
 
     int N = 0;
 
-    switch (tipoProjec)
+    switch (tipo)
     {
-    case enemy_tipoProjec::MOVE_CHASE:
+    case enemy_tipo::MOVE_CHASE:
         N = 3 * 3;
         break;
-    case enemy_tipoProjec::MOVE_CHASE_SHY:
+    case enemy_tipo::MOVE_CHASE_SHY:
          N = 7 * 3;
         break;
-    case enemy_tipoProjec::MOVE_PATROL:
+    case enemy_tipo::MOVE_PATROL:
         N = 2 * 3;
         break;
-    case enemy_tipoProjec::MOVE_STATIC:
+    case enemy_tipo::MOVE_STATIC:
         N = 5 * 3;
         break;
-    case enemy_tipoProjec::MOVE_STATIC_JUMP:
+    case enemy_tipo::MOVE_STATIC_JUMP:
         N = 0;
         break;
     default: 
@@ -124,7 +124,7 @@ void enemy::update_physics()
     chr_vx += chr_accx;
     chr_vx = cap(chr_vx, max_vx);
     chr_x += chr_vx;
-    if(tipoProjec != MOVE_GHOST && tipoProjec != MOVE_GHOST_SHY){
+    if(tipo != MOVE_GHOST && tipo != MOVE_GHOST_SHY){
         apply_map();
         apply_gravity();
     }
@@ -161,7 +161,7 @@ void enemy::update_projectile()
 
 void enemy::update_movement()
 {
-    switch (tipoProjec)
+    switch (tipo)
     {
     case MOVE_STATIC:       move_static();      break;
     case MOVE_STATIC_JUMP:  move_static_jump(); break;
@@ -280,7 +280,7 @@ void enemy::update_attack()
     }
 
     // per MOVE_MELEE attacca solo quando è in range
-    if (tipoProjec == MOVE_MELEE && dist_to_dog() > (has(ATTR_BASH)?chase_range:melee_range)) return;
+    if (tipo == MOVE_MELEE && dist_to_dog() > (has(ATTR_BASH)?chase_range:melee_range)) return;
 
     currentAction = ACTION_ATTACK;
     face_dog();
@@ -423,7 +423,7 @@ void enemy::throw_aimed_projectile(u_int8_t tipoProjec, uint8_t tileIndex,
     // L'angolo di rotazione del sprite segue la traiettoria:
     //   0° = rivolto a destra, quindi rotazione = -90° - angle.
     bomb_def def;
-    def.tipoProjec = tipoProjec;
+    def.tipo        = tipoProjec;
     def.x           = chr_x;
     def.y           = chr_y + enemy_config::SPAWN_Y_OFFSET;
     def.vx          = vx;

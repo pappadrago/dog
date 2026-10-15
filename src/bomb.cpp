@@ -30,7 +30,7 @@ bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounce
 
 bomb::bomb(const bomb_def& def)
 {
-    tipoProjec = def.tipo;
+    tipoProjec = def.tipoProjec;
     chr_x = def.x;
     chr_y = def.y;
     chr_vx = def.vx;
