@@ -137,11 +137,13 @@ namespace
             txt.push_back(char('0' + (value / div) % 10));
             div /= 10;
         }
+        
         return txt;
     }
 
     void draw_keys()
     {
+
         draw_right(s_keys_digits, HUD_KEYS_NUM_X, HUD_Y, padded(s_keys_shown, HUD_KEYS_DIGITS));
     }
 
@@ -150,10 +152,10 @@ namespace
         draw_right(s_life_digits, HUD_LIFE_NUM_X, HUD_Y, padded(s_life_shown, HUD_LIFE_DIGITS));
     }
 
-    void draw_score()
-    {
-        draw_right(s_score_digits, HUD_SCORE_NUM_X, HUD_Y, padded(s_score_shown, HUD_SCORE_DIGITS));
-    }
+    // void draw_score()
+    // {
+    //     draw_right(s_score_digits, HUD_SCORE_NUM_X, HUD_Y, padded(s_score_shown, HUD_SCORE_DIGITS));
+    // }
 
     void set_visible(bn::ivector<bn::sprite_ptr>& v, bool visible)
     {
@@ -166,8 +168,8 @@ void hud_reset()
 {
     s_life_label.clear();
     s_life_digits.clear();
-    s_score_label.clear();
-    s_score_digits.clear();
+    // s_score_label.clear();
+    // s_score_digits.clear();
 
     s_keys_label.clear();
     s_keys_digits.clear();
@@ -179,14 +181,14 @@ void hud_reset()
 void hud_update()
 {
     int life = g_dog->life;
-    int score = g_dog->score;
+    // int score = g_dog->score;
     int keys = g_dog->chiavi_richieste - g_dog->chiavi_raccolte;
 
     if (!s_generator)
         return;
 
     life = capzero(life, HUD_LIFE_MAX);
-    score = capzero(score, HUD_SCORE_MAX);
+    // score = capzero(score, HUD_SCORE_MAX);
     keys = capzero(keys, HUD_KEYS_MAX);
 
 
@@ -199,16 +201,16 @@ void hud_update()
 
         draw_left(s_keys_label, HUD_KEYS_LABEL_X, HUD_Y, "K:");
 
-        s_score_label.clear();
-        s_generator->set_right_alignment();
-        s_generator->generate(HUD_SCORE_LABEL_X, HUD_Y, "P:", s_score_label);
-        s_generator->set_left_alignment();
+        // s_score_label.clear();
+        // s_generator->set_right_alignment();
+        // s_generator->generate(HUD_SCORE_LABEL_X, HUD_Y, "P:", s_score_label);
+        // s_generator->set_left_alignment();
 
         s_life_shown = s_life_target = life;
-        s_score_shown = s_score_target = score;
+        // s_score_shown = s_score_target = score;
         s_keys_shown = s_keys_target = keys;
         draw_life();
-        draw_score();
+        // draw_score();
         draw_keys();
         s_hud_ready = true;
     }
@@ -218,7 +220,7 @@ void hud_update()
         s_flash = HUD_FLASH_FRAMES;
 
     s_life_target = life;
-    s_score_target = score;
+    // s_score_target = score;
     s_keys_target = keys;
 
     // Il contatore rincorre il valore reale; si rigenerano gli sprite solo se la cifra cambia
@@ -229,12 +231,12 @@ void hud_update()
         draw_life();
     }
 
-    int score_next = approach(s_score_shown, s_score_target);
-    if (score_next != s_score_shown)
-    {
-        s_score_shown = score_next;
-        draw_score();
-    }
+    // int score_next = approach(s_score_shown, s_score_target);
+    // if (score_next != s_score_shown)
+    // {
+    //     s_score_shown = score_next;
+    //     draw_score();
+    // }
 
     int keys_next = approach(s_keys_shown, s_keys_target);
     if (keys_next != s_keys_shown)
@@ -243,17 +245,21 @@ void hud_update()
         draw_keys();
     }
 
-
     // Lampeggio dell'energia: veloce dopo il danno, lento se quasi finita
+    constexpr int FLASH_FAST_PERIOD = 4;    // frames per on/off cycle (2 on, 2 off)
+    constexpr int FLASH_SLOW_PERIOD = 32;   // frames per on/off cycle (16 on, 16 off)
+
     bool life_visible = true;
+
     if (s_flash > 0)
     {
-        s_flash--;
-        life_visible = ((s_flash / 2) % 2) == 0;
+        --s_flash;
+        life_visible = (s_flash % FLASH_FAST_PERIOD) < (FLASH_FAST_PERIOD / 2);
     }
     else if (s_life_target > 0 && s_life_target <= HUD_LOW_LIFE)
     {
-        life_visible = ((s_hud_frame / 16) % 2) == 0;
+        life_visible = (s_hud_frame % FLASH_SLOW_PERIOD) < (FLASH_SLOW_PERIOD / 2);
     }
+
     set_visible(s_life_digits, life_visible);
 }

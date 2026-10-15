@@ -24,10 +24,13 @@ bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounce
     int B = 9;
     actionExplode = bn::create_sprite_animate_action_once(
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
+
+    tipo = BOMB_BOMB;
 }
 
 bomb::bomb(const bomb_def& def)
 {
+    tipo = def.tipo;
     chr_x = def.x;
     chr_y = def.y;
     chr_vx = def.vx;
@@ -44,12 +47,29 @@ bomb::bomb(const bomb_def& def)
 
     if (def.angle != 0)
         sprite->set_rotation_angle_safe(def.angle);
-    sprite->set_bg_priority(1);
+    sprite->set_bg_priority(0);
     sprite->set_camera(g_camera);
 
     int B = 9;
     actionExplode = bn::create_sprite_animate_action_once(
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
+}
+
+namespace bomb_config {
+    constexpr bn::fixed GROUND_BOUNCE_DAMPING = bn::fixed(0.75); // energia persa al rimbalzo al suolo
+    constexpr bn::fixed WALL_BOUNCE_DAMPING = bn::fixed(0.5);  // energia persa al rimbalzo laterale
+    constexpr int         DOG_INVULNERABILITY = 60;             // frame di i-frames dopo un colpo
+    constexpr int         DOG_Damage = 3;              // danno base della bomba
+    constexpr int         FUSE_BLINK_TICKS = 30;             // soglia "miccia accesa"
+}
+
+void bomb::hide_and_finish()
+{
+
+    sprite->set_visible(false);
+    sprite->remove_affine_mat();
+
+    finished = true;
 }
 
 void bomb::update()
@@ -65,8 +85,7 @@ void bomb::update()
     if (ttl > 0) {
         ttl--;
         if (ttl == 0) {
-            sprite->set_visible(false);
-            finished = true;
+            hide_and_finish();
             return;
         }
     }
@@ -114,17 +133,20 @@ void bomb::update()
         g_dog->chr_vx = (g_dog->chr_x < chr_x) ? SMALL_VX_L : SMALL_VX_R;
         g_dog->chr_vy = SMALL_JUMP_VY;
         g_dog->invulnerability = 60;
-        sprite->set_visible(false);
-        finished = true;
+        if (tipo != BOMB_DAGGER) {
+            hide_and_finish();
+        }
         g_dog->dog_damage(3);
     }
-
-
 
 
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
+
+    if (tipo == BOMB_DAGGER) {
+        sprite->set_rotation_angle_safe(-dir * age << 4);
+    }
 
     // dopo l'ultimo rimbalzo la bomba lampeggia (miccia accesa)
     if (ttl > 0 && ttl < 30)

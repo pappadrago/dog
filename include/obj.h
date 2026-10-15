@@ -47,7 +47,6 @@ public:
     int life = START_LIFE;
     bn::fixed max_vx = bn::fixed(1.0);
 
-
     bool atterrato_ora = false;           // true solo nel frame esatto in cui tocca terra
     bn::fixed velocita_atterraggio = ZERO;   // chr_vy un istante prima di essere azzerata
     bool testata_ora = false;

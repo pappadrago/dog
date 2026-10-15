@@ -82,13 +82,16 @@ public:
     void throw_arrow();
     void throw_fireball();
 
+    void melee();
+
     bn::optional<bn::sprite_animate_action<10>> actionMelee;
 
     uint8_t tipo = 0;
     uint16_t attributo = 0;
 
-    bn::fixed sight_range = 100;
+    bn::fixed sight_range = 110;
     bn::fixed melee_range = 24;
+    bn::fixed chase_range = 64;
     uint16_t  jump_period = 90; // frame tra due salti (STATIC_JUMP)
     uint16_t  attack_period = 120;// frame tra due attacchi
 
@@ -149,8 +152,10 @@ private:
     bool  dog_is_looking_at_me() const;
     bn::fixed dist_to_dog() const;
     void  face_dog();
-    void  walk_towards(int d, bn::fixed accel, bn::fixed vmax);
+    void  walk_towards(int d, bn::fixed accel);
     void  fire(int16_t proj_type);
     int16_t pick_projectile() const;
-
+void throw_aimed_projectile(int16_t tipo, uint8_t tileIndex,
+                            bool ignoreGravity, bool ignoreWalls,
+                            bn::fixed speed);
 };
