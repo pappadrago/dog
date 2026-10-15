@@ -26,7 +26,7 @@ static void spawn_drop(bn::fixed x, bn::fixed y)
     if (!it)
     {
         if (g_items->full()) return;
-        item_def def = { ITEM_tipoProjectipoProjec_ENERGIA, 0, 0, 0 };
+        item_def def = { ITEM_TIPO_ENERGIA, 0, 0, 0 };
         it = new item(def);
         g_items->push_back(it);
     }

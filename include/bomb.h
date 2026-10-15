@@ -36,7 +36,7 @@ class bomb : public live_obj
 {
 public:
     bool finished = false;
-    u_int8_t tipo;
+    u_int8_t tipoProjec;
     bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int max_bounces = BOMB_MAX_BOUNCES);
 
     explicit bomb(const bomb_def& def);
