@@ -1,5 +1,9 @@
 #include "globals.h"
-
+#include "bn_core.h"
+#include "bn_colors.h"
+#include "bn_bg_palettes.h"
+#include "bn_sprite_palette_ptr.h"
+#include "bn_vector.h"
 #include "bau.h"
 #include "enemy.h"
 #include "item.h"
@@ -7,6 +11,8 @@
 #include "boss.h"
 #include "piattaforma.h"
 #include "game_timer.h"
+
+
 
 
 bn::random g_rng;
@@ -73,4 +79,47 @@ void g_fade_screen(bool to_black)
         bn::sprite_palettes::set_fade(bn::colors::black, intensity);
         bn::core::update();
     }
+}
+
+#include "bn_sprite_items_weapons.h"
+#include "bn_sprite_items_enemies.h"
+#include "bn_sprite_items_enemies2.h"
+#include "bn_sprite_items_items.h"
+#include "bn_sprite_items_doors.h"
+#include "bn_sprite_items_enemies2.h"
+
+template<typename Step>
+void fade_screen_except_dog(bool to_black, Step&& step)
+{
+    static constexpr int FRAMES = 120;
+
+    // Una palette_ptr per ogni palette sprite da dissolvere (create_palette riusa quelle già in VRAM).
+    // La palette di fox1632 (dog) NON è in lista.
+    bn::vector<bn::sprite_palette_ptr, 10> palettes;
+    palettes.push_back(bn::sprite_items::enemies.palette_item().create_palette());
+    palettes.push_back(bn::sprite_items::enemies2.palette_item().create_palette());
+    palettes.push_back(bn::sprite_items::weapons.palette_item().create_palette());
+    palettes.push_back(bn::sprite_items::items.palette_item().create_palette());
+    palettes.push_back(bn::sprite_items::doors.palette_item().create_palette());
+
+    for (int i = 1; i <= FRAMES; ++i)
+    {
+        step();
+
+        bn::fixed intensity = to_black ? bn::fixed(i) / FRAMES
+                                       : bn::fixed(FRAMES - i) / FRAMES;
+
+        bn::bg_palettes::set_fade(bn::colors::black, intensity);   // tutti gli sfondi
+        for (bn::sprite_palette_ptr& p : palettes)
+            p.set_fade(bn::colors::black, intensity);
+
+        g_dog->sprite->set_visible(true);   // evita che il lampeggio da invulnerabilità lo nasconda
+
+        bn::core::update();
+    }
+}
+
+void fade_screen_except_dog(bool to_black)
+{
+    fade_screen_except_dog(to_black, []() {});
 }

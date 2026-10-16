@@ -75,7 +75,7 @@ void dog::update()
     // produce il comportamento corretto
     sprite->set_bg_priority(1);
 
-    if(ticks2anotherBau>0)
+    if (ticks2anotherBau > 0)
         ticks2anotherBau--;
 
     // --- Timer di tolleranza ---
@@ -369,7 +369,7 @@ void dog::update()
         polvere_sprite->set_vertical_flip(false);
         polvere_sprite->set_rotation_angle_safe(0);
         ground_pound_engaged = false;
-        if (wall_sliding){
+        if (wall_sliding) {
             if (muro_lato == DIR_RIGHT)
                 dir = DIR_LEFT;
             else if (muro_lato == DIR_LEFT)
@@ -482,11 +482,15 @@ void dog::update_animations() {
 
 void dog::dog_damage(int amount)
 {
-    actionColpito->reset();
-    colpito_anim_ticks = COLPITO_ANIM_TICKS;
-    life -= amount;
-    if (life < 0)
-        life = 0;
+    if (life > 0) {
+        actionColpito->reset();
+        colpito_anim_ticks = COLPITO_ANIM_TICKS;
+        life -= amount;
+        if (life <= 0) {
+            life = 0;
+            fade_screen_except_dog(true);
+        }
+    }
 }
 
 void dog::applica_powerup(uint16_t attributo)

@@ -82,3 +82,4 @@ extern bn::optional<healthbar> g_healthbar;
 
 
 void g_fade_screen(bool to_black);
+void fade_screen_except_dog(bool to_black);
