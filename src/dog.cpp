@@ -488,7 +488,6 @@ void dog::dog_damage(int amount)
         life -= amount;
         if (life <= 0) {
             life = 0;
-            fade_screen_except_dog(true);
         }
     }
 }

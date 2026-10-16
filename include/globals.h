@@ -12,7 +12,7 @@
 #include "bn_keypad.h"
 #include "bn_camera_ptr.h"
 #include "bn_music_items.h"
-
+#include "bn_sprite_text_generator.h"
 #include "game_constants.h"
 #include "math.h"
 #include "bau.h"
@@ -82,4 +82,4 @@ extern bn::optional<healthbar> g_healthbar;
 
 
 void g_fade_screen(bool to_black);
-void fade_screen_except_dog(bool to_black);
+void fade_screen_except_dog(bool to_black, bn::sprite_text_generator& text_generator);

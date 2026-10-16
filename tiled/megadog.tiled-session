@@ -6,7 +6,7 @@
     "file.lastUsedOpenFilter": "File Tileset Tiled (*.tsx *.xml)",
     "fileStates": {
         "/home/kids/gba/assets/farmer story bg.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 2,
             "scaleInEditor": 3
         },
         "Megadog_s1.tmx": {
@@ -15,6 +15,14 @@
             "viewCenter": {
                 "x": 815.5,
                 "y": 96.5
+            }
+        },
+        "megadog_s1.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1018,
+                "y": 299
             }
         }
     },
@@ -25,11 +33,13 @@
     "map.width": 96,
     "openFiles": [
         "Megadog_s1.tmx",
-        "/home/kids/gba/assets/farmer story bg.tsx"
+        "/home/kids/gba/assets/farmer story bg.tsx",
+        "megadog_s1.tmx"
     ],
     "project": "megadog.tiled-project",
     "recentFiles": [
+        "Megadog_s1.tmx",
         "/home/kids/gba/assets/farmer story bg.tsx",
-        "Megadog_s1.tmx"
+        "megadog_s1.tmx"
     ]
 }

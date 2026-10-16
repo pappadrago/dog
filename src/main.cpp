@@ -200,262 +200,295 @@ int main()
 
     //bn::music_items::qwak.play(0.25);
 
-    dog_selection_screen(text_generator);
+    while (true) {
+        dog_selection_screen(text_generator);
+        // Costruzione oggetti di gioco in ordine di dipendenza
+        g_camera.emplace(bn::camera_ptr::create(0, 0));
+        g_bau.emplace();
+        g_bau_carico.emplace();
+        g_enemies.emplace();
+        g_items.emplace();
+        g_piattaforme.emplace();
+        g_lava.emplace();
+        g_timer.emplace();
+        g_dog.emplace();
+        g_piattaforme_mobili.emplace();
+        g_healthbar.emplace();
 
-    // Costruzione oggetti di gioco in ordine di dipendenza
-    g_camera.emplace(bn::camera_ptr::create(0, 0));
-    g_bau.emplace();
-    g_bau_carico.emplace();
-    g_enemies.emplace();
-    g_items.emplace();
-    g_piattaforme.emplace();
-    g_lava.emplace();
-    g_timer.emplace();
-    g_dog.emplace();
-    g_piattaforme_mobili.emplace();
-    g_healthbar.emplace();
+        g_schema = 1;
+        int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
+        bool game_over = false;
 
-    g_schema = 1;
-    int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
-
-    while (true)
-    {
-        // ------------------------------------------------------------
-        // Caricamento dello schema corrente
-        // ------------------------------------------------------------
-        // Sfondi dello schema: parallasse (bg0, bg1), livello tile e primo piano
-        bn::regular_bg_ptr bg0 = create_schema_bg0(g_schema);
-        bn::regular_bg_ptr bg1 = create_schema_bg1(g_schema);
-        bg0.set_priority(3);
-        bg1.set_priority(3);
-
-        bn::regular_bg_ptr foregroundfg = create_schema_foreground(g_schema);
-
-        foregroundfg.set_priority(0);
-
-        carica_collisione_schema(g_schema);   // PRIMA di tutto: porte/nemici/item/piattaforme ne dipendono
-
-        static bn::unique_ptr<platform_map> plat_map;
-        plat_map.reset(new platform_map(get_schema_platform_item(g_schema)));
-
-        bn::regular_bg_item item_scrivibile(
-            get_schema_platform_item(g_schema).tiles_item(),
-            get_schema_platform_item(g_schema).palette_item(),
-            plat_map->map_item);
-        bn::regular_bg_ptr foreground = item_scrivibile.create_bg(0, 0);
-        foreground.set_priority(2);
-
-        // Porte dello schema
-        const door_list& dl = get_schema_doors(g_schema);
-        bn::vector<door*, MAX_DOORS> doors;
-        for (int i = 0; i < dl.count; ++i)
-            doors.push_back(new door(dl.data[i]));
-
-        bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
-
-        // Il cane compare sopra la porta di arrivo
-        if (arrival_door >= 0 && arrival_door < dl.count)
+        while (!game_over)
         {
-            g_dog->chr_x = bn::fixed(dl.data[arrival_door].x);
-            g_dog->chr_y = bn::fixed(dl.data[arrival_door].y);
-            g_dog->chr_vx = ZERO;
-            g_dog->chr_vy = ZERO;
-            g_dog->invulnerability = 60;   // i nemici nascono a caso: un attimo di respiro
-        }
+            // ------------------------------------------------------------
+            // Caricamento dello schema corrente
+            // ------------------------------------------------------------
+            // Sfondi dello schema: parallasse (bg0, bg1), livello tile e primo piano
+            bn::regular_bg_ptr bg0 = create_schema_bg0(g_schema);
+            bn::regular_bg_ptr bg1 = create_schema_bg1(g_schema);
+            bg0.set_priority(3);
+            bg1.set_priority(3);
 
-        // Spawn nemici
-        {
-            int n_enemies = 0;
-            const enemy_def* edefs = get_schema_enemies(g_schema, n_enemies);
+            bn::regular_bg_ptr foregroundfg = create_schema_foreground(g_schema);
 
-            for (int i = 0; i < n_enemies; ++i) {
-                enemy* new_enemy = new enemy(edefs[i]);
-                new_enemy->def_origine = &edefs[i];
-                g_enemies->push_back(new_enemy);
+            foregroundfg.set_priority(0);
 
-            }
-        }
-        // Spawn oggetti
-        {
-            int n_items = 0;
-            const item_def* defs = get_schema_items(g_schema, n_items);
+            carica_collisione_schema(g_schema);   // PRIMA di tutto: porte/nemici/item/piattaforme ne dipendono
 
-            g_dog->chiavi_raccolte = 0;
-            g_dog->chiavi_richieste = 0;
+            static bn::unique_ptr<platform_map> plat_map;
+            plat_map.reset(new platform_map(get_schema_platform_item(g_schema)));
 
-            for (int i = 0; i < n_items; ++i) {
-                item* new_item = new item(defs[i]);
-                g_items->push_back(new_item);
-                if (defs[i].tipo == ITEM_TIPO_CHIAVE)
-                    g_dog->chiavi_richieste++;
-            }
-        }
-        {
-            int n_piattaforme = 0;
-            const piattaforma_def* pdefs = get_schema_piattaforme(g_schema, n_piattaforme);
-            for (int i = 0; i < n_piattaforme; i++)
-                g_piattaforme->push_back(new piattaforma(pdefs[i], *plat_map, foreground.map()));
-        }
-        {
-            int n_lava = 0;
-            const lava_zona_def* ldefs = get_schema_lava(g_schema, n_lava);
-            for (int i = 0; i < n_lava; i++)
-                g_lava->push_back(new lava_zona(ldefs[i], *plat_map, foreground.map()));
-        }
-        {
-            int n = 0;
-            const piattaforma_mobile_def* defs = get_schema_piattaforme_mobili(g_schema, n);
-            for (int i = 0; i < n; i++)
-                g_piattaforme_mobili->push_back(new piattaforma_mobile(defs[i]));
-        }
-        update_text_clear();
+            bn::regular_bg_item item_scrivibile(
+                get_schema_platform_item(g_schema).tiles_item(),
+                get_schema_platform_item(g_schema).palette_item(),
+                plat_map->map_item);
+            bn::regular_bg_ptr foreground = item_scrivibile.create_bg(0, 0);
+            foreground.set_priority(2);
 
-        update_camera(bg0, bg1, foreground, foregroundfg);
+            // Porte dello schema
+            const door_list& dl = get_schema_doors(g_schema);
+            bn::vector<door*, MAX_DOORS> doors;
+            for (int i = 0; i < dl.count; ++i)
+                doors.push_back(new door(dl.data[i]));
 
-        // ------------------------------------------------------------
-        // Loop dello schema: termina quando il cane usa una porta
-        // ------------------------------------------------------------
-        const door_info* used_door = nullptr;
+            bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
 
-        //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
-
-        // Un frame di gioco (senza bn::core::update)
-        auto game_step = [&]()
+            // Il cane compare sopra la porta di arrivo
+            if (arrival_door >= 0 && arrival_door < dl.count)
             {
-                for (piattaforma* p : *g_piattaforme)
-                    p->update();
+                g_dog->chr_x = bn::fixed(dl.data[arrival_door].x);
+                g_dog->chr_y = bn::fixed(dl.data[arrival_door].y);
+                g_dog->chr_vx = ZERO;
+                g_dog->chr_vy = ZERO;
+                g_dog->invulnerability = 60;   // i nemici nascono a caso: un attimo di respiro
+            }
 
-                for (piattaforma_mobile* pm : *g_piattaforme_mobili)
-                    pm->muovi();
+            // Spawn nemici
+            {
+                int n_enemies = 0;
+                const enemy_def* edefs = get_schema_enemies(g_schema, n_enemies);
 
-                for (piattaforma_mobile* pm : *g_piattaforme_mobili)
-                    pm->trasporta_se_agganciato();
+                for (int i = 0; i < n_enemies; ++i) {
+                    enemy* new_enemy = new enemy(edefs[i]);
+                    new_enemy->def_origine = &edefs[i];
+                    g_enemies->push_back(new_enemy);
 
-                g_dog->update();
-                for (enemy* e : *g_enemies)
-                    e->update();
-                g_healthbar->update();
+                }
+            }
+            // Spawn oggetti
+            {
+                int n_items = 0;
+                const item_def* defs = get_schema_items(g_schema, n_items);
 
-                for (int i = g_enemies->size() - 1; i >= 0; --i)
+                g_dog->chiavi_raccolte = 0;
+                g_dog->chiavi_richieste = 0;
+
+                for (int i = 0; i < n_items; ++i) {
+                    item* new_item = new item(defs[i]);
+                    g_items->push_back(new_item);
+                    if (defs[i].tipo == ITEM_TIPO_CHIAVE)
+                        g_dog->chiavi_richieste++;
+                }
+            }
+            {
+                int n_piattaforme = 0;
+                const piattaforma_def* pdefs = get_schema_piattaforme(g_schema, n_piattaforme);
+                for (int i = 0; i < n_piattaforme; i++)
+                    g_piattaforme->push_back(new piattaforma(pdefs[i], *plat_map, foreground.map()));
+            }
+            {
+                int n_lava = 0;
+                const lava_zona_def* ldefs = get_schema_lava(g_schema, n_lava);
+                for (int i = 0; i < n_lava; i++)
+                    g_lava->push_back(new lava_zona(ldefs[i], *plat_map, foreground.map()));
+            }
+            {
+                int n = 0;
+                const piattaforma_mobile_def* defs = get_schema_piattaforme_mobili(g_schema, n);
+                for (int i = 0; i < n; i++)
+                    g_piattaforme_mobili->push_back(new piattaforma_mobile(defs[i]));
+            }
+            update_text_clear();
+
+            update_camera(bg0, bg1, foreground, foregroundfg);
+
+            // ------------------------------------------------------------
+            // Loop dello schema: termina quando il cane usa una porta
+            // ------------------------------------------------------------
+            const door_info* used_door = nullptr;
+
+            //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
+
+            // Un frame di gioco (senza bn::core::update)
+            auto game_step = [&]()
                 {
-                    enemy* e = (*g_enemies)[i];
-                    if (e->distrutto)
+                    for (piattaforma* p : *g_piattaforme)
+                        p->update();
+
+                    for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                        pm->muovi();
+
+                    for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                        pm->trasporta_se_agganciato();
+
+                    g_dog->update();
+                    for (enemy* e : *g_enemies)
+                        e->update();
+                    g_healthbar->update();
+
+                    for (int i = g_enemies->size() - 1; i >= 0; --i)
                     {
-                        if ((e->attributo & enemy_attr::ATTR_RESPAWN) && e->def_origine && !da_rinascere.full())
-                            da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
-                        if (g_healthbar->target == e) { 
-                            g_healthbar->target = nullptr; 
-                            g_healthbar->ticks = 0; 
-                            g_healthbar->sprite->set_visible(false); 
+                        enemy* e = (*g_enemies)[i];
+                        if (e->distrutto)
+                        {
+                            if ((e->attributo & enemy_attr::ATTR_RESPAWN) && e->def_origine && !da_rinascere.full())
+                                da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
+                            if (g_healthbar->target == e) {
+                                g_healthbar->target = nullptr;
+                                g_healthbar->ticks = 0;
+                                g_healthbar->sprite->set_visible(false);
+                            }
+                            for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                                if (pm->nemico_agganciato == e) pm->nemico_agganciato = nullptr;
+                            delete e;
+                            g_enemies->erase(g_enemies->begin() + i);
                         }
-                        for (piattaforma_mobile* pm : *g_piattaforme_mobili)
-                            if (pm->nemico_agganciato == e) pm->nemico_agganciato = nullptr;                        
-                        delete e;
-                        g_enemies->erase(g_enemies->begin() + i);
                     }
-                }
 
-                // Respawn: quando il punto di nascita è fuori portata da dog
-                for (int i = da_rinascere.size() - 1; i >= 0; --i)
-                {
-                    const enemy_def* d = da_rinascere[i];
-                    if (!g_enemies->full() &&
-                        bn::abs(bn::fixed(d->x) - g_dog->chr_x) > ENEMY_RESPAWN_RANGE_X)
+                    // Respawn: quando il punto di nascita è fuori portata da dog
+                    for (int i = da_rinascere.size() - 1; i >= 0; --i)
                     {
-                        enemy* nuovo = new enemy(*d);
-                        nuovo->def_origine = d;
-                        g_enemies->push_back(nuovo);
-                        da_rinascere.erase(da_rinascere.begin() + i);
-                    }
-                }
-
-
-                for (piattaforma_mobile* pm : *g_piattaforme_mobili)
-                    pm->verifica_nuovo_aggancio();
-
-                g_dog->update_animations();
-
-                g_bau->update();
-                g_bau_carico->update();
-
-                if (g_boss.has_value())
-                    g_boss->update();
-
-                for (item* e : *g_items)
-                    e->update();
-                for (door* d : doors)
-                    if (d->update())
-                        used_door = &d->info();
-                for (lava_zona* z : *g_lava)
-                    z->update();
-
-                for (int i = g_piattaforme_mobili->size() - 1; i >= 0; --i)
-                    if ((*g_piattaforme_mobili)[i]->distrutta)
-                    {
-                        delete (*g_piattaforme_mobili)[i];
-                        g_piattaforme_mobili->erase(g_piattaforme_mobili->begin() + i);
+                        const enemy_def* d = da_rinascere[i];
+                        if (!g_enemies->full() &&
+                            bn::abs(bn::fixed(d->x) - g_dog->chr_x) > ENEMY_RESPAWN_RANGE_X)
+                        {
+                            enemy* nuovo = new enemy(*d);
+                            nuovo->def_origine = d;
+                            g_enemies->push_back(nuovo);
+                            da_rinascere.erase(da_rinascere.begin() + i);
+                        }
                     }
 
-                update_camera(bg0, bg1, foreground, foregroundfg);
 
-                update_text_tick();
-                hud_update();
+                    for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+                        pm->verifica_nuovo_aggancio();
 
-                // BN_LOG("cpu ", bn::core::last_cpu_usage());
-                // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
-                //  BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
-            };
+                    g_dog->update_animations();
 
-        // Fade-in a gioco attivo: gli sprite prendono la posizione giusta
-        // (nel costruttore sono tutti creati nello stesso punto)
-        if (arrival_door >= 0)
-            fade_screen(false, game_step);
+                    g_bau->update();
+                    g_bau_carico->update();
 
-        while (!used_door)
-        {
-            game_step();
-            bn::core::update();
+                    if (g_boss.has_value())
+                        g_boss->update();
+
+                    for (item* e : *g_items)
+                        e->update();
+                    for (door* d : doors)
+                        if (d->update())
+                            used_door = &d->info();
+                    for (lava_zona* z : *g_lava)
+                        z->update();
+
+                    for (int i = g_piattaforme_mobili->size() - 1; i >= 0; --i)
+                        if ((*g_piattaforme_mobili)[i]->distrutta)
+                        {
+                            delete (*g_piattaforme_mobili)[i];
+                            g_piattaforme_mobili->erase(g_piattaforme_mobili->begin() + i);
+                        }
+
+                    update_camera(bg0, bg1, foreground, foregroundfg);
+
+                    update_text_tick();
+                    hud_update();
+
+                    // BN_LOG("cpu ", bn::core::last_cpu_usage());
+                    // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
+                    //  BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
+                };
+
+            // Fade-in a gioco attivo: gli sprite prendono la posizione giusta
+            // (nel costruttore sono tutti creati nello stesso punto)
+            if (arrival_door >= 0)
+                fade_screen(false, game_step);
+
+            while (!used_door && !game_over)
+            {
+                game_step();
+                bn::core::update();
+                if (g_dog->life <= 0)
+                    game_over = true;
+            }
+
+            // ------------------------------------------------------------
+            // Transizione verso lo schema di destinazione
+            // ------------------------------------------------------------
+
+            if (game_over)
+                fade_screen_except_dog(true, text_generator);
+            else
+                fade_screen(true);
+
+            for (enemy* e : *g_enemies)
+                delete e;
+            g_enemies->clear();
+
+            for (item* i : *g_items)
+                delete i;
+            g_items->clear();
+
+            for (door* d : doors)
+                delete d;
+            doors.clear();
+
+            for (piattaforma* p : *g_piattaforme)
+                delete p;
+            g_piattaforme->clear();
+
+            for (piattaforma_mobile* p : *g_piattaforme_mobili)
+                delete p;
+            g_piattaforme_mobili->clear();
+
+
+            for (lava_zona* z : *g_lava)
+                delete z;
+            g_lava->clear();
+
+            // eventuale bau in volo
+            g_bau->ticks = 0;
+            g_bau->sprite->set_visible(false);
+
+            g_bau_carico->ticks = 0;
+            g_bau_carico->sprite->set_visible(false);
+
+            if (game_over)
+                break;   // bg0, bg1, foreground... vengono distrutti qui
+            g_schema = used_door->dest_schema;
+            arrival_door = used_door->dest_door;
+            // foreground e foregroundfg vengono distrutti a fine iterazione e ricreati sopra
         }
+                // --- teardown partita ---
+        hud_reset();
+        update_text_clear();
+        g_boss.reset();
+        g_shake_ticks = 0;
 
-        // ------------------------------------------------------------
-        // Transizione verso lo schema di destinazione
-        // ------------------------------------------------------------
-        fade_screen(true);
+        // ordine inverso rispetto alla creazione; la camera per ultima
+        // perché gli sprite ne tengono un riferimento
+        g_healthbar.reset();
+        g_piattaforme_mobili.reset();
+        g_dog.reset();
+        g_timer.reset();
+        g_lava.reset();
+        g_piattaforme.reset();
+        g_items.reset();
+        g_enemies.reset();
+        g_bau_carico.reset();
+        g_bau.reset();
+        g_camera.reset();
 
-        for (enemy* e : *g_enemies)
-            delete e;
-        g_enemies->clear();
-
-        for (item* i : *g_items)
-            delete i;
-        g_items->clear();
-
-        for (door* d : doors)
-            delete d;
-        doors.clear();
-
-        for (piattaforma* p : *g_piattaforme)
-            delete p;
-        g_piattaforme->clear();
-
-        for (piattaforma_mobile* p : *g_piattaforme_mobili)
-            delete p;
-        g_piattaforme_mobili->clear();
-
-
-        for (lava_zona* z : *g_lava)
-            delete z;
-        g_lava->clear();
-
-        // eventuale bau in volo
-        g_bau->ticks = 0;
-        g_bau->sprite->set_visible(false);
-
-        g_bau_carico->ticks = 0;
-        g_bau_carico->sprite->set_visible(false);
-
-        g_schema = used_door->dest_schema;
-        arrival_door = used_door->dest_door;
-        // foreground e foregroundfg vengono distrutti a fine iterazione e ricreati sopra
+        // toglie il nero lasciato dal fade
+        bn::bg_palettes::set_fade_intensity(0);
+        bn::sprite_palettes::set_fade_intensity(0);
     }
 }
