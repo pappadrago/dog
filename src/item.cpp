@@ -78,12 +78,14 @@ void item::update_physics(){
 
 void item::hide_and_finish()
 {
-    sprite->set_visible(false);
     sprite->remove_affine_mat();
+    sprite->set_visible(false);
     active = false;
 }
 
 void item::update_graphics(){
+    if(!active)
+        return;
     static constexpr bn::fixed ITEM_ACTIVATION_RANGE_X = 240;
     // congelato se lontano dal cane
     if (bn::abs(chr_x - g_dog->chr_x) > ITEM_ACTIVATION_RANGE_X)
@@ -94,7 +96,7 @@ void item::update_graphics(){
     bn::fixed dx = bn::degrees_lut_cos_safe(animAngle << 2) * 6 - 2;
     sprite->set_x(chr_x + dx - HALF_SCREEN_W);
     sprite->set_y(chr_y + dy - HALF_SCREEN_H);
-
+    
     if (is_drop)
     {
         sprite->set_visible(ttl > DROP_BLINK_TIME || ttl % 4 < 2);

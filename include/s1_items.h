@@ -2,6 +2,7 @@
 #include "item.h"
 
 #define ID_PIATTAFORMA_S1_1 19
+#define ID_PIATTAFORMA_S1_2 20
 
 constexpr item_def schema1_items[] = {
 { ITEM_TIPO_CHIAVE,  0,             50, 400 },
@@ -13,5 +14,6 @@ constexpr item_def schema1_items[] = {
 { ITEM_TIPO_ENERGIA, 0,             200, 300 },
 { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
 { ITEM_TIPO_SBLOCCO,  ID_PIATTAFORMA_S1_1,             800, 300 },
+{ ITEM_TIPO_SBLOCCO,  ID_PIATTAFORMA_S1_2,             1350, 100 },
 };
 constexpr int schema1_items_count = sizeof(schema1_items) / sizeof(schema1_items[0]);

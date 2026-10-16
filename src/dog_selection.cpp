@@ -63,15 +63,9 @@ void dog_selection_screen(bn::sprite_text_generator& text_generator)
             *sprites[i], 6, items[i]->tiles_item(), 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55);
     }
 
-    bn::sprite_ptr cursor = bn::sprite_items::fox1632.create_sprite(START_X, CURSOR_Y, 61);
-
     bn::vector<bn::sprite_ptr, 32> txt_sprites;
     text_generator.set_center_alignment();
     text_generator.generate(0, 0, "premi START per iniziare", txt_sprites);
-
-    int selected = 0;
-    int input_delay = 0;
-
 
     bn::regular_bg_ptr bg0 = bn::regular_bg_items::bg_s1.create_bg(0);
     bn::regular_bg_ptr bg1 = bn::regular_bg_items::bg_s1.create_bg(1);
@@ -109,16 +103,7 @@ void dog_selection_screen(bn::sprite_text_generator& text_generator)
     g_fade_screen(false);
     while (true)
     {
-        if (input_delay > 0) input_delay--;
-        if (input_delay == 0)
-        {
-            if (bn::keypad::right_pressed() && selected < NUM_DOGS - 1) { selected++; input_delay = 12; }
-            else if (bn::keypad::left_pressed() && selected > 0) { selected--; input_delay = 12; }
-        }
-        cursor.set_x(START_X + 36 + selected * SPACING);
         for (int i = 0; i < NUM_DOGS; i++) if (anims[i].has_value()) anims[i]->update();
-
-
         // --- Aggiorna il nemico in vetrina ---
         {
             bn::fixed target_x = cameo_da_sinistra ? CAMEO_TARGET_OFFSET : -CAMEO_TARGET_OFFSET;

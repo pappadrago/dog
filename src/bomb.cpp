@@ -47,6 +47,8 @@ bomb::bomb(const bomb_def& def)
 
     if (def.angle != 0)
         sprite->set_rotation_angle_safe(def.angle);
+    else
+        sprite->set_horizontal_flip(chr_vx<0);
     sprite->set_bg_priority(0);
     sprite->set_camera(g_camera);
 
@@ -95,7 +97,7 @@ void bomb::update()
     if (!ignoreGravity) {
         apply_gravity();
 
-        if (onGround)
+        if (onGround && tipoProjec == BOMB_BOMB)
         {
             if (bounces >= max_bounces)
             {
