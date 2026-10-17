@@ -31,16 +31,16 @@ void bau::do_spawn(int charge)
 
     chr_x = g_dog->chr_x + bn::fixed(16).multiplication(bau_dir);
     chr_y = g_dog->chr_y;
-    sprite->set_visible(true);
     sprite->set_tiles(bn::sprite_items::fox1632.tiles_item(), charge < BAU_CHARGE_MAX / 2 ? 61 : 62);
 
-    chr_vx = bn::fixed(2.0+power*2).multiplication(bau_dir);
+    chr_vx = bn::fixed(3.0+power.multiplication(3.0)).multiplication(bau_dir);
     ticks = 60;
 
     hit_half = bn::fixed(8) + power.multiplication(bn::fixed(6));         // 8 -> 14
     sprite->set_scale(bn::fixed(1) + power.multiplication(bn::fixed(0.75)));
-
     bn::sound_items::bau.play();
+
+    sprite->set_visible(true);
 }
 
 
@@ -89,7 +89,7 @@ void bau::update()
     if (ticks > 0) {
         ticks--;
         if (ticks == 0) {
-            ticks2Anim = 30;
+            ticks2Anim = 10;
         }
     }
     sprite->set_x(chr_x - HALF_SCREEN_W);

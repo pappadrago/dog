@@ -41,7 +41,7 @@ item::item(const item_def& def)
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
-    ticks2animation = 0;
+    ticks2action = 0;
     active = true;
     animAngle = g_rng.get_int(100);
 
@@ -55,17 +55,10 @@ void item::update()
     update_graphics();
 }
 
-<<<<<<< HEAD
-void item::update_physics(){
- if (ticks2animation > 0) {
-        ticks2animation--;
-        if (ticks2animation == 0)
-=======
 void item::update_physics() {
     if (ticks2action > 0) {
         ticks2action--;
         if (ticks2action == 0)
->>>>>>> 8541bfc (bug fix)
         {
             hide_and_finish();
             return;
@@ -87,11 +80,7 @@ void item::hide_and_finish()
     sprite->remove_affine_mat();
     sprite->set_visible(false);
     active = false;
-<<<<<<< HEAD
-    ttl=0;
-=======
     ttl = 0;
->>>>>>> 8541bfc (bug fix)
 }
 
 void item::update_graphics() {
@@ -114,14 +103,10 @@ void item::update_graphics() {
         sprite->set_visible(ttl > DROP_BLINK_TIME || ttl % 4 < 2);
     }
     else {
-<<<<<<< HEAD
-        sprite->set_visible(ticks2animation > 0 ? (ticks2animation % 2) : true);
-=======
         sprite->set_visible(ticks2action > 0 ? (ticks2action % 2) : true);
->>>>>>> 8541bfc (bug fix)
     }
-    if (ticks2animation > 0)
-        sprite->set_scale(bn::fixed(2) - bn::fixed(ticks2animation).division(30));
+    if (ticks2action > 0)
+        sprite->set_scale(bn::fixed(2) - bn::fixed(ticks2action).division(30));
 }
 
 void item::raccogli()
@@ -129,7 +114,7 @@ void item::raccogli()
     if (!active) return;
     g_dog->add_score(10);
     chr_vy = MEDIUM_JUMP_VY;
-    ticks2animation = 30;
+    ticks2action = 30;
     switch (tipo)
     {
     case ITEM_TIPO_CHIAVE:
@@ -168,7 +153,7 @@ void item::drop_at(bn::fixed x, bn::fixed y)
     chr_y = y;
     chr_vx = ZERO;
     chr_vy = BIG_JUMP_VY;
-    ticks2animation = 0;
+    ticks2action = 0;
     sprite->set_tiles(bn::sprite_items::items.tiles_item(), g_rng.get_int(10));
     sprite->set_position(x - HALF_SCREEN_W, y - HALF_SCREEN_H);
     sprite->set_visible(true);

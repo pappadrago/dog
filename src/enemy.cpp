@@ -81,7 +81,7 @@ void enemy::init(const enemy_def& def)
 {
     chr_y = bn::fixed(def.y);
     chr_x = bn::fixed(def.x);
-    ticks2animation = def.delay;
+    ticks2action = def.delay;
     currentAction = ACTION_MOVE;
     update_graphics();
 }
@@ -114,7 +114,7 @@ void enemy::update()
         update_movement();
         update_attack();
     }
-    else if (--ticks2animation <= 0)
+    else if (--ticks2action <= 0)
         currentAction = ACTION_STAND;
 
     update_projectile();
@@ -146,7 +146,7 @@ void enemy::update_graphics()
 
     // lampeggi (invulnerabilità, stun, proiettile in scadenza)
     if (invulnerability > 0)               sprite->set_visible(invulnerability % 2);
-    else if (currentAction == ACTION_STUN) sprite->set_visible(ticks2animation % 2);
+    else if (currentAction == ACTION_STUN) sprite->set_visible(ticks2action % 2);
     else                                   sprite->set_visible(true);
 
 }
@@ -319,11 +319,7 @@ void enemy::beHitByBark(int _dir, bn::fixed power)
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
-<<<<<<< HEAD
-    ticks2animation = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
-=======
     ticks2action = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
->>>>>>> 8541bfc (bug fix)
 
 
     int damage = (BAU_DAMAGE + power.multiplication(BAU_DAMAGE)).integer();
@@ -338,7 +334,7 @@ void enemy::beHitByDog()
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
-    ticks2animation = invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+    ticks2action = invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
 
     takeDamage(10);
     g_healthbar->show(this);
@@ -479,11 +475,7 @@ void enemy::beHitByShockwave(int _dir)
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
-<<<<<<< HEAD
-    ticks2animation = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
-=======
     ticks2action= invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
->>>>>>> 8541bfc (bug fix)
     takeDamage(5);
 }
 

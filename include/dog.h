@@ -102,8 +102,6 @@ public:
     bool salto_pieno = false;   // true se il salto non è stato accorciato rilasciando il tasto in salita
     void start_polvere_anim(bn::fixed x, bn::fixed y, bool groundPound, bool vertical_flip, int rotation_angle);
 
-int ticks2anotherBau = 0;
-
 #define GROUND_POUND_ONDA_RAGGIO_X bn::fixed(240)
 #define GROUND_POUND_ONDA_RAGGIO_Y bn::fixed(160)
 #define ONDA_URTO_STUN_TICKS 30

@@ -43,7 +43,7 @@ public:
 
     bool onGround = false;
     int  dir = 1;
-    int ticks2animation = 0, invulnerability = 0;
+    int ticks2action = 0, invulnerability = 0;
     int life = START_LIFE;
     bn::fixed max_vx = bn::fixed(1.0);
 
