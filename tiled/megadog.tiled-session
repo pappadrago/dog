@@ -21,8 +21,8 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1018,
-                "y": 299
+                "x": 252,
+                "y": 357
             }
         }
     },
@@ -32,14 +32,13 @@
     "map.tileWidth": 16,
     "map.width": 96,
     "openFiles": [
-        "Megadog_s1.tmx",
         "/home/kids/gba/assets/farmer story bg.tsx",
         "megadog_s1.tmx"
     ],
     "project": "megadog.tiled-project",
     "recentFiles": [
-        "Megadog_s1.tmx",
         "/home/kids/gba/assets/farmer story bg.tsx",
-        "megadog_s1.tmx"
+        "megadog_s1.tmx",
+        "Megadog_s1.tmx"
     ]
 }

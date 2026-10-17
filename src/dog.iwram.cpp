@@ -131,7 +131,6 @@ BN_CODE_IWRAM void dog::update()
     }
 
 
-
     if (bn::keypad::a_pressed())
     {
         if (g_bau->ticks == 0)

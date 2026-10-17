@@ -333,6 +333,7 @@ int main()
                         pm->trasporta_se_agganciato();
 
                     g_dog->update();
+
                     for (enemy* e : *g_enemies)
                         e->update();
                     g_healthbar->update();
@@ -369,7 +370,6 @@ int main()
                             da_rinascere.erase(da_rinascere.begin() + i);
                         }
                     }
-
 
                     for (piattaforma_mobile* pm : *g_piattaforme_mobili)
                         pm->verifica_nuovo_aggancio();
