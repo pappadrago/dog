@@ -211,7 +211,11 @@ BN_CODE_IWRAM void dog::update()
 
         for (item* _item : *g_items)
         {
+<<<<<<< HEAD
             if (!_item->active || _item->ticks2animation) continue;
+=======
+            if (!_item->active || _item->ticks2action) continue;
+>>>>>>> 8541bfc (bug fix)
             bool hit = check_collision_16(*_item->sprite);
             if (hit)
                 _item->raccogli();

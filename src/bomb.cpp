@@ -48,7 +48,7 @@ bomb::bomb(const bomb_def& def)
     if (def.angle != 0)
         sprite->set_rotation_angle_safe(def.angle);
     else
-        sprite->set_horizontal_flip(chr_vx<0);
+        sprite->set_horizontal_flip(chr_vx < 0);
     sprite->set_bg_priority(0);
     sprite->set_camera(g_camera);
 
@@ -115,6 +115,11 @@ void bomb::update()
     // --- Movimento orizzontale (rimbalza contro i muri) ---
     bn::fixed old_vx = chr_vx;
     chr_x += chr_vx;
+<<<<<<< HEAD
+=======
+    if (ignoreGravity)
+        chr_y += chr_vy;
+>>>>>>> 8541bfc (bug fix)
     if (!ignoreWalls) {
         apply_map();
         if (chr_vx == bn::fixed(0) && old_vx != bn::fixed(0)) {

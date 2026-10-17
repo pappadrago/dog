@@ -319,7 +319,11 @@ void enemy::beHitByBark(int _dir, bn::fixed power)
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
+<<<<<<< HEAD
     ticks2animation = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+=======
+    ticks2action = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+>>>>>>> 8541bfc (bug fix)
 
 
     int damage = (BAU_DAMAGE + power.multiplication(BAU_DAMAGE)).integer();
@@ -475,7 +479,11 @@ void enemy::beHitByShockwave(int _dir)
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
+<<<<<<< HEAD
     ticks2animation = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
+=======
+    ticks2action= invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
+>>>>>>> 8541bfc (bug fix)
     takeDamage(5);
 }
 
