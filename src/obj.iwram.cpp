@@ -31,61 +31,55 @@ BN_CODE_IWRAM void live_obj::apply_friction()
 BN_CODE_IWRAM void live_obj::apply_gravity()
 {
     const collision_map_info& map = get_collision_map(g_schema);
+
+    atterrato_ora = false;
+    testata_ora = false;
+    chr_vy += GRAVITY;
+    onGround = false;
+    if (chr_vy > MAX_FALL)
+        chr_vy = MAX_FALL;
+    chr_y += chr_vy;
+
+    const int cx = chr_x.integer();
+    const int bh = box_halfdim.integer();
+
+    int tx1 = (cx + bh) >> 4;
+    int tx2 = (cx - bh) >> 4;
+
+    if (tx1 < 0) tx1 = 0;
+    else if (tx1 > map.columns - 1) tx1 = map.columns - 1;
+    if (tx2 < 0) tx2 = 0;
+    else if (tx2 > map.columns - 1) tx2 = map.columns - 1;
+
+    const bool falling = chr_vy > 0;
+
+    // Vertical probe: feet while falling, head while rising.
+    int ty = (chr_y + (falling ? box_dim : -box_dim)).integer() >> 4;
+    if (ty < 0) ty = 0;
+    else if (ty > map.rows - 1) ty = map.rows - 1;
+
+    const int row = ty * map.columns;
+    const uint8_t tile1 = map.data[row + tx1];
+    const uint8_t tile2 = map.data[row + tx2];
+
+    if (tile1 == 1 || tile2 == 1)
     {
-        atterrato_ora = false;
-        testata_ora = false;
-        chr_vy += GRAVITY;
-        onGround = false;
-        if (chr_vy > MAX_FALL)
-            chr_vy = MAX_FALL;
-        chr_y += chr_vy;
-
-        int cx = chr_x.integer();
-        int bh = box_halfdim.integer();
-
-        int tx1 = (cx + bh) >> 4;
-        int tx2 = (cx - bh) >> 4;
-
-        if (tx1 < 0) tx1 = 0;
-        if (tx2 < 0) tx2 = 0;
-        if (tx1 > map.columns - 1) tx1 = map.columns - 1;
-        if (tx2 > map.columns - 1) tx2 = map.columns - 1;
-
-        bool falling = chr_vy > 0;
-
-        // Punto di controllo verticale: piedi se scendo, testa se salgo
-        int ty = (chr_y + (falling ? box_dim : -box_dim)).integer() >> 4;
-        if (ty < 0) ty = 0;
-        if (ty > map.rows - 1) ty = map.rows - 1;
-
-        int row = ty * map.columns;
-        uint8_t tile_dwn1 = map.data[row + tx1];
-        uint8_t tile_dwn2 = map.data[row + tx2];
-
-        if (tile_dwn1 == 1 || tile_dwn2 == 1)
+        if (falling)
         {
-            if (chr_vy > 0)
-            {
-                // Atterraggio: i piedi si fermano sul bordo SUPERIORE della tile
-                chr_y = bn::fixed(ty << 4) - box_dim;
-                onGround = true;
-
-                atterrato_ora = true;
-                velocita_atterraggio = chr_vy;
-
-            }
-            else
-            {
-                // Testata: la testa si ferma sul bordo INFERIORE della tile
-                chr_y = bn::fixed((ty << 4) + 16) + box_halfdim;
-                testata_ora = true;
-            }
-            if(chr_vy != 0) {
-             salto_in_corso = false;
-            }
-            chr_vy = ZERO;
-            
+            chr_y = bn::fixed(ty << 4) - box_dim;
+            onGround = true;
+            atterrato_ora = true;
+            velocita_atterraggio = chr_vy;
         }
+        else
+        {
+            chr_y = bn::fixed((ty << 4) + 16) + box_halfdim;
+            testata_ora = true;
+        }
+
+        if (chr_vy != 0)
+            salto_in_corso = false;
+        chr_vy = ZERO;
     }
 }
 

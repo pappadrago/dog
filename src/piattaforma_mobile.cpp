@@ -9,14 +9,27 @@ static constexpr bn::fixed META_LARGHEZZA = 16;
 static constexpr bn::fixed META_ALTEZZA   = 4;
 static constexpr bn::fixed TOLLERANZA     = 6;
 
+// Normalizza un angolo gradi nel range [0, 360)
+static bn::fixed normalizza_angolo(bn::fixed angolo)
+{
+    while (angolo >= 360) angolo -= 360;
+    while (angolo < 0)    angolo += 360;
+    return angolo;
+}
+
+// Determina se il movimento da `vecchio` a `nuovo` ha attraversato l'angolo `target`.
+// Se oraria=true, il movimento e in senso orario; altrimenti in senso antiorario.
 static bool attraversa(bn::fixed vecchio, bn::fixed nuovo, bn::fixed target, bool oraria)
 {
+    // Spostamenti relativi rispetto a `vecchio`, in funzione della direzione
     bn::fixed rel_target = oraria ? (target - vecchio) : (vecchio - target);
     bn::fixed rel_nuovo  = oraria ? (nuovo  - vecchio) : (vecchio - nuovo);
 
+    // Normalizza nel range [0, 360) per confrontare gli avanamenti
     while (rel_target < 0) rel_target += 360;
     while (rel_nuovo  < 0) rel_nuovo  += 360;
 
+    // L'attraversamento avviene se il target e stato superato durante la rotazione
     return rel_target <= rel_nuovo;
 }
 
@@ -77,8 +90,17 @@ void piattaforma_mobile::rinasci()
     sprite->set_bg_priority(1);
 }
 
+void piattaforma_mobile::distruggi()
+{
+    distrutta = true;
+    dog_agganciato = false;
+    nemico_agganciato = nullptr;
+    sprite.reset();
+}
+
 void piattaforma_mobile::muovi()
 {
+    // --- Gestione stato distrutta (respawn) ---
     if (distrutta)
     {
         if (_ticks_respawn_rimanenti > 0)
@@ -90,8 +112,10 @@ void piattaforma_mobile::muovi()
         return;
     }
 
+    // --- Salva posizione precedente per calcolare delta di trasporto ---
     _px = _x; _py = _y;
 
+    // --- Aggiorna movimento angolare ---
     if (attiva)
     {
         if (_ticks_pausa_rimanenti > 0)
@@ -100,11 +124,10 @@ void piattaforma_mobile::muovi()
         }
         else
         {
-            bn::fixed passo = bn::fixed(def.velocita_gradi_x10).division(10);
+            bn::fixed passo = bn::fixed(def.velocita_gradi_x16).division(16);
             bn::fixed vecchio = _angolo;
             bn::fixed nuovo = _angolo + (def.oraria ? passo : -passo);
-            while (nuovo >= 360) nuovo -= 360;
-            while (nuovo < 0) nuovo += 360;
+            nuovo = normalizza_angolo(nuovo);
 
             if (def.pausa_angolo_0 > 0 && attraversa(vecchio, nuovo, 0, def.oraria))
             {
@@ -120,41 +143,42 @@ void piattaforma_mobile::muovi()
             {
                 _angolo = nuovo;
             }
+
             calcola_posizione();
         }
     }
 
+    // --- Aggiorna sprite ---
     sprite->set_x(_x - HALF_SCREEN_W);
     sprite->set_y(_y - HALF_SCREEN_H);
 
+    // --- Gestione autodistruzione in seguito all'attivazione ---
     if (attiva && def.durata_ticks >= 0)
     {
         if (_ticks_vita > 0) _ticks_vita--;
 
+        // Lampeggio prima della distruzione
         static constexpr int TICKS_LAMPEGGIO = 60;
         if (_ticks_vita <= TICKS_LAMPEGGIO)
             sprite->set_visible((_ticks_vita / 4) % 2);
 
         if (_ticks_vita == 0)
         {
-            distrutta = true;
-            dog_agganciato = false;
-            nemico_agganciato = nullptr;
-            sprite.reset();
+            distruggi();
             return;
         }
     }
 
+    // --- Gestione autodistruzione in seguito alla salita del cane ---
     if (_ticks_dopo_salita_rimanenti >= 0)
     {
         if (_ticks_dopo_salita_rimanenti > 0)
+        {
             _ticks_dopo_salita_rimanenti--;
+        }
         else
         {
-            distrutta = true;
-            dog_agganciato = false;
-            nemico_agganciato = nullptr;
-            sprite.reset();
+            distruggi();
             if (def.ticks_prima_di_tornare >= 0)
                 _ticks_respawn_rimanenti = def.ticks_prima_di_tornare;
         }

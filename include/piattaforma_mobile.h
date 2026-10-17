@@ -13,7 +13,7 @@ struct piattaforma_mobile_def
     int16_t  centro_x, centro_y;
     int16_t  semiasse_x, semiasse_y;
     int16_t  rotazione;
-    uint8_t  velocita_gradi_x10;
+    uint8_t  velocita_gradi_x16;
     bool     oraria;
     bool     parte_attiva;
     uint8_t  attiva_con;
@@ -57,6 +57,7 @@ private:
 
     void calcola_posizione();
     void rinasci();
+    void distruggi();
     bn::fixed delta_x() const { return _x - _px; }
     bn::fixed delta_y() const { return _y - _py; }
 
