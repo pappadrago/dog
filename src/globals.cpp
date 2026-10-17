@@ -134,6 +134,10 @@ void fade_screen_except_dog(bool to_black, bn::sprite_text_generator& text_gener
         actionSleep.update();
         if (bn::keypad::start_pressed())
             break;
+        if (bn::keypad::select_pressed()){
+            g_schema = 1;
+            break;
+        }
         bn::core::update();
     }
 }

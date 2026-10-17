@@ -115,7 +115,6 @@ void bomb::update()
     // --- Movimento orizzontale (rimbalza contro i muri) ---
     bn::fixed old_vx = chr_vx;
     chr_x += chr_vx;
-    chr_y += chr_vy;
     if (!ignoreWalls) {
         apply_map();
         if (chr_vx == bn::fixed(0) && old_vx != bn::fixed(0)) {

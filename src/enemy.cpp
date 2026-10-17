@@ -38,7 +38,7 @@ enemy::enemy(const enemy_def& def)
     tipo = def.tipo;
     attributo = def.attributo;
     bn::sprite_item spr_itm = bn::sprite_items::enemies;
-    int N = g_rng.get_int(10)*3;
+    int N = g_rng.get_int(9) * 3;
 
     switch (tipo)
     {
@@ -81,8 +81,9 @@ void enemy::init(const enemy_def& def)
 {
     chr_y = bn::fixed(def.y);
     chr_x = bn::fixed(def.x);
-    ticks2action = def.delay;
+    ticks2animation = def.delay;
     currentAction = ACTION_MOVE;
+    update_graphics();
 }
 
 void enemy::update()
@@ -113,7 +114,7 @@ void enemy::update()
         update_movement();
         update_attack();
     }
-    else if (--ticks2action <= 0)
+    else if (--ticks2animation <= 0)
         currentAction = ACTION_STAND;
 
     update_projectile();
@@ -145,7 +146,7 @@ void enemy::update_graphics()
 
     // lampeggi (invulnerabilità, stun, proiettile in scadenza)
     if (invulnerability > 0)               sprite->set_visible(invulnerability % 2);
-    else if (currentAction == ACTION_STUN) sprite->set_visible(ticks2action % 2);
+    else if (currentAction == ACTION_STUN) sprite->set_visible(ticks2animation % 2);
     else                                   sprite->set_visible(true);
 
 }
@@ -237,7 +238,6 @@ void enemy::move_chase_shy()
     move_chase();
 }
 
-
 void enemy::move_ghost()
 {
     if (!dog_in_sight() || g_dog->invulnerability) { chr_accx = 0; return; }
@@ -265,7 +265,6 @@ void enemy::move_ghost_shy()
     if (!dog_in_sight() || dog_is_looking_at_me() || g_dog->invulnerability) { chr_accx = 0; chr_vx = 0; return; }
     move_ghost();
 }
-
 
 void enemy::move_melee()
 {
@@ -307,8 +306,6 @@ void enemy::update_attack()
 void enemy::takeDamage(int damage) {
     life -= damage;
     if (life <= 0) {
-        //if (vita_residua_ticks)
-        vita_residua_ticks = invulnerability;
         die(-dir);
     }
     g_healthbar->show(this);
@@ -322,8 +319,7 @@ void enemy::beHitByBark(int _dir, bn::fixed power)
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
-    ticks2action =
-        invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+    ticks2animation = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
 
 
     int damage = (BAU_DAMAGE + power.multiplication(BAU_DAMAGE)).integer();
@@ -338,7 +334,7 @@ void enemy::beHitByDog()
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
-    ticks2action = invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
+    ticks2animation = invulnerability = 60;   // per l'intera durata dello stordimento non collide col corpo del cane
 
     takeDamage(10);
     g_healthbar->show(this);
@@ -479,7 +475,7 @@ void enemy::beHitByShockwave(int _dir)
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
-    ticks2action = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
+    ticks2animation = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
     takeDamage(5);
 }
 

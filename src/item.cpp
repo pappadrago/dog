@@ -30,11 +30,9 @@ item::item(const item_def& def)
 {
     tipo = def.tipo;
     attributo = def.attributo;
-    spawn_x = bn::fixed(def.x);
-    spawn_y = bn::fixed(def.y);
 
-    chr_x = spawn_x;
-    chr_y = spawn_y;
+    chr_x = bn::fixed(def.x);
+    chr_y = bn::fixed(def.y);
 
     sprite = bn::sprite_items::items.create_sprite(chr_x, chr_y, tile_per_item(tipo));
     sprite->set_bg_priority(1);
@@ -43,9 +41,10 @@ item::item(const item_def& def)
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
-    ticks2action = 0;
+    ticks2animation = 0;
     active = true;
     animAngle = g_rng.get_int(100);
+
 }
 
 void item::update()
@@ -57,9 +56,9 @@ void item::update()
 }
 
 void item::update_physics(){
- if (ticks2action > 0) {
-        ticks2action--;
-        if (ticks2action == 0)
+ if (ticks2animation > 0) {
+        ticks2animation--;
+        if (ticks2animation == 0)
         {
             hide_and_finish(); 
             return;
@@ -81,6 +80,7 @@ void item::hide_and_finish()
     sprite->remove_affine_mat();
     sprite->set_visible(false);
     active = false;
+    ttl=0;
 }
 
 void item::update_graphics(){
@@ -102,11 +102,10 @@ void item::update_graphics(){
         sprite->set_visible(ttl > DROP_BLINK_TIME || ttl % 4 < 2);
     }
     else {
-
-        sprite->set_visible(ticks2action > 0 ? (ticks2action % 2) : true);
+        sprite->set_visible(ticks2animation > 0 ? (ticks2animation % 2) : true);
     }
-    if (ticks2action > 0)
-        sprite->set_scale(bn::fixed(2) - bn::fixed(ticks2action).division(30));
+    if (ticks2animation > 0)
+        sprite->set_scale(bn::fixed(2) - bn::fixed(ticks2animation).division(30));
 }
 
 void item::raccogli()
@@ -114,7 +113,7 @@ void item::raccogli()
     if (!active) return;
     g_dog->add_score(10);
     chr_vy = MEDIUM_JUMP_VY;
-    ticks2action = 30;
+    ticks2animation = 30;
     switch (tipo)
     {
     case ITEM_TIPO_CHIAVE:
@@ -153,8 +152,7 @@ void item::drop_at(bn::fixed x, bn::fixed y)
     chr_y = y;
     chr_vx = ZERO;
     chr_vy = BIG_JUMP_VY;
-    ticks2action = 0;
+    ticks2animation = 0;
     sprite->set_tiles(bn::sprite_items::items.tiles_item(), g_rng.get_int(10));
     sprite->set_visible(true);
-
 }

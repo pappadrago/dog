@@ -17,15 +17,15 @@
 #define BAU_CHARGE_MAX 60   // frame di pressione per la carica massima (1 s)
 #define BAU_CHARGE_MIN_RILASCIO 20   // sotto questa carica il rilascio non spara: un tap lancia solo il primo bau
 
-class bau: public obj
+class bau : public obj
 {
 public:
 
     bn::fixed power = 0;      // 0..1, calcolata allo sparo
     bn::fixed hit_half = 8;   // mezza hitbox, cresce con la carica
 
-    int ticks = 0;
-        
+    int ticks = 0, ticks2Anim = 0;
+
 
     bau();
 

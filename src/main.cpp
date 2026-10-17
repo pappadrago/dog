@@ -199,7 +199,7 @@ int main()
     update_text_init(&text_generator);
 
     //bn::music_items::qwak.play(0.25);
-
+    g_schema = 1;
     while (true) {
         dog_selection_screen(text_generator);
         // Costruzione oggetti di gioco in ordine di dipendenza
@@ -215,7 +215,7 @@ int main()
         g_piattaforme_mobili.emplace();
         g_healthbar.emplace();
 
-        g_schema = 1;
+
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;
 
@@ -390,21 +390,21 @@ int main()
                     for (lava_zona* z : *g_lava)
                         z->update();
 
-                    for (int i = g_piattaforme_mobili->size() - 1; i >= 0; --i)
+                    for (int i = g_piattaforme_mobili->size() - 1; i >= 0; --i) {
                         if ((*g_piattaforme_mobili)[i]->distrutta)
                         {
                             delete (*g_piattaforme_mobili)[i];
                             g_piattaforme_mobili->erase(g_piattaforme_mobili->begin() + i);
                         }
-
+                    }
                     update_camera(bg0, bg1, foreground, foregroundfg);
 
                     update_text_tick();
                     hud_update();
 
-                    // BN_LOG("cpu ", bn::core::last_cpu_usage());
-                    // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
-                    //  BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
+                    // BN_LOG("cpu ", bn::core::last_cpu_usage(), "max ", bn::core::current_cpu_ticks);
+                   // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
+                   // BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
                 };
 
             // Fade-in a gioco attivo: gli sprite prendono la posizione giusta
@@ -467,7 +467,7 @@ int main()
             arrival_door = used_door->dest_door;
             // foreground e foregroundfg vengono distrutti a fine iterazione e ricreati sopra
         }
-                // --- teardown partita ---
+        // --- teardown partita ---
         hud_reset();
         update_text_clear();
         g_boss.reset();
