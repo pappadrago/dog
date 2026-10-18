@@ -48,6 +48,7 @@ private:
     bn::fixed _angolo_iniziale = 0;
     bn::fixed _x, _y;
     bn::fixed _px, _py;
+    bn::fixed _passo_angolo = 0;   // precomputed: def.velocita_gradi_x16 / 16
 
     int _ticks_vita = -1;
     int _ticks_pausa_rimanenti = 0;
@@ -60,7 +61,16 @@ private:
     void distruggi();
     bn::fixed delta_x() const { return _x - _px; }
     bn::fixed delta_y() const { return _y - _py; }
+    bn::fixed passo_angolo() const { return _passo_angolo; }
 
     bool continua_aggancio(live_obj& o);
     bool prova_nuovo_aggancio(live_obj& o);
+
+    // Gestione cane
+    void aggancia_cane_solido();
+    void aggancia_cane_cloud();
+    void imposta_timer_dopo_salita(bool appena_agganciato);
+
+    // Gestione nemici
+    void aggancia_nemico();
 };

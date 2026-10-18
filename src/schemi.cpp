@@ -20,6 +20,7 @@
 #include "enemy.h"
 #include "s1_enemies.h"
 #include "s2_enemies.h"
+#include "s1_trampolini.h"
 
 
 // Per aggiungere uno schema: includere s2.h e gli sfondi s2/s2fg,
@@ -244,5 +245,15 @@ const enemy_def* get_schema_enemies(int schema, int& count)
     default:
         count = 0;
         return nullptr;
+    }
+}
+
+
+const trampolino_def* get_schema_trampolini(int schema, int& count)
+{
+    switch (schema)
+    {
+    case 1: count = schema1_trampolini_count; return schema1_trampolini;
+    default: count = 0; return nullptr;
     }
 }

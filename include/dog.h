@@ -105,4 +105,8 @@ public:
 #define GROUND_POUND_ONDA_RAGGIO_X bn::fixed(240)
 #define GROUND_POUND_ONDA_RAGGIO_Y bn::fixed(160)
 #define ONDA_URTO_STUN_TICKS 30
+
+bn::optional<bn::sprite_ptr> spriteAusiliario;
+bn::optional<bn::sprite_animate_action<24>> carica_anim;
+bool carica_attiva = false;
 };

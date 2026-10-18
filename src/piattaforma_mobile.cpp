@@ -9,6 +9,11 @@ static constexpr bn::fixed META_LARGHEZZA = 16;
 static constexpr bn::fixed META_ALTEZZA   = 4;
 static constexpr bn::fixed TOLLERANZA     = 6;
 
+// `velocita_gradi_x16` è espresso in gradi * 16 (fixed-point Q8.4).
+// Per ottenere i gradi reali si divide per 16. Il divisore è costante
+// e può essere calcolato una sola volta all'inizializzazione.
+static constexpr int PASSO_DIVISORE = 16;
+
 // Normalizza un angolo gradi nel range [0, 360)
 static bn::fixed normalizza_angolo(bn::fixed angolo)
 {
@@ -36,6 +41,7 @@ static bool attraversa(bn::fixed vecchio, bn::fixed nuovo, bn::fixed target, boo
 piattaforma_mobile::piattaforma_mobile(const piattaforma_mobile_def& d) : def(d)
 {
     _angolo = _angolo_iniziale = 0;
+    _passo_angolo = bn::fixed(def.velocita_gradi_x16).division(PASSO_DIVISORE);
     calcola_posizione();
     _px = _x; _py = _y;
 
@@ -124,9 +130,8 @@ void piattaforma_mobile::muovi()
         }
         else
         {
-            bn::fixed passo = bn::fixed(def.velocita_gradi_x16).division(16);
             bn::fixed vecchio = _angolo;
-            bn::fixed nuovo = _angolo + (def.oraria ? passo : -passo);
+            bn::fixed nuovo = _angolo + (def.oraria ? _passo_angolo : -_passo_angolo);
             nuovo = normalizza_angolo(nuovo);
 
             if (def.pausa_angolo_0 > 0 && attraversa(vecchio, nuovo, 0, def.oraria))
@@ -234,55 +239,74 @@ bool piattaforma_mobile::prova_nuovo_aggancio(live_obj& o)
     return false;
 }
 
-void piattaforma_mobile::verifica_nuovo_aggancio()
+// --- Gestione cane ---
+
+// Collisione "solido": risoluzione AABB con spinta (push-out) lungo l'asse minore.
+// Il cane viene spinto fuori dalla piattaforma e non vi rimane agganciato.
+void piattaforma_mobile::aggancia_cane_solido()
 {
-    if (distrutta) return;
+    bn::fixed dx = g_dog->chr_x - _x;
+    bn::fixed dy = g_dog->chr_y - _y;
+    bn::fixed overlap_x = (META_LARGHEZZA + g_dog->box_halfdim) - bn::abs(dx);
+    bn::fixed overlap_y = (META_ALTEZZA   + g_dog->box_dim)      - bn::abs(dy);
 
-    // --- cane ---
-    if (def.tipo_collisione == PIATTAFORMA_MOBILE_SOLIDO)
+    if (overlap_x <= 0 || overlap_y <= 0)
     {
-        bn::fixed dx = g_dog->chr_x - _x;
-        bn::fixed dy = g_dog->chr_y - _y;
-        bn::fixed overlap_x = (META_LARGHEZZA + g_dog->box_halfdim) - bn::abs(dx);
-        bn::fixed overlap_y = (META_ALTEZZA + g_dog->box_dim) - bn::abs(dy);
-
-        if (overlap_x <= 0 || overlap_y <= 0)
-        {
-            dog_agganciato = false;
-        }
-        else if (overlap_x < overlap_y)
-        {
-            g_dog->chr_x += (dx > 0) ? overlap_x : -overlap_x;
-            g_dog->chr_vx = ZERO;
-            dog_agganciato = false;
-        }
-        else if (dy < 0)
-        {
-            g_dog->chr_y = (_y - META_ALTEZZA) - g_dog->box_dim;
-            g_dog->chr_vy = ZERO;
-            g_dog->onGround = true;
-            if (!dog_agganciato && def.ticks_dopo_salita >= 0 && _ticks_dopo_salita_rimanenti < 0)
-                _ticks_dopo_salita_rimanenti = def.ticks_dopo_salita;
-            dog_agganciato = true;
-        }
-        else
-        {
-            g_dog->chr_y = (_y + META_ALTEZZA) + g_dog->box_dim;
-            if (g_dog->chr_vy < 0) g_dog->chr_vy = ZERO;
-            dog_agganciato = false;
-        }
+        // Nessuna sovrapposizione: il cane non è a contatto
+        dog_agganciato = false;
+    }
+    else if (overlap_x < overlap_y)
+    {
+        // Spinta orizzontale (sovrapposizione minore in X)
+        g_dog->chr_x += (dx > 0) ? overlap_x : -overlap_x;
+        g_dog->chr_vx = ZERO;
+        dog_agganciato = false;
+    }
+    else if (dy < 0)
+    {
+        // Cane sopra la piattaforma: appoggio dall'alto
+        g_dog->chr_y = (_y - META_ALTEZZA) - g_dog->box_dim;
+        g_dog->chr_vy = ZERO;
+        g_dog->onGround = true;
+        dog_agganciato = true;
     }
     else
     {
-        bool era_agganciato = dog_agganciato;
-        bool agganciato_ora = era_agganciato ? continua_aggancio(*g_dog) : prova_nuovo_aggancio(*g_dog);
-        dog_agganciato = agganciato_ora;
-
-        if (!era_agganciato && agganciato_ora && def.ticks_dopo_salita >= 0 && _ticks_dopo_salita_rimanenti < 0)
-            _ticks_dopo_salita_rimanenti = def.ticks_dopo_salita;
+        // Cane sotto la piattaforma: spinta verso il basso
+        g_dog->chr_y = (_y + META_ALTEZZA) + g_dog->box_dim;
+        if (g_dog->chr_vy < 0) g_dog->chr_vy = ZERO;
+        dog_agganciato = false;
     }
+}
 
-    // --- un nemico alla volta, solo appoggio dall'alto (indipendentemente da tipo_collisione) ---
+// Collisione "cloud": il cane si appoggia dall'alto con tolleranza,
+// senza subire spinte orizzontali.
+void piattaforma_mobile::aggancia_cane_cloud()
+{
+    bool era_agganciato = dog_agganciato;
+    bool agganciato_ora = era_agganciato ? continua_aggancio(*g_dog) : prova_nuovo_aggancio(*g_dog);
+    dog_agganciato = agganciato_ora;
+}
+
+// Imposta il timer di autodistruzione quando il cane sale sulla piattaforma.
+// Condizioni: il cane non era già agganciato, la piattaforma prevede il timer,
+// e il timer non è già in conteggio.
+void piattaforma_mobile::imposta_timer_dopo_salita(bool appena_agganciato)
+{
+    if (appena_agganciato &&
+        def.ticks_dopo_salita >= 0 &&
+        _ticks_dopo_salita_rimanenti < 0)
+    {
+        _ticks_dopo_salita_rimanenti = def.ticks_dopo_salita;
+    }
+}
+
+// --- Gestione nemici ---
+
+// Un nemico alla volta può appoggiarsi sulla piattaforma (solo dall'alto),
+// indipendentemente dal tipo di collisione della piattaforma.
+void piattaforma_mobile::aggancia_nemico()
+{
     if (nemico_agganciato)
     {
         if (nemico_agganciato->distrutto || !continua_aggancio(*nemico_agganciato))
@@ -300,4 +324,21 @@ void piattaforma_mobile::verifica_nuovo_aggancio()
             }
         }
     }
+}
+
+void piattaforma_mobile::verifica_nuovo_aggancio()
+{
+    if (distrutta) return;
+
+    // --- cane ---
+    bool cane_era_agganciato = dog_agganciato;
+    if (def.tipo_collisione == PIATTAFORMA_MOBILE_SOLIDO)
+        aggancia_cane_solido();
+    else
+        aggancia_cane_cloud();
+
+    imposta_timer_dopo_salita(!cane_era_agganciato && dog_agganciato);
+
+    // --- nemici ---
+    aggancia_nemico();
 }

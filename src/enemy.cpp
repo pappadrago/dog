@@ -88,6 +88,7 @@ void enemy::init(const enemy_def& def)
 
 void enemy::update()
 {
+    update_projectile();
 
     if (is_dead())
     {
@@ -117,7 +118,6 @@ void enemy::update()
     else if (--ticks2action <= 0)
         currentAction = ACTION_STAND;
 
-    update_projectile();
     update_graphics();
 }
 
@@ -356,10 +356,11 @@ void enemy::throw_bomb()
 void enemy::throw_shell()
 {
     if (bomba) return;   // un colpo alla volta
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
 
     static constexpr int SHELL_FLIGHT_TIME = 70;   // tick stimati per l'arco
 
-    bn::fixed dx = g_dog->chr_x - chr_x;
     dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
 
     bn::fixed vx = dx.division(SHELL_FLIGHT_TIME);
@@ -406,8 +407,9 @@ void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t tileIndex,
 {
     if (bomba) return;   // un colpo alla volta per nemico
 
-    // --- Direzione di base (orizzontale) ---
     bn::fixed dx = g_dog->chr_x - chr_x;
+    if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
+
     dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
 
     bn::fixed vx, vy, angle = ZERO;
@@ -421,7 +423,7 @@ void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t tileIndex,
 
         vx = bn::degrees_lut_cos_safe(angle).multiplication(speed);
         vy = bn::degrees_lut_sin_safe(angle).multiplication(speed);
-        angle = -angle - bn::fixed(90);
+        angle = -angle;
     }
     else
     {

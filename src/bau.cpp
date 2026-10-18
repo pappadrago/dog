@@ -32,7 +32,7 @@ void bau::do_spawn(int charge)
     chr_y = g_dog->chr_y;
     sprite->set_tiles(bn::sprite_items::fox1632.tiles_item(), charge < BAU_CHARGE_MAX / 2 ? 61 : 62);
 
-    chr_vx = bn::fixed(4.0+power.multiplication(4.0)).multiplication(bau_dir);
+    chr_vx = bn::fixed(4.0 + power.multiplication(4.0)).multiplication(bau_dir);
     ticks = 30;
 
     hit_half = bn::fixed(8) + power.multiplication(bn::fixed(6));         // 8 -> 14
@@ -80,8 +80,10 @@ void bau::update()
         if (hit)
         {
             enem->beHitByBark(enem->chr_x < g_dog->chr_x ? DIR_LEFT : DIR_RIGHT, power);
-            ticks = 0;
-            ticks2Anim = 20;
+            if (power < bn::fixed(1)) {
+                ticks = 0;
+                ticks2Anim = 20;
+            }
             break;
         }
     }

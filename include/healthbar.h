@@ -6,7 +6,7 @@
 class enemy;
 
 #define HEALTHBAR_FRAMES   9      // deve coincidere con il BMP
-#define HEALTHBAR_DURATA   100    // 3 secondi
+#define HEALTHBAR_DURATA   60    // 3 secondi
 #define HEALTHBAR_FLICK    30     // lampeggia negli ultimi frame
 
 class healthbar

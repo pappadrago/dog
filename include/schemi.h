@@ -6,6 +6,7 @@
 #include "piattaforma_mobile.h"
 #include "lava.h"
 #include "enemy.h"
+#include "trampolino.h"
 
 
 // Numero di schemi disponibili: aumentare quando si aggiunge s2, s3...
@@ -66,3 +67,5 @@ const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& cou
 
 
  const enemy_def* get_schema_enemies(int schema, int& count);
+
+ const trampolino_def* get_schema_trampolini(int schema, int& count);

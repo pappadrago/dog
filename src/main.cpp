@@ -214,7 +214,7 @@ int main()
         g_dog.emplace();
         g_piattaforme_mobili.emplace();
         g_healthbar.emplace();
-
+        g_trampolini.emplace();
 
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;
@@ -309,6 +309,13 @@ int main()
                 for (int i = 0; i < n; i++)
                     g_piattaforme_mobili->push_back(new piattaforma_mobile(defs[i]));
             }
+            {
+                int n = 0;
+                const trampolino_def* defs = get_schema_trampolini(g_schema, n);
+                for (int i = 0; i < n; i++)
+                    g_trampolini->push_back(new trampolino(defs[i]));
+            }
+
             update_text_clear();
 
             update_camera(bg0, bg1, foreground, foregroundfg);
@@ -333,6 +340,8 @@ int main()
                         pm->trasporta_se_agganciato();
 
                     g_dog->update();
+                    for (trampolino* t : *g_trampolini)
+                        t->update();
 
                     for (enemy* e : *g_enemies)
                         e->update();
@@ -440,7 +449,9 @@ int main()
             for (door* d : doors)
                 delete d;
             doors.clear();
-
+            for (trampolino* t : *g_trampolini)
+                delete t;
+            g_trampolini->clear();
             for (piattaforma* p : *g_piattaforme)
                 delete p;
             g_piattaforme->clear();
@@ -486,7 +497,7 @@ int main()
         g_bau_carico.reset();
         g_bau.reset();
         g_camera.reset();
-
+        g_trampolini.reset();
         // toglie il nero lasciato dal fade
         bn::bg_palettes::set_fade_intensity(0);
         bn::sprite_palettes::set_fade_intensity(0);

@@ -78,7 +78,7 @@ BN_CODE_IWRAM void dog::update()
             muro_lato = 0;
             doppio_salto_disponibile = doppio_salto_acquisito;
         }
-        else if (doppio_salto_disponibile)
+        else if (doppio_salto_disponibile && bn::abs(chr_vy)<= bn::fixed(2))
         {
             jump_buffer_ticks = 0;
             salto_tenuto = false;
@@ -249,7 +249,7 @@ BN_CODE_IWRAM void dog::update()
         }
     }
 
-    if (atterrato_ora) {
+    if (atterrato_ora && onGround) {
         doppio_salto_disponibile = doppio_salto_acquisito;
     }
 

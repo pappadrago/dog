@@ -4,6 +4,7 @@
 #include "bau.h"
 #include "enemy.h"
 #include "item.h"
+#include "lava.h"
 #include "collision.h"
 #include "bn_keypad.h"
 #include "bn_math.h"
@@ -12,6 +13,7 @@
 #include "bn_sprite_items_fox.h"
 #include "bn_sprite_items_fox1632.h"
 #include "bn_sprite_items_zombie.h"
+#include "bn_sprite_items_lavabubble.h"
 #include "bn_log.h"
 
 
@@ -65,6 +67,14 @@ dog::dog()
 
     actionStacco = bn::create_sprite_animate_action_once(
         *sprite, 3, spriteItems->tiles_item(), 21, 21);
+
+    spriteAusiliario = bn::sprite_items::lavabubble.create_sprite(0, 0, 0);
+    spriteAusiliario->set_camera(g_camera);
+    spriteAusiliario->set_bg_priority(1);
+    spriteAusiliario->set_z_order(-1);          // davanti al cane
+    spriteAusiliario->set_visible(false);
+    carica_anim = bn::create_sprite_animate_action_forever(
+        *spriteAusiliario, 1, bn::sprite_items::lavabubble.tiles_item(), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
 }
 
 void dog::update_animations() {
@@ -118,8 +128,27 @@ void dog::update_animations() {
 
     if (invulnerability)
         sprite->set_visible(invulnerability % 2);
-    else
-        sprite->set_visible(charge_ticks < BAU_CHARGE_MAX || (g_rng.get_bool()));
+        
+bool carica_piena = charge_ticks >= BAU_CHARGE_MAX && bn::keypad::a_held();
+
+if (carica_piena)
+{
+    if (!carica_attiva)
+    {
+        carica_attiva = true;          // frame in cui la carica raggiunge il massimo
+        carica_anim->reset();
+        spriteAusiliario->set_visible(true);
+    }
+    carica_anim->update();
+    spriteAusiliario->set_x(sprite->x());
+    spriteAusiliario->set_y(sprite->y());
+    spriteAusiliario->set_horizontal_flip(dir == DIR_LEFT);
+}
+else if (carica_attiva)
+{
+    carica_attiva = false;
+    spriteAusiliario->set_visible(false);
+}        
 
 }
 

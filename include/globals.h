@@ -83,3 +83,7 @@ extern bn::optional<healthbar> g_healthbar;
 
 void g_fade_screen(bool to_black);
 void fade_screen_except_dog(bool to_black, bn::sprite_text_generator& text_generator);
+
+class trampolino;
+#define MAX_TRAMPOLINI 8
+extern bn::optional<bn::vector<trampolino*, MAX_TRAMPOLINI>> g_trampolini;
