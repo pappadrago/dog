@@ -49,6 +49,10 @@ public:
     int idle_ticks = 0;
     int dash_ticks = 0;
 
+        // Tetto temporaneo a chr_vx, impostato da oggetti che dog sta spingendo (es. trampolino)
+    int       spinta_ticks = 0;
+    bn::fixed tetto_vx_spinta = ZERO;
+
     bn::optional<bn::sprite_ptr> polvere_sprite;
     bn::optional<bn::sprite_animate_action<4>> polvere_anim;
     bn::optional<bn::sprite_animate_action<4>> ground_pound_anim;

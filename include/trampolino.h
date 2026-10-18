@@ -6,7 +6,7 @@
 
 #define TRAMPOLINO_RIMBALZO_VY   bn::fixed(-5.5)   // contro BIG_JUMP_VY = -3.8: ~100px di salto
 #define TRAMPOLINO_RIMBALZO_VY_B bn::fixed(-7.0)   // tenendo premuto B al rilascio: ~160px
-#define TRAMPOLINO_VELOCITA_SPINTA bn::fixed(0.35) // tetto di chr_vx di dog mentre spinge
+#define TRAMPOLINO_VELOCITA_SPINTA bn::fixed(0.2) // tetto di chr_vx di dog mentre spinge
 #define TRAMPOLINO_RITARDO_TICKS 12                // frame tra atterraggio e rimbalzo (= ATTERRAGGIO_ANIM_TICKS)
 #define TRAMPOLINO_AFFONDAMENTO 7   // px di cui dog scende a fine compressione
 

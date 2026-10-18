@@ -78,7 +78,7 @@ BN_CODE_IWRAM void dog::update()
             muro_lato = 0;
             doppio_salto_disponibile = doppio_salto_acquisito;
         }
-        else if (doppio_salto_disponibile && bn::abs(chr_vy)<= bn::fixed(2))
+        else if (doppio_salto_disponibile && bn::abs(chr_vy) <= bn::fixed(2))
         {
             jump_buffer_ticks = 0;
             salto_tenuto = false;
@@ -299,8 +299,14 @@ BN_CODE_IWRAM void dog::update()
     else
         polvere_sprite->set_visible(false);
 
-    if (wall_jump_anim_ticks == 0 && dash_ticks == 0)
+    if (wall_jump_anim_ticks == 0 && dash_ticks == 0) {
         chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
+
+        if (spinta_ticks > 0)
+            chr_vx = cap(chr_vx, tetto_vx_spinta);
+    }
+    if (spinta_ticks > 0)
+        spinta_ticks--;
     chr_x += chr_vx;
     apply_map();
 
