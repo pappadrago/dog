@@ -9,18 +9,7 @@
 #include "bn_regular_bg_items_s2.h"
 #include "bn_regular_bg_items_s2fg.h"
 
-#include "s1_piattaforme.h"
-#include "s1_piattaforme_mobili.h"
-#include "s2_piattaforme.h"
-#include "s2_piattaforme_mobili.h"
-
-#include "s1_lava.h"
-#include "s2_lava.h"
-
 #include "enemy.h"
-#include "s1_enemies.h"
-#include "s2_enemies.h"
-#include "s1_trampolini.h"
 
 
 // Per aggiungere uno schema: includere s2.h e gli sfondi s2/s2fg,
@@ -113,8 +102,8 @@ bn::regular_bg_ptr create_schema_foreground(int schema)
 {
     switch (schema)
     {
-    case 2: 
-    return bn::regular_bg_items::s2fg.create_bg(0);
+    case 2:
+        return bn::regular_bg_items::s2fg.create_bg(0);
     case 1:
     default:
         return bn::regular_bg_items::s1fg.create_bg(0);
@@ -205,8 +194,8 @@ const lava_zona_def* get_schema_lava(int schema, int& count)
         count = schema1_lava_count;
         return schema1_lava;
     case 2:
-         count = schema2_lava_count;
-         return schema2_lava;
+        count = schema2_lava_count;
+        return schema2_lava;
         count = 0;
         return nullptr;   // finché s2 non ha lava propria
     default:

@@ -1,7 +1,7 @@
 #pragma once
 #include "item.h"
-#include "s1_items.h"
-#include "s2_items.h"
+#include "s1.h"
+#include "s2.h"
 
 inline const item_def* get_schema_items(int schema, int& count)
 {

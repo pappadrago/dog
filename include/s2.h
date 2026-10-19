@@ -1,5 +1,61 @@
 #pragma once
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "enemy.h"
+
+constexpr enemy_def schema2_enemies[] = {
+    { enemy_tipo::MOVE_STATIC, enemy_attr::ATTR_NONE,  400, 400,0 },
+    { enemy_tipo::MOVE_CHASE,                 enemy_attr::ATTR_AIM, 200,400,   150 },
+    { enemy_tipo::MOVE_CHASE_SHY,                 enemy_attr::ATTR_AIM, 600, 400, 210},
+    { enemy_tipo::MOVE_PATROL,          enemy_attr::ATTR_BOMB, 900, 400,  180 },
+    { enemy_tipo::MOVE_STATIC,          enemy_attr::ATTR_SHELL, 1200, 400, 240 },
+    { enemy_tipo::MOVE_STATIC_JUMP,       enemy_attr::ATTR_BOMB,  1400, 400,  120 },
+};
+constexpr int schema2_enemies_count = sizeof(schema2_enemies) / sizeof(schema2_enemies[0]);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "item.h"
+
+constexpr item_def schema2_items[] = {
+    { ITEM_TIPO_CHIAVE,  0,             300, 400 },
+    { ITEM_TIPO_CHIAVE,  0,             700, 350 },
+    { ITEM_TIPO_CHIAVE,  0,            1100, 400 },
+    { ITEM_TIPO_POWERUP, POWERUP_SALTO|POWERUP_CORSA, 500, 300 },
+    { ITEM_TIPO_POWERUP, POWERUP_SALTO|POWERUP_CORSA, 900, 250 },
+    { ITEM_TIPO_ENERGIA, 0,             200, 300 },
+    { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
+
+
+};
+constexpr int schema2_items_count = sizeof(schema2_items) / sizeof(schema2_items[0]);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "lava.h"
+
+constexpr lava_zona_def schema2_lava[] = {
+    { 49,3, 55, 3,
+      { { 1,2,LAVA_TILE,LAVA_TILE },{ 2,3,LAVA_TILE,LAVA_TILE }, },
+      2, 12, 15 },
+};
+constexpr int schema2_lava_count = sizeof(schema2_lava) / sizeof(schema2_lava[0]);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// include/s1_piattaforme.h
+#include "piattaforma.h"
+
+constexpr piattaforma_def schema2_piattaforme[] = {
+    // tile 16px (x1,y1,x2,y2) | hw solido[4] | hw vuoto[4] | stato iniziale | trigger
+    { 30, 20, 31, 20, {40,41,56,57}, {10,11,26,27}, 0, 0 },
+};
+constexpr int schema2_piattaforme_count = sizeof(schema2_piattaforme) / sizeof(schema2_piattaforme[0]);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "piattaforma_mobile.h"
+
+constexpr piattaforma_mobile_def schema2_piattaforme_mobili[] = {
+{ 75,390, 0, 70, 20, 4, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },
+};
+constexpr int schema2_piattaforme_mobili_count =
+    sizeof(schema2_piattaforme_mobili) / sizeof(schema2_piattaforme_mobili[0]);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 constexpr uint8_t collision_map_columns_s2 = 192;
 constexpr uint8_t collision_map_rows_s2 = 32;
 

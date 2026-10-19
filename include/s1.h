@@ -1,7 +1,108 @@
-#include "schemi.h"
-
 #pragma once
 
+#include "schemi.h"
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "trampolino.h"
+
+constexpr trampolino_def schema1_trampolini[] = {
+    { 300, 360 },
+};
+constexpr int schema1_trampolini_count = sizeof(schema1_trampolini) / sizeof(schema1_trampolini[0]);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include "lava.h"
+
+constexpr lava_zona_def schema1_lava[] = {
+    { 48,28, 57, 28,
+      { { 1,2,LAVA_TILE,LAVA_TILE },{ 2,3,LAVA_TILE,LAVA_TILE }, },
+      2, 12, 15 },
+  { 144,28, 153, 28,
+      { { 1,2,LAVA_TILE,LAVA_TILE },{ 2,3,LAVA_TILE,LAVA_TILE }, },
+      2, 12, 15 },
+};
+constexpr int schema1_lava_count = sizeof(schema1_lava) / sizeof(schema1_lava[0]);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#include "item.h"
+
+#define ID_PIATTAFORMA_S1_1 19
+#define ID_PIATTAFORMA_S1_2 20
+
+constexpr item_def schema1_items[] = {
+{ ITEM_TIPO_CHIAVE,  0,             50, 400 },
+{ ITEM_TIPO_CHIAVE,  0,             100, 350 },
+{ ITEM_TIPO_CHIAVE,  0,            150, 400 },
+{ ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_DOPPIO_SALTO | POWERUP_WALL_JUMP | POWERUP_DASH | POWERUP_AIR_DASH | POWERUP_GROUND_POUND, 200, 300 },
+{ ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_CORSA, 650, 300 },
+{ ITEM_TIPO_POWERUP, POWERUP_CORSA, 900, 250 },
+{ ITEM_TIPO_ENERGIA, 0,             200, 300 },
+{ ITEM_TIPO_ENERGIA, 0,            1300, 300 },
+{ ITEM_TIPO_SBLOCCO,  ID_PIATTAFORMA_S1_1,             800, 300 },
+{ ITEM_TIPO_SBLOCCO,  ID_PIATTAFORMA_S1_2,             1350, 100 },
+};
+constexpr int schema1_items_count = sizeof(schema1_items) / sizeof(schema1_items[0]);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "piattaforma.h"
+
+constexpr piattaforma_def schema1_piattaforme[] = {
+    // tile 16px (x1,y1,x2,y2) | hw solido[4] | hw vuoto[4] | stato iniziale | trigger
+    { 48, 27, 57, 27, {6,7,16,17}, {4, 5, 14, 15}, 0, ID_PIATTAFORMA_S1_1 },
+    { 91, 4, 91, 9, {6,7,16,17}, {4, 5, 14, 15}, 1, ID_PIATTAFORMA_S1_2 },
+};
+constexpr int schema1_piattaforme_count = sizeof(schema1_piattaforme) / sizeof(schema1_piattaforme[0]);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include "piattaforma_mobile.h"
+
+constexpr piattaforma_mobile_def schema1_piattaforme_mobili[] = {
+    // int16_t  centro_x, centro_y;
+    // int16_t  semiasse_x, semiasse_y;
+    // int16_t  rotazione;
+    // uint8_t  velocita_gradi_x10;
+    // bool     oraria;
+    // bool     parte_attiva;
+    // uint8_t  attiva_con;
+    // int16_t  durata_ticks;          // -1 = nessuna autodistruzione legata all'attivazione
+    // uint8_t  tipo_collisione;
+    // uint16_t pausa_angolo_0;        // tick di sosta a 0°; 0 = nessuna pausa
+    // uint16_t pausa_angolo_180;      // tick di sosta a 180°; 0 = nessuna pausa
+    // int16_t  ticks_dopo_salita;     // -1 = nessuna autodistruzione da salita di dog
+    // int16_t  ticks_prima_di_tornare;// -1 = non ricompare mai, dopo l'autodistruzione da salita
+
+{ 75,390, 0, 70, 20, 4, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },
+
+
+
+};
+constexpr int schema1_piattaforme_mobili_count =
+sizeof(schema1_piattaforme_mobili) / sizeof(schema1_piattaforme_mobili[0]);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#include "enemy.h"
+
+constexpr enemy_def schema1_enemies[] = {
+
+// { enemy_tipo::MOVE_MELEE, enemy_attr::ATTR_MELEE | ATTR_RESPAWN,  660,400, 80 },
+{ enemy_tipo::MOVE_MELEE, enemy_attr::ATTR_BASH | ATTR_RESPAWN,  360,400, 80 },
+{ enemy_tipo::MOVE_CHASE_SHY, enemy_attr::ATTR_GRAVITY_ARROW | ATTR_AIM | ATTR_RESPAWN,  360,400, 80 },
+{ enemy_tipo::MOVE_GHOST, enemy_attr::ATTR_NONE | ATTR_RESPAWN,  260, 400, 80 },
+{ enemy_tipo::MOVE_STATIC, enemy_attr::ATTR_BOMB | ATTR_RESPAWN,  460, 400, 80 },
+{ enemy_tipo::MOVE_CHASE, enemy_attr::ATTR_BOMB,  960, 400, 80 },
+{ enemy_tipo::MOVE_CHASE, enemy_attr::ATTR_BOMB| ATTR_RESPAWN ,  860, 400, 80 },
+{ enemy_tipo::MOVE_CHASE_SHY, enemy_attr::ATTR_FIREBALL | ATTR_AIM | ATTR_RESPAWN,  660,400, 80 },
+// { enemy_tipo::MOVE_STATIC_JUMP, enemy_attr::ATTR_ARROW | ATTR_AIM | ATTR_RESPAWN,  1260, 400, 80 },
+// { enemy_tipo::MOVE_STATIC, enemy_attr::ATTR_BOMB | ATTR_RESPAWN,  1460, 400, 80 },
+
+};
+constexpr int schema1_enemies_count = sizeof(schema1_enemies) / sizeof(schema1_enemies[0]);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 constexpr uint8_t collision_map_columns_s1 = 192;
 constexpr uint8_t collision_map_rows_s1 = 32;
