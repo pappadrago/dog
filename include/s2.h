@@ -1,5 +1,13 @@
 #pragma once
 
+
+#include "enemy.h"
+#include "door.h"
+#include "item.h"
+#include "lava.h"
+#include "piattaforma.h"
+#include "piattaforma_mobile.h"
+#include "schemi.h"
 #include "bn_regular_bg_items_s2.h"
 #include "bn_regular_bg_items_bg_s2.h"
 #include "bn_regular_bg_items_s2fg.h"
@@ -12,7 +20,7 @@ static constexpr door_def s2_doors[] =
 };
 constexpr int s2_doors_count= sizeof(s2_doors) / sizeof(s2_doors[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "enemy.h"
+
 
 constexpr enemy_def schema2_enemies[] = {
     { enemy_tipo::MOVE_STATIC, enemy_attr::ATTR_NONE,  400, 400,0 },
@@ -24,7 +32,7 @@ constexpr enemy_def schema2_enemies[] = {
 };
 constexpr int schema2_enemies_count = sizeof(schema2_enemies) / sizeof(schema2_enemies[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "item.h"
+
 
 constexpr item_def schema2_items[] = {
     { ITEM_TIPO_CHIAVE,  0,             300, 400 },
@@ -39,7 +47,7 @@ constexpr item_def schema2_items[] = {
 };
 constexpr int schema2_items_count = sizeof(schema2_items) / sizeof(schema2_items[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "lava.h"
+
 
 constexpr lava_zona_def schema2_lava[] = {
     { 49,3, 55, 3,
@@ -47,9 +55,10 @@ constexpr lava_zona_def schema2_lava[] = {
       2, 12, 15 },
 };
 constexpr int schema2_lava_count = sizeof(schema2_lava) / sizeof(schema2_lava[0]);
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// include/s1_piattaforme.h
-#include "piattaforma.h"
+
+
 
 constexpr piattaforma_def schema2_piattaforme[] = {
     // tile 16px (x1,y1,x2,y2) | hw solido[4] | hw vuoto[4] | stato iniziale | trigger
@@ -57,7 +66,7 @@ constexpr piattaforma_def schema2_piattaforme[] = {
 };
 constexpr int schema2_piattaforme_count = sizeof(schema2_piattaforme) / sizeof(schema2_piattaforme[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "piattaforma_mobile.h"
+
 
 constexpr piattaforma_mobile_def schema2_piattaforme_mobili[] = {
 { 75,390, 0, 70, 20, 4, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },
@@ -106,7 +115,7 @@ constexpr uint8_t collision_map_s2[collision_map_columns_s2 * collision_map_rows
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 };
 
-#include "schemi.h"
+
 
 constexpr collision_map_info collision_map_s2_info = { collision_map_s2, collision_map_columns_s2, collision_map_rows_s2, collision_map_columns_s2 * 16, collision_map_rows_s2 * 16 };
 

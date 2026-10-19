@@ -87,3 +87,7 @@ void fade_screen_except_dog(bool to_black, bn::sprite_text_generator& text_gener
 class trampolino;
 #define MAX_TRAMPOLINI 8
 extern bn::optional<bn::vector<trampolino*, MAX_TRAMPOLINI>> g_trampolini;
+
+
+template<typename T, int N> 
+constexpr int array_count(const T (&)[N]) { return N; }

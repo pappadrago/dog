@@ -9,7 +9,6 @@ static int s_schema_caricato = -1;
 static collision_map_info s_attiva;
 
 
-
 void imposta_collisione(int tile_x, int tile_y, uint8_t value)
 {
     if (tile_x < 0 || tile_x >= s_attiva.columns) return;
@@ -24,81 +23,101 @@ void imposta_collisione_rect(int x1, int y1, int x2, int y2, uint8_t value)
             imposta_collisione(tx, ty, value);
 }
 
-const schema_def schemi[] = {
+constexpr schema_def schemi[] = {
 make_schema_1(),
 make_schema_2()
 };
+constexpr int NUM_SCHEMI = sizeof(schemi) / sizeof(schemi[0]);
+
+static const schema_def& S(int schema)
+{
+    int i = schema - 1;
+    if (i < 0 || i >= NUM_SCHEMI) i = 0;   // come il vecchio fallback
+    return schemi[i];
+}
 
 const trampolino_def* get_schema_trampolini(int schema, int& count)
 {
-    count = schemi[schema - 1].trampolini_count;
-    return schemi[schema - 1].trampolini;
+    const schema_def& s = S(schema);
+    count = s.trampolini_count;
+    return s.trampolini;
 }
 
 const enemy_def* get_schema_enemies(int schema, int& count)
 {
-    count = schemi[schema - 1].enemies_count;
-    return schemi[schema - 1].enemies;
+    const schema_def& s = S(schema);
+    count = s.enemies_count;
+    return s.enemies;
 }
 
 const lava_zona_def* get_schema_lava(int schema, int& count)
 {
-    count = schemi[schema - 1].lava_count;
-    return schemi[schema - 1].lava;
+    const schema_def& s = S(schema);
+    count = s.lava_count;
+    return s.lava;
 }
 
 const piattaforma_def* get_schema_piattaforme(int schema, int& count)
 {
-    count = schemi[schema - 1].piattaforme_count;
-    return schemi[schema - 1].piattaforme;
+    const schema_def& s = S(schema);
+    count = s.piattaforme_count;
+    return s.piattaforme;
 }
 
 const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& count)
 {
-    count = schemi[schema - 1].piattaforme_mobili_count;
-    return schemi[schema - 1].piattaforme_mobili;
+    const schema_def& s = S(schema);
+    count = s.piattaforme_mobili_count;
+    return s.piattaforme_mobili;
 }
 
 const door_def* get_schema_doors(int schema, int& count)
 {
-    count = schemi[schema - 1].doors_count;
-    return schemi[schema - 1].doors;
+    const schema_def& s = S(schema);
+    count = s.doors_count;
+    return s.doors;
+}
+
+const item_def* get_schema_items(int schema, int& count)
+{
+    const schema_def& s = S(schema);
+    count = s.items_count;
+    return s.items;
 }
 
 bn::regular_bg_ptr create_schema_platform(int schema)
 {
-    return schemi[schema - 1].sprite_level_bg_item.create_bg(0);
+    return S(schema).sprite_level_bg_item.create_bg(0);
 }
 
 bn::regular_bg_item create_schema_bg_item(int schema)
 {
-    return schemi[schema - 1].sprite_level_bg_item;
+    return S(schema).sprite_level_bg_item;
 }
-
 
 const bn::regular_bg_item& get_schema_sprite_level_bg_item(int schema)
 {
-    return schemi[schema - 1].sprite_level_bg_item;
+    return S(schema).sprite_level_bg_item;
 }
 
 bn::regular_bg_ptr create_schema_bg0(int schema)
 {
-    return schemi[schema - 1].parallax_bg_item.create_bg(0);
+    return S(schema).parallax_bg_item.create_bg(0);
 }
 
 bn::regular_bg_ptr create_schema_bg1(int schema)
 {
-    return schemi[schema - 1].parallax_bg_item.create_bg(1);
+    return S(schema).parallax_bg_item.create_bg(1);
 }
 
 bn::regular_bg_ptr create_schema_foreground(int schema)
 {
-    return schemi[schema - 1].foreground_item.create_bg(0);
+    return S(schema).foreground_item.create_bg(0);
 }
 
 void carica_collisione_schema(int schema)
 {
-    const collision_map_info& originale = *schemi[schema - 1].map_info;
+    const collision_map_info& originale = *S(schema).map_info;
     int celle = originale.columns * originale.rows;
 
     BN_ASSERT(celle <= MAX_COLLISION_CELLE, "collisione: buffer troppo piccolo");
@@ -115,6 +134,5 @@ const collision_map_info& get_collision_map(int schema)
 {
     if (schema == s_schema_caricato)
         return s_attiva;
-
-    return *schemi[schema - 1].map_info;
+    return *S(schema).map_info;
 }

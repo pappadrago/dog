@@ -22,7 +22,10 @@ void bau::do_spawn(int charge)
     // if (is_solid_at(bordo, g_dog->chr_y, g_schema))
     //     x = g_dog->chr_x;   // cane contro il muro: parte dalla sua posizione, non dentro la parete
 
-    if (charge > BAU_CHARGE_MAX) charge = BAU_CHARGE_MAX;
+    if (charge >= BAU_CHARGE_MAX) {
+        charge = BAU_CHARGE_MAX;
+        bn::sound_items::bau.play();
+    }
     power = bn::fixed(charge).division(BAU_CHARGE_MAX);   // 0..1
 
     // se il cane è attaccato al muro, il bau parte in direzione opposta a quella del cane
@@ -37,7 +40,7 @@ void bau::do_spawn(int charge)
 
     hit_half = bn::fixed(8) + power.multiplication(bn::fixed(6));         // 8 -> 14
     sprite->set_scale(bn::fixed(1) + power.multiplication(bn::fixed(0.75)));
-    bn::sound_items::bau.play();
+    
 
     sprite->set_visible(true);
 }

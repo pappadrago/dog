@@ -1,18 +1,23 @@
 #pragma once
+#include "enemy.h"
+#include "door.h"
+#include "item.h"
+#include "lava.h"
+#include "piattaforma.h"
+#include "piattaforma_mobile.h"
+#include "schemi.h"
+#include "trampolino.h"
 #include "bn_regular_bg_items_s1.h"
 #include "bn_regular_bg_items_bg_s1.h"
 #include "bn_regular_bg_items_s1fg.h"
-#include "schemi.h"
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "trampolino.h"
+
 
 constexpr trampolino_def schema1_trampolini[] = {
     { 300, 360 },
 };
 constexpr int schema1_trampolini_count = sizeof(schema1_trampolini) / sizeof(schema1_trampolini[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#include "lava.h"
 
 constexpr lava_zona_def schema1_lava[] = {
     { 48,28, 57, 28,
@@ -35,8 +40,6 @@ static constexpr door_def s1_doors[] =
 constexpr int s1_doors_count= sizeof(s1_doors) / sizeof(s1_doors[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "item.h"
-
 #define ID_PIATTAFORMA_S1_1 19
 #define ID_PIATTAFORMA_S1_2 20
 
@@ -55,7 +58,6 @@ constexpr item_def schema1_items[] = {
 constexpr int schema1_items_count = sizeof(schema1_items) / sizeof(schema1_items[0]);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "piattaforma.h"
 
 constexpr piattaforma_def schema1_piattaforme[] = {
     // tile 16px (x1,y1,x2,y2) | hw solido[4] | hw vuoto[4] | stato iniziale | trigger
@@ -66,7 +68,6 @@ constexpr int schema1_piattaforme_count = sizeof(schema1_piattaforme) / sizeof(s
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "piattaforma_mobile.h"
 
 constexpr piattaforma_mobile_def schema1_piattaforme_mobili[] = {
     // int16_t  centro_x, centro_y;
@@ -92,9 +93,6 @@ constexpr int schema1_piattaforme_mobili_count =
 sizeof(schema1_piattaforme_mobili) / sizeof(schema1_piattaforme_mobili[0]);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-#include "enemy.h"
 
 constexpr enemy_def schema1_enemies[] = {
 

@@ -36,8 +36,6 @@
 #include "dog_selection.h"
 #include "game_timer.h"
 #include "schemi.h"
-#include "enemies_table.h"
-#include "items_table.h"
 #include "platform_map.h"
 #include <bn_blending.h>
 #include "piattaforma.h"
@@ -247,12 +245,14 @@ int main()
             foreground.set_priority(2);
 
             // Porte dello schema
+            
             int n_doors = 0;
             const door_def* doorDef = get_schema_doors(g_schema, n_doors);
+
             bn::vector<door*, MAX_DOORS> doors;
             for (int i = 0; i < n_doors; ++i)
                 doors.push_back(new door(doorDef[i]));
-            ///////////////////77
+            
 
             bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
 
