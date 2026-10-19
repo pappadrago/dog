@@ -58,7 +58,7 @@ void imposta_collisione(int tile_x, int tile_y, uint8_t value);
 void imposta_collisione_rect(int tile_x1, int tile_y1, int tile_x2, int tile_y2, uint8_t value);
 
 // Riferimento all'asset regular_bg del livello (s1/s2/...) dello schema, per costruirne una copia scrivibile
-const bn::regular_bg_item& get_schema_platform_item(int schema);
+const bn::regular_bg_item& get_schema_sprite_level_bg_item(int schema);
 
 const piattaforma_def* get_schema_piattaforme(int schema, int& count);
 const lava_zona_def* get_schema_lava(int schema, int& count);
@@ -79,9 +79,9 @@ struct schema_def
     const piattaforma_mobile_def* piattaforme_mobili; int piattaforme_mobili_count;
     const enemy_def* enemies; int enemies_count;
     const door_def* doors; int doors_count;
-    const bn::regular_bg_item pg_item;  // livello sprite
-    const bn::regular_bg_item bg_item;  // background in parallasse 0 e 1
-    const bn::regular_bg_item fg_item;  // foreground, davanti agli sprite
+    const bn::regular_bg_item sprite_level_bg_item;  // livello sprite
+    const bn::regular_bg_item parallax_bg_item;  // background in parallasse 0 e 1
+    const bn::regular_bg_item foreground_item;  // foreground, davanti agli sprite
     const collision_map_info* map_info;
 };
 

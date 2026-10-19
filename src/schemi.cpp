@@ -67,33 +67,33 @@ const door_def* get_schema_doors(int schema, int& count)
 
 bn::regular_bg_ptr create_schema_platform(int schema)
 {
-    return schemi[schema - 1].pg_item.create_bg(0);
+    return schemi[schema - 1].sprite_level_bg_item.create_bg(0);
 }
 
 bn::regular_bg_item create_schema_bg_item(int schema)
 {
-    return schemi[schema - 1].pg_item;
+    return schemi[schema - 1].sprite_level_bg_item;
 }
 
 
-const bn::regular_bg_item& get_schema_platform_item(int schema)
+const bn::regular_bg_item& get_schema_sprite_level_bg_item(int schema)
 {
-    return schemi[schema - 1].pg_item;
+    return schemi[schema - 1].sprite_level_bg_item;
 }
 
 bn::regular_bg_ptr create_schema_bg0(int schema)
 {
-    return schemi[schema - 1].bg_item.create_bg(0);
+    return schemi[schema - 1].parallax_bg_item.create_bg(0);
 }
 
 bn::regular_bg_ptr create_schema_bg1(int schema)
 {
-    return schemi[schema - 1].bg_item.create_bg(1);
+    return schemi[schema - 1].parallax_bg_item.create_bg(1);
 }
 
 bn::regular_bg_ptr create_schema_foreground(int schema)
 {
-    return schemi[schema - 1].fg_item.create_bg(0);
+    return schemi[schema - 1].foreground_item.create_bg(0);
 }
 
 void carica_collisione_schema(int schema)

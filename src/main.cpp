@@ -237,11 +237,11 @@ int main()
             carica_collisione_schema(g_schema);   // PRIMA di tutto: porte/nemici/item/piattaforme ne dipendono
 
             static bn::unique_ptr<platform_map> plat_map;
-            plat_map.reset(new platform_map(get_schema_platform_item(g_schema)));
+            plat_map.reset(new platform_map(get_schema_sprite_level_bg_item(g_schema)));
 
             bn::regular_bg_item item_scrivibile(
-                get_schema_platform_item(g_schema).tiles_item(),
-                get_schema_platform_item(g_schema).palette_item(),
+                get_schema_sprite_level_bg_item(g_schema).tiles_item(),
+                get_schema_sprite_level_bg_item(g_schema).palette_item(),
                 plat_map->map_item);
             bn::regular_bg_ptr foreground = item_scrivibile.create_bg(0, 0);
             foreground.set_priority(2);
