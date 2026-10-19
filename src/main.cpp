@@ -247,18 +247,20 @@ int main()
             foreground.set_priority(2);
 
             // Porte dello schema
-            const door_list& dl = get_schema_doors(g_schema);
+            int n_doors = 0;
+            const door_def* doorDef = get_schema_doors(g_schema, n_doors);
             bn::vector<door*, MAX_DOORS> doors;
-            for (int i = 0; i < dl.count; ++i)
-                doors.push_back(new door(dl.data[i]));
+            for (int i = 0; i < n_doors; ++i)
+                doors.push_back(new door(doorDef[i]));
+            ///////////////////77
 
             bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
 
             // Il cane compare sopra la porta di arrivo
-            if (arrival_door >= 0 && arrival_door < dl.count)
+            if (arrival_door >= 0 && arrival_door < n_doors)
             {
-                g_dog->chr_x = bn::fixed(dl.data[arrival_door].x);
-                g_dog->chr_y = bn::fixed(dl.data[arrival_door].y);
+                g_dog->chr_x = bn::fixed(doors[arrival_door]->chr_x);
+                g_dog->chr_y = bn::fixed(doors[arrival_door]->chr_y);
                 g_dog->chr_vx = ZERO;
                 g_dog->chr_vy = ZERO;
                 g_dog->invulnerability = 60;   // i nemici nascono a caso: un attimo di respiro
@@ -323,7 +325,7 @@ int main()
             // ------------------------------------------------------------
             // Loop dello schema: termina quando il cane usa una porta
             // ------------------------------------------------------------
-            const door_info* used_door = nullptr;
+            const door_def* used_door = nullptr;
 
             //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
 

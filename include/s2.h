@@ -1,12 +1,16 @@
 #pragma once
 
-static constexpr door_info s2_doors[] =
+#include "bn_regular_bg_items_s2.h"
+#include "bn_regular_bg_items_bg_s2.h"
+#include "bn_regular_bg_items_s2fg.h"
+
+static constexpr door_def s2_doors[] =
 {
     //   x    y  dest_schema  dest_door
     { 32, 432,           1,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
     { 1510, 464,           1,         0 },   // porta 1 -> porta 0
 };
-
+constexpr int s2_doors_count= sizeof(s2_doors) / sizeof(s2_doors[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "enemy.h"
 
@@ -115,6 +119,10 @@ constexpr schema_def make_schema_2()
         schema2_piattaforme, schema2_piattaforme_count,
         schema2_piattaforme_mobili, schema2_piattaforme_mobili_count,
         schema2_enemies, schema2_enemies_count,
+        s2_doors, s2_doors_count,
+        bn::regular_bg_items::s2,  
+        bn::regular_bg_items::bg_s2,
+        bn::regular_bg_items::s2fg,
         &collision_map_s2_info
     };
 }

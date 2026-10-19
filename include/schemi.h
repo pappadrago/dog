@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "bn_regular_bg_ptr.h"
+#include "bn_regular_bg_item.h"
 #include "piattaforma.h"
 #include "piattaforma_mobile.h"
 #include "lava.h"
@@ -10,9 +11,6 @@
 #include "trampolino.h"
 
 
-
-// Numero di schemi disponibili: aumentare quando si aggiunge s2, s3...
-constexpr int NUM_SCHEMI = 2;
 
 struct collision_map_info
 {
@@ -27,7 +25,7 @@ struct collision_map_info
 const collision_map_info& get_collision_map(int schema);
 
 // Una porta: dove sta e dove porta
-struct door_info
+struct door_def
 {
     int x, y;          // centro della porta (px, coordinate mondo)
     int dest_schema;   // schema di destinazione
@@ -36,12 +34,12 @@ struct door_info
 
 struct door_list
 {
-    const door_info* data;
+    const door_def* data;
     int count;
 };
 
 // Porte dello schema (valori fuori range -> schema 1)
-const door_list& get_schema_doors(int schema);
+const door_def* get_schema_doors(int schema, int& count);
 
 // Sfondi di parallasse (lontano / medio) dello schema
 bn::regular_bg_ptr create_schema_bg0(int schema);
@@ -80,6 +78,10 @@ struct schema_def
     const piattaforma_def* piattaforme; int piattaforme_count;
     const piattaforma_mobile_def* piattaforme_mobili; int piattaforme_mobili_count;
     const enemy_def* enemies; int enemies_count;
+    const door_def* doors; int doors_count;
+    const bn::regular_bg_item pg_item;  // livello sprite
+    const bn::regular_bg_item bg_item;  // background in parallasse 0 e 1
+    const bn::regular_bg_item fg_item;  // foreground, davanti agli sprite
     const collision_map_info* map_info;
 };
 

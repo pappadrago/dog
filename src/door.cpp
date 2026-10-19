@@ -5,7 +5,7 @@
 #include "bn_math.h"
 #include "bn_sprite_items_doors.h"
 
-door::door(const door_info& info) :
+door::door(const door_def& info) :
     _info(&info)
 {
     chr_x = bn::fixed(info.x);

@@ -1,5 +1,7 @@
 #pragma once
-
+#include "bn_regular_bg_items_s1.h"
+#include "bn_regular_bg_items_bg_s1.h"
+#include "bn_regular_bg_items_s1fg.h"
 #include "schemi.h"
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "trampolino.h"
@@ -24,12 +26,13 @@ constexpr int schema1_lava_count = sizeof(schema1_lava) / sizeof(schema1_lava[0]
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static constexpr door_info s1_doors[] =
+static constexpr door_def s1_doors[] =
 {
     //   x    y  dest_schema  dest_door
     { 16, 448,           2,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
     { 1526, 432,           2,         0 },   // porta 1 -> porta 0
 };
+constexpr int s1_doors_count= sizeof(s1_doors) / sizeof(s1_doors[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "item.h"
@@ -164,6 +167,10 @@ constexpr schema_def make_schema_1()
         schema1_piattaforme, schema1_piattaforme_count,
         schema1_piattaforme_mobili, schema1_piattaforme_mobili_count,
         schema1_enemies, schema1_enemies_count,
+        s1_doors, s1_doors_count,
+        bn::regular_bg_items::s1,
+        bn::regular_bg_items::bg_s1,
+        bn::regular_bg_items::s1fg,
         &collision_map_s1_info
     };
 }   

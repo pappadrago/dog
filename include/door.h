@@ -20,15 +20,15 @@ public:
     bn::fixed chr_x;
     bn::fixed chr_y;
 
-    door(const door_info& info);
+    door(const door_def& info);
 
     // Da chiamare ogni frame. Ritorna true nel frame in cui il cane
     // usa la porta (up premuto, a terra, davanti alla porta, con tutte le chiavi).
     bool update();
 
-    const door_info& info() const { return *_info; }
+    const door_def& info() const { return *_info; }
 
 private:
-    const door_info* _info;
+    const door_def* _info;
     int current_frame = -1; // forza il primo aggiornamento del frame
 };
