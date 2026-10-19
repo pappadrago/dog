@@ -25,18 +25,6 @@ static constexpr collision_map_info s_maps[NUM_SCHEMI] =
 // y = (riga_del_pavimento * 16) - 16.
 // dest_door = indice della porta di arrivo nello schema di destinazione:
 // il cane compare sopra quella porta.
-static constexpr door_info s1_doors[] =
-{
-    //   x    y  dest_schema  dest_door
-    { 16, 448,           2,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
-    { 1526, 432,           2,         0 },   // porta 1 -> porta 0
-};
-static constexpr door_info s2_doors[] =
-{
-    //   x    y  dest_schema  dest_door
-    { 32, 432,           1,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
-    { 1510, 464,           1,         0 },   // porta 1 -> porta 0
-};
 
 static constexpr door_list s_doors[NUM_SCHEMI] =
 {
