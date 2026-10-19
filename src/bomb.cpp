@@ -196,6 +196,7 @@ void bomb::update_explosion()
             g_dog->chr_vx = (dx < 0) ? bn::fixed(-2.0) : bn::fixed(2.0);
             g_dog->chr_vy = MEDIUM_JUMP_VY;
             g_dog->invulnerability = 60;
+            g_dog->dog_damage(15);
         }
     }
 

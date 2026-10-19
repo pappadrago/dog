@@ -38,14 +38,14 @@ class item : public live_obj
 {
 public:
 
-    int      action = 0;
     uint8_t  tipo;
     uint16_t attributo;
 
     bool is_drop = false;   // item lasciato da un nemico
-    bool active  = true;    // false = slot libero (solo per i drop)
-    int  ttl = 0;
-    int animAngle = 0;
+    bool active = true;    // false = slot libero (solo per i drop)
+    uint16_t  ttl = 0;
+    uint16_t animAngle = 0;
+    bn::vector<bn::sprite_ptr, 4> numero_sprites;
 
     bn::fixed spawn_x, spawn_y;
     explicit item(const item_def& def);
@@ -57,8 +57,10 @@ public:
     void raccogli();
     void drop_at(bn::fixed x, bn::fixed y);
 
-    private:
+private:
     void update_physics();
     void update_graphics();
     void hide_and_finish();
 };
+
+   // numero della porta mostrato durante il pickup di una chiave

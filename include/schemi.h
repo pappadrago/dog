@@ -6,6 +6,7 @@
 #include "piattaforma.h"
 #include "piattaforma_mobile.h"
 #include "lava.h"
+#include "door.h"
 #include "enemy.h"
 #include "item.h"
 #include "trampolino.h"
@@ -24,19 +25,6 @@ struct collision_map_info
 // schema: 1..NUM_SCHEMI (valori fuori range -> schema 1)
 const collision_map_info& get_collision_map(int schema);
 
-// Una porta: dove sta e dove porta
-struct door_def
-{
-    int x, y;          // centro della porta (px, coordinate mondo)
-    int dest_schema;   // schema di destinazione
-    int dest_door;     // indice della porta di arrivo nello schema di destinazione
-};
-
-struct door_list
-{
-    const door_def* data;
-    int count;
-};
 
 // Porte dello schema (valori fuori range -> schema 1)
 const door_def* get_schema_doors(int schema, int& count);

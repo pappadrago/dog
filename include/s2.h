@@ -15,8 +15,8 @@
 static constexpr door_def s2_doors[] =
 {
     //   x    y  dest_schema  dest_door
-    { 32, 432,           1,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
-    { 1510, 464,           1,         0 },   // porta 1 -> porta 0
+    { 32, 432,           1,         1 , 2 },   // porta 0 -> porta 1 (stesso schema, per provare)
+    { 1510, 464,           1,         0, 3 },   // porta 1 -> porta 0
 };
 constexpr int s2_doors_count= sizeof(s2_doors) / sizeof(s2_doors[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,9 +35,9 @@ constexpr int schema2_enemies_count = sizeof(schema2_enemies) / sizeof(schema2_e
 
 
 constexpr item_def schema2_items[] = {
-    { ITEM_TIPO_CHIAVE,  0,             300, 400 },
-    { ITEM_TIPO_CHIAVE,  0,             700, 350 },
-    { ITEM_TIPO_CHIAVE,  0,            1100, 400 },
+    { ITEM_TIPO_CHIAVE,  1,             300, 400 },
+    { ITEM_TIPO_CHIAVE,  2,             700, 350 },
+    { ITEM_TIPO_CHIAVE,  3,            1100, 400 },
     { ITEM_TIPO_POWERUP, POWERUP_SALTO|POWERUP_CORSA, 500, 300 },
     { ITEM_TIPO_POWERUP, POWERUP_SALTO|POWERUP_CORSA, 900, 250 },
     { ITEM_TIPO_ENERGIA, 0,             200, 300 },

@@ -7,6 +7,8 @@
 #include "bn_log.h"
 #include "piattaforma.h"
 #include "piattaforma_mobile.h"
+#include "hud.h"
+#include "bn_string.h"
 
 // Indici tile per tipo di oggetto: adatta agli indici reali dello spritesheet "items"
 static constexpr int TILE_CHIAVE = 31;
@@ -77,6 +79,7 @@ void item::update_physics() {
 
 void item::hide_and_finish()
 {
+    numero_sprites.clear();
     sprite->remove_affine_mat();
     sprite->set_visible(false);
     active = false;
@@ -91,7 +94,7 @@ void item::update_graphics() {
         sprite->set_visible(false);   // fuori portata: non lasciarlo fermo a schermo
         return;
     }
-    
+
     animAngle++;
     bn::fixed dy = bn::degrees_lut_sin_safe(animAngle << 3) * 4 - 2;
     bn::fixed dx = bn::degrees_lut_cos_safe(animAngle << 2) * 6 - 2;
@@ -107,6 +110,13 @@ void item::update_graphics() {
     }
     if (ticks2action > 0)
         sprite->set_scale(bn::fixed(2) - bn::fixed(ticks2action).division(30));
+
+    // il numero sale piano; lampeggia solo negli ultimi frame, per restare leggibile
+    for (bn::sprite_ptr& s : numero_sprites)
+    {
+        s.set_y(s.y() - bn::fixed(0.5));
+        s.set_visible(ticks2action > 10 || ticks2action % 2);
+    }        
 }
 
 void item::raccogli()
@@ -119,6 +129,17 @@ void item::raccogli()
     {
     case ITEM_TIPO_CHIAVE:
         g_dog->chiavi_raccolte++;
+        g_dog->segna_chiave(attributo);
+        if (bn::sprite_text_generator* gen = hud_text_generator())
+        {
+            numero_sprites.clear();
+            gen->set_center_alignment();
+            gen->generate(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 14,
+                bn::to_string<4>(attributo & 0xFF), numero_sprites);
+            gen->set_left_alignment();
+            for (bn::sprite_ptr& s : numero_sprites)
+                s.set_camera(g_camera);   // il testo segue la camera come gli altri sprite del mondo
+        }
         break;
 
     case ITEM_TIPO_ENERGIA:

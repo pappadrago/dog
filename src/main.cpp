@@ -12,7 +12,7 @@
 #include "bn_regular_bg_map_ptr.h"
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_memory.h"
-#include "common_variable_8x16_sprite_font.h"
+#include "common_variable_8x8_sprite_font.h"
 #include "bn_log.h"
 
 
@@ -44,6 +44,28 @@
 
 namespace
 {
+    // Resetta in ordine (da sinistra a destra) una serie di bn::optional.
+// Chiamare con l'ordine inverso rispetto alla creazione.
+    template<typename... Opts>
+    void reset_all(Opts&... opts)
+    {
+        (opts.reset(), ...);
+    }
+    // Elimina tutti gli oggetti puntati dal contenitore e lo svuota.
+    template<typename Vec>
+    void delete_all_and_clear(Vec& v)
+    {
+        for (auto* p : v)
+            delete p;
+        v.clear();
+    }
+
+    // Versione variadica: più contenitori in una sola chiamata, nell'ordine indicato.
+    template<typename... Vecs>
+    void delete_all(Vecs&... vs)
+    {
+        (delete_all_and_clear(vs), ...);
+    }
     // Dissolvenza verso il nero (true) o dal nero (false).
     // Usa il fade delle palette: agisce su tutti gli sprite e gli sfondi,
     // senza dover abilitare il blending oggetto per oggetto.
@@ -193,7 +215,7 @@ int main()
 
     //show_intro_screen();
 
-    bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
+    bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
     update_text_init(&text_generator);
 
     //bn::music_items::qwak.play(0.25);
@@ -245,14 +267,14 @@ int main()
             foreground.set_priority(2);
 
             // Porte dello schema
-            
+
             int n_doors = 0;
             const door_def* doorDef = get_schema_doors(g_schema, n_doors);
 
             bn::vector<door*, MAX_DOORS> doors;
             for (int i = 0; i < n_doors; ++i)
                 doors.push_back(new door(doorDef[i]));
-            
+
 
             bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
 
@@ -287,10 +309,17 @@ int main()
                 g_dog->chiavi_richieste = 0;
 
                 for (int i = 0; i < n_items; ++i) {
+                    if (defs[i].tipo == ITEM_TIPO_CHIAVE)
+                    {
+                        g_dog->chiavi_richieste++;
+                        if (g_dog->ha_chiave(defs[i].attributo))
+                        {
+                            g_dog->chiavi_raccolte++;
+                            continue;   // già raccolta: non riappare
+                        }
+                    }
                     item* new_item = new item(defs[i]);
                     g_items->push_back(new_item);
-                    if (defs[i].tipo == ITEM_TIPO_CHIAVE)
-                        g_dog->chiavi_richieste++;
                 }
             }
             {
@@ -434,38 +463,21 @@ int main()
             // ------------------------------------------------------------
             // Transizione verso lo schema di destinazione
             // ------------------------------------------------------------
-
+            // libera gli sprite del numero chiave prima di qualsiasi fade
+            for (door* d : doors)
+                d->libera_testo();
             if (game_over)
                 fade_screen_except_dog(true, text_generator);
             else
                 fade_screen(true);
 
-            for (enemy* e : *g_enemies)
-                delete e;
-            g_enemies->clear();
-
-            for (item* i : *g_items)
-                delete i;
-            g_items->clear();
-
-            for (door* d : doors)
-                delete d;
-            doors.clear();
-            for (trampolino* t : *g_trampolini)
-                delete t;
-            g_trampolini->clear();
-            for (piattaforma* p : *g_piattaforme)
-                delete p;
-            g_piattaforme->clear();
-
-            for (piattaforma_mobile* p : *g_piattaforme_mobili)
-                delete p;
-            g_piattaforme_mobili->clear();
-
-
-            for (lava_zona* z : *g_lava)
-                delete z;
-            g_lava->clear();
+            delete_all(*g_enemies,
+                *g_items,
+                doors,
+                *g_trampolini,
+                *g_piattaforme,
+                *g_piattaforme_mobili,
+                *g_lava);
 
             // eventuale bau in volo
             g_bau->ticks = 0;
@@ -483,23 +495,25 @@ int main()
         // --- teardown partita ---
         hud_reset();
         update_text_clear();
-        g_boss.reset();
         g_shake_ticks = 0;
 
         // ordine inverso rispetto alla creazione; la camera per ultima
         // perché gli sprite ne tengono un riferimento
-        g_healthbar.reset();
-        g_piattaforme_mobili.reset();
-        g_dog.reset();
-        g_timer.reset();
-        g_lava.reset();
-        g_piattaforme.reset();
-        g_items.reset();
-        g_enemies.reset();
-        g_bau_carico.reset();
-        g_bau.reset();
-        g_camera.reset();
-        g_trampolini.reset();
+        // ordine inverso rispetto alla creazione; la camera per ultima
+        // perché gli sprite ne tengono un riferimento
+        reset_all(g_boss,
+                  g_healthbar,
+                  g_trampolini,          // spostato: prima della camera
+                  g_piattaforme_mobili,
+                  g_dog,
+                  g_timer,
+                  g_lava,
+                  g_piattaforme,
+                  g_items,
+                  g_enemies,
+                  g_bau_carico,
+                  g_bau,
+                  g_camera);
         // toglie il nero lasciato dal fade
         bn::bg_palettes::set_fade_intensity(0);
         bn::sprite_palettes::set_fade_intensity(0);

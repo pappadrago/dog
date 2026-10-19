@@ -25,8 +25,25 @@ public:
 
     int score = 0;
 
+    // Contatori dello schema corrente (usati solo dall'HUD)
     int chiavi_raccolte = 0;
     int chiavi_richieste = 0;
+
+    // Bitmap globale: bit N = chiave N raccolta = porta N aperta (256 bit)
+    uint8_t chiavi_bitmap[32] = {};
+
+    bool ha_chiave(int id) const
+    {
+        id &= 0xFF;
+        return (chiavi_bitmap[id >> 3] >> (id & 7)) & 1;
+    }
+    void segna_chiave(int id)
+    {
+        id &= 0xFF;
+        chiavi_bitmap[id >> 3] |= uint8_t(1 << (id & 7));
+    }
+    bool porta_apribile(int id) const { return ha_chiave(id); }
+
 
     dog();
 
@@ -42,8 +59,6 @@ public:
     int charge_ticks = 0;
     void applica_powerup(uint16_t attributo);
     void update_animations();
-
-    bool porta_apribile() const { return chiavi_raccolte >= chiavi_richieste; }
 
     int stordito_ticks = 0;
     int idle_ticks = 0;

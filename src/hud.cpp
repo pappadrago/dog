@@ -263,3 +263,8 @@ void hud_update()
 
     set_visible(s_life_digits, life_visible);
 }
+
+bn::sprite_text_generator* hud_text_generator()
+{
+    return s_generator;
+}

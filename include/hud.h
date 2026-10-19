@@ -43,3 +43,7 @@ void hud_update();
 
 // Cancella l'HUD; alla prossima hud_update riparte da zero (nuova partita).
 void hud_reset();
+
+// Restituisce il generatore di testo inizializzato con update_text_init()
+// (già configurato per stare davanti a sfondi e sprite di gioco).
+bn::sprite_text_generator* hud_text_generator();

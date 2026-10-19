@@ -4,6 +4,9 @@
 #include "bn_keypad.h"
 #include "bn_math.h"
 #include "bn_sprite_items_doors.h"
+#include "hud.h"
+#include "bn_string.h"
+#include "bn_log.h"
 
 door::door(const door_def& info) :
     _info(&info)
@@ -25,7 +28,27 @@ bool door::update()
     bn::fixed dy = bn::abs(g_dog->chr_y - chr_y);
 
     bool dog_at_door = dx < DOOR_ENTER_HALF_W && dy < DOOR_ENTER_HALF_H;
-    bool apribile     = g_dog->porta_apribile();
+    bool apribile = g_dog->porta_apribile(_info->id);
+
+    // numero della chiave necessaria: visibile solo con dog davanti a una porta chiusa
+    bool mostra_numero = dog_at_door && !apribile;
+
+    if (mostra_numero && testo_sprites.empty())
+    {
+        if (bn::sprite_text_generator* gen = hud_text_generator())
+        {
+            gen->set_center_alignment();
+            gen->generate(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 14,
+                bn::to_string<4>(_info->id), testo_sprites);
+            gen->set_left_alignment();
+            for (bn::sprite_ptr& s : testo_sprites)
+                s.set_camera(g_camera);   // il testo resta ancorato alla porta quando la camera si muove
+        }
+    }
+    else if (!mostra_numero && !testo_sprites.empty())
+    {
+        testo_sprites.clear();
+    }
 
     int frame;
     if (!apribile)

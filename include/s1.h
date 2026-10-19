@@ -34,8 +34,8 @@ constexpr int schema1_lava_count = sizeof(schema1_lava) / sizeof(schema1_lava[0]
 static constexpr door_def s1_doors[] =
 {
     //   x    y  dest_schema  dest_door
-    { 16, 448,           2,         1 },   // porta 0 -> porta 1 (stesso schema, per provare)
-    { 1526, 432,           2,         0 },   // porta 1 -> porta 0
+    { 16, 448,           2,         1  , 127},   // porta 0 -> porta 1 (stesso schema, per provare)
+    { 1526, 432,           2,         0, 1 },   // porta 1 -> porta 0
 };
 constexpr int s1_doors_count= sizeof(s1_doors) / sizeof(s1_doors[0]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,9 +44,9 @@ constexpr int s1_doors_count= sizeof(s1_doors) / sizeof(s1_doors[0]);
 #define ID_PIATTAFORMA_S1_2 20
 
 constexpr item_def schema1_items[] = {
-{ ITEM_TIPO_CHIAVE,  0,             50, 400 },
-{ ITEM_TIPO_CHIAVE,  0,             100, 350 },
-{ ITEM_TIPO_CHIAVE,  0,            150, 400 },
+{ ITEM_TIPO_CHIAVE,127,             50, 400 },
+{ ITEM_TIPO_CHIAVE,  1,             100, 350 },
+{ ITEM_TIPO_CHIAVE,  2,            150, 400 },
 { ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_DOPPIO_SALTO | POWERUP_WALL_JUMP | POWERUP_DASH | POWERUP_AIR_DASH | POWERUP_GROUND_POUND, 200, 300 },
 { ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_CORSA, 650, 300 },
 { ITEM_TIPO_POWERUP, POWERUP_CORSA, 900, 250 },
