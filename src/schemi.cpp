@@ -156,81 +156,38 @@ const bn::regular_bg_item& get_schema_platform_item(int schema)
 }
 
 
-const piattaforma_def* get_schema_piattaforme(int schema, int& count)
-{
-    switch (schema)
-    {
-    case 1:
-        count = schema1_piattaforme_count;
-        return schema1_piattaforme;
-    case 2:
-        // count = schema2_piattaforme_count;
-        // return schema2_piattaforme;
-        count = 0;
-        return nullptr;   // finché s2 non ha piattaforme proprie
-    default:
-        count = 0;
-        return nullptr;
-    }
-}
+const schema_def schemi[] = {
+make_schema_1(),
+make_schema_2()
+};
 
-const lava_zona_def* get_schema_lava(int schema, int& count)
+const trampolino_def* get_schema_trampolini(int schema, int& count)
 {
-    switch (schema)
-    {
-    case 1:
-        count = schema1_lava_count;
-        return schema1_lava;
-    case 2:
-        count = schema2_lava_count;
-        return schema2_lava;
-        count = 0;
-        return nullptr;   // finché s2 non ha lava propria
-    default:
-        count = 0;
-        return nullptr;
-    }
-}
-
-
-const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& count)
-{
-    switch (schema)
-    {
-    case 1:
-        count = schema1_piattaforme_mobili_count;
-        return schema1_piattaforme_mobili;
-    case 2:
-        count = schema2_piattaforme_mobili_count;
-        return schema2_piattaforme_mobili;
-    default:
-        count = 0;
-        return nullptr;
-    }
+    count = schemi[schema - 1].trampolini_count;
+    return schemi[schema - 1].trampolini;
 }
 
 const enemy_def* get_schema_enemies(int schema, int& count)
 {
-    switch (schema)
-    {
-    case 1:
-        count = schema1_enemies_count;
-        return schema1_enemies;
-    case 2:
-        count = schema2_enemies_count;
-        return schema2_enemies;
-    default:
-        count = 0;
-        return nullptr;
-    }
+    count = schemi[schema - 1].enemies_count;
+    return schemi[schema - 1].enemies;
 }
 
-
-const trampolino_def* get_schema_trampolini(int schema, int& count)
+const lava_zona_def* get_schema_lava(int schema, int& count)
 {
-    switch (schema)
-    {
-    case 1: count = schema1_trampolini_count; return schema1_trampolini;
-    default: count = 0; return nullptr;
-    }
+    count = schemi[schema - 1].lava_count;
+    return schemi[schema - 1].lava;
 }
+
+const piattaforma_def* get_schema_piattaforme(int schema, int& count)
+{
+    count = schemi[schema - 1].piattaforme_count;
+    return schemi[schema - 1].piattaforme;
+}
+
+const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& count)
+{
+    count = schemi[schema - 1].piattaforme_mobili_count;
+    return schemi[schema - 1].piattaforme_mobili;
+}
+

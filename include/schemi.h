@@ -72,8 +72,6 @@ const enemy_def* get_schema_enemies(int schema, int& count);
 
 const trampolino_def* get_schema_trampolini(int schema, int& count);
 
-
-
 struct schema_def
 {
     const trampolino_def* trampolini; int trampolini_count;
@@ -82,6 +80,6 @@ struct schema_def
     const piattaforma_def* piattaforme; int piattaforme_count;
     const piattaforma_mobile_def* piattaforme_mobili; int piattaforme_mobili_count;
     const enemy_def* enemies; int enemies_count;
-    const collision_map_info* collision;
+    const collision_map_info* map_info;
 };
 
