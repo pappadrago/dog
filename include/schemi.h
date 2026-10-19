@@ -6,7 +6,9 @@
 #include "piattaforma_mobile.h"
 #include "lava.h"
 #include "enemy.h"
+#include "item.h"
 #include "trampolino.h"
+
 
 
 // Numero di schemi disponibili: aumentare quando si aggiunge s2, s3...
@@ -18,7 +20,7 @@ struct collision_map_info
     int columns;
     int rows;
     int map_w;
-    int map_h;    
+    int map_h;
 };
 
 // schema: 1..NUM_SCHEMI (valori fuori range -> schema 1)
@@ -66,6 +68,20 @@ const lava_zona_def* get_schema_lava(int schema, int& count);
 const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& count);
 
 
- const enemy_def* get_schema_enemies(int schema, int& count);
+const enemy_def* get_schema_enemies(int schema, int& count);
 
- const trampolino_def* get_schema_trampolini(int schema, int& count);
+const trampolino_def* get_schema_trampolini(int schema, int& count);
+
+
+
+struct schema_def
+{
+    const trampolino_def* trampolini; int trampolini_count;
+    const lava_zona_def* lava; int lava_count;
+    const item_def* items; int items_count;
+    const piattaforma_def* piattaforme; int piattaforme_count;
+    const piattaforma_mobile_def* piattaforme_mobili; int piattaforme_mobili_count;
+    const enemy_def* enemies; int enemies_count;
+    const collision_map_info* collision;
+};
+

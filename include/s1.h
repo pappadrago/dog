@@ -109,6 +109,8 @@ constexpr enemy_def schema1_enemies[] = {
 };
 constexpr int schema1_enemies_count = sizeof(schema1_enemies) / sizeof(schema1_enemies[0]);
 
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 constexpr uint8_t collision_map_columns_s1 = 192;
@@ -149,3 +151,19 @@ constexpr uint8_t collision_map_s1[collision_map_columns_s1 * collision_map_rows
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 };
+
+
+constexpr collision_map_info collision_map_s1_info = { collision_map_s1, collision_map_columns_s1, collision_map_rows_s1, collision_map_columns_s1 * 16, collision_map_rows_s1 * 16 };
+
+constexpr schema_def make_schema_1()
+{
+    return {
+        schema1_trampolini, schema1_trampolini_count,
+        schema1_lava, schema1_lava_count,
+        schema1_items, schema1_items_count,
+        schema1_piattaforme, schema1_piattaforme_count,
+        schema1_piattaforme_mobili, schema1_piattaforme_mobili_count,
+        schema1_enemies, schema1_enemies_count,
+        &collision_map_s1_info
+    };
+}   
