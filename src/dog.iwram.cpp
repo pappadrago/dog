@@ -289,6 +289,18 @@ BN_CODE_IWRAM void dog::update()
 
     }
 
+    if (wall_jump_anim_ticks == 0 && dash_ticks == 0) {
+        chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
+
+        if (spinta_ticks > 0){
+            chr_vx = cap(chr_vx, tetto_vx_spinta);
+            if(polvere_anim->done())
+            start_polvere_anim(chr_x - HALF_SCREEN_W+dir*8, chr_y + 4 - HALF_SCREEN_H, false, false, 0);
+        }
+    }
+    if (spinta_ticks > 0)
+        spinta_ticks--;
+
     if (!polvere_anim->done()) {
         polvere_anim->update();
     }
@@ -299,14 +311,7 @@ BN_CODE_IWRAM void dog::update()
     else
         polvere_sprite->set_visible(false);
 
-    if (wall_jump_anim_ticks == 0 && dash_ticks == 0) {
-        chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
 
-        if (spinta_ticks > 0)
-            chr_vx = cap(chr_vx, tetto_vx_spinta);
-    }
-    if (spinta_ticks > 0)
-        spinta_ticks--;
     chr_x += chr_vx;
     apply_map();
 

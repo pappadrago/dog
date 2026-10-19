@@ -20,6 +20,7 @@
 void dog::start_polvere_anim(bn::fixed x, bn::fixed y, bool groundPound, bool vertical_flip, int rotation_angle) {
     groundPound ? ground_pound_anim->reset() : polvere_anim->reset();
     polvere_sprite->set_visible(true);
+    polvere_sprite->set_z_order(-2);
     polvere_sprite->set_x(x);
     polvere_sprite->set_y(y);
     polvere_sprite->set_vertical_flip(vertical_flip);
