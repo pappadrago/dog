@@ -184,7 +184,7 @@ void bomb::update_explosion()
         actionExplode->update();
     }
 
-    // Danno al cane: stesso knockback usato per il contatto coi nemici
+    // Danno al cane
     if (g_dog->invulnerability == 0)
     {
         bn::fixed dx = g_dog->chr_x - chr_x;
