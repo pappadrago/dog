@@ -129,27 +129,27 @@ void dog::update_animations() {
 
     if (invulnerability)
         sprite->set_visible(invulnerability % 2);
-        
-bool carica_piena = charge_ticks >= BAU_CHARGE_MAX && bn::keypad::a_held();
 
-if (carica_piena)
-{
-    if (!carica_attiva)
+    bool carica_piena = charge_ticks >= BAU_CHARGE_MAX && bn::keypad::a_held();
+
+    if (carica_piena)
     {
-        carica_attiva = true;          // frame in cui la carica raggiunge il massimo
-        carica_anim->reset();
-        spriteAusiliario->set_visible(true);
+        if (!carica_attiva)
+        {
+            carica_attiva = true;          // frame in cui la carica raggiunge il massimo
+            carica_anim->reset();
+            spriteAusiliario->set_visible(true);
+        }
+        carica_anim->update();
+        spriteAusiliario->set_x(sprite->x());
+        spriteAusiliario->set_y(sprite->y());
+        spriteAusiliario->set_horizontal_flip(dir == DIR_LEFT);
     }
-    carica_anim->update();
-    spriteAusiliario->set_x(sprite->x());
-    spriteAusiliario->set_y(sprite->y());
-    spriteAusiliario->set_horizontal_flip(dir == DIR_LEFT);
-}
-else if (carica_attiva)
-{
-    carica_attiva = false;
-    spriteAusiliario->set_visible(false);
-}        
+    else if (carica_attiva)
+    {
+        carica_attiva = false;
+        spriteAusiliario->set_visible(false);
+    }
 
 }
 

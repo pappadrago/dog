@@ -165,3 +165,14 @@ private:
                             bool ignoreGravity, bool ignoreWalls,
                             bn::fixed speed);
 };
+
+namespace enemy_config {
+    constexpr int PROJECTILE_LIFETIME = 120;   // frame di vita di proiettili lanciati
+    constexpr int ARROW_TILE_INDEX = 9;
+    constexpr int GRAVITY_ARROW_TILE_INDEX = 24;
+    constexpr int FIREBALL_TILE_INDEX = 23;
+    constexpr bn::fixed ARROW_SPEED = bn::fixed(2.0);
+    constexpr bn::fixed FIREBALL_SPEED = bn::fixed(1.5);
+    // Offset verticale di spawn rispetto al nemico (centro del sprite).
+    constexpr bn::fixed SPAWN_Y_OFFSET = bn::fixed(-4);
+}

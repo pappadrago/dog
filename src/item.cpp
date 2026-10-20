@@ -13,7 +13,10 @@
 // Indici tile per tipo di oggetto: adatta agli indici reali dello spritesheet "items"
 static constexpr int TILE_CHIAVE = 31;
 static constexpr int TILE_ENERGIA = 11;
-static constexpr int TILE_SBLOCCO = 30;
+
+static constexpr int TILE_SBLOCCO = 15;
+static constexpr int TILE_SBLOCCO_ATTIVO = 17;   // adatta all'indice reale nello spritesheet "items"
+
 static constexpr int TILE_POWERUP_BASE = 0; // + sotto_tipo (4 varianti consecutive)
 
 static int tile_per_item(uint8_t tipo)
@@ -96,8 +99,12 @@ void item::update_graphics() {
     }
 
     animAngle++;
-    bn::fixed dy = bn::degrees_lut_sin_safe(animAngle << 3) * 4 - 2;
-    bn::fixed dx = bn::degrees_lut_cos_safe(animAngle << 2) * 6 - 2;
+    bn::fixed dy = 0;
+    bn::fixed dx = 0;
+    if (tipo != ITEM_TIPO_SBLOCCO) {
+        dy = bn::degrees_lut_sin_safe(animAngle << 3) * 4 - 2;
+        dx = bn::degrees_lut_cos_safe(animAngle << 2) * 6 - 2;
+    }
     sprite->set_x(chr_x + dx - HALF_SCREEN_W);
     sprite->set_y(chr_y + dy - HALF_SCREEN_H);
 
@@ -116,13 +123,33 @@ void item::update_graphics() {
     {
         s.set_y(s.y() - bn::fixed(0.5));
         s.set_visible(ticks2action > 10 || ticks2action % 2);
-    }        
+    }
+}
+
+void item::show_nr(bn::string<4> txt) {
+    if (bn::sprite_text_generator* gen = hud_text_generator())
+    {
+        numero_sprites.clear();
+        gen->set_center_alignment();
+        gen->generate(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 14,
+            txt, numero_sprites);
+        gen->set_left_alignment();
+        for (bn::sprite_ptr& s : numero_sprites)
+            s.set_camera(g_camera);   // il testo segue la camera come gli altri sprite del mondo
+    }
 }
 
 void item::raccogli()
 {
     if (!active) return;
-    g_dog->add_score(10);
+
+    if (tipo == ITEM_TIPO_SBLOCCO)
+    {
+        commuta_sblocco();
+        show_nr(bn::to_string<4>(attributo & 0xFF));
+        return;   // l'interruttore non scompare
+    }
+
     chr_vy = MEDIUM_JUMP_VY;
     ticks2action = 30;
     switch (tipo)
@@ -130,35 +157,22 @@ void item::raccogli()
     case ITEM_TIPO_CHIAVE:
         g_dog->chiavi_raccolte++;
         g_dog->segna_chiave(attributo);
-        if (bn::sprite_text_generator* gen = hud_text_generator())
-        {
-            numero_sprites.clear();
-            gen->set_center_alignment();
-            gen->generate(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 14,
-                bn::to_string<4>(attributo & 0xFF), numero_sprites);
-            gen->set_left_alignment();
-            for (bn::sprite_ptr& s : numero_sprites)
-                s.set_camera(g_camera);   // il testo segue la camera come gli altri sprite del mondo
-        }
+        show_nr(bn::to_string<4>(attributo & 0xFF));
         break;
 
     case ITEM_TIPO_ENERGIA:
         g_dog->life += 30; // valore da bilanciare
         g_dog->life = capzero(g_dog->life, MAX_LIFE);
+        show_nr("+"+
+            bn::to_string<3>(30));
         break;
 
     case ITEM_TIPO_POWERUP:
         g_dog->applica_powerup(attributo);
         break;
     case ITEM_TIPO_SBLOCCO:
-        for (piattaforma* p : *g_piattaforme)
-            if (p->def.attiva_con == attributo)
-                p->commuta();
 
-        for (piattaforma_mobile* pm : *g_piattaforme_mobili)
-            if (pm->def.attiva_con == attributo)
-                pm->attiva_piattaforma();
-        break;
+
     default:
         break;
     }
@@ -178,4 +192,28 @@ void item::drop_at(bn::fixed x, bn::fixed y)
     sprite->set_tiles(bn::sprite_items::items.tiles_item(), g_rng.get_int(10));
     sprite->set_position(x - HALF_SCREEN_W, y - HALF_SCREEN_H);
     sprite->set_visible(true);
+}
+
+
+void item::commuta_sblocco()
+{
+    stato ^= 1;
+    sprite->set_tiles(bn::sprite_items::items.tiles_item(),
+        stato ? TILE_SBLOCCO_ATTIVO : TILE_SBLOCCO);
+
+    // --- qui va la tua logica di commutazione delle piattaforme collegate ---
+    for (piattaforma* p : *g_piattaforme)
+        if (p->def.attiva_con == attributo)
+            p->commuta();
+
+    for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+        if (pm->def.attiva_con == attributo)
+            pm->attiva_piattaforma();
+}
+
+void item::contatto_interruttore(bool hit)
+{
+    if (hit && !dog_sopra)      // solo sul fronte di salita del contatto
+        commuta_sblocco();
+    dog_sopra = hit;
 }

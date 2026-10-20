@@ -50,7 +50,7 @@ bool door::update()
         testo_sprites.clear();
     }
 
-    int frame;
+    uint_fast8_t frame;
     if (!apribile)
         frame = DOOR_FRAME_LOCKED;
     else if (dog_at_door)

@@ -151,6 +151,23 @@ BN_CODE_IWRAM void dog::update()
     }
 
 
+    for (item* _item : *g_items)
+    {
+        if (!_item->active) continue;
+
+        bool hit = check_collision_16(*_item->sprite);
+
+        if (_item->tipo == ITEM_TIPO_SBLOCCO)
+        {
+            _item->contatto_interruttore(hit);
+            continue;
+        }
+
+        if (_item->ticks2action) continue;
+        if (hit)
+            _item->raccogli();
+    }
+
     if (invulnerability > 0)
         invulnerability--;
 
@@ -205,13 +222,7 @@ BN_CODE_IWRAM void dog::update()
 
         }
 
-        for (item* _item : *g_items)
-        {
-            if (!_item->active || _item->ticks2action) continue;
-            bool hit = check_collision_16(*_item->sprite);
-            if (hit)
-                _item->raccogli();
-        }
+
 
         if (g_boss.has_value() && g_boss->invulnerability == 0)
         {
@@ -292,10 +303,10 @@ BN_CODE_IWRAM void dog::update()
     if (wall_jump_anim_ticks == 0 && dash_ticks == 0) {
         chr_vx = cap(chr_vx, max_vx + runningExtraSpeed + bonus_corsa);
 
-        if (spinta_ticks > 0){
+        if (spinta_ticks > 0) {
             chr_vx = cap(chr_vx, tetto_vx_spinta);
-            if(polvere_anim->done())
-            start_polvere_anim(chr_x - HALF_SCREEN_W+dir*8, chr_y + 4 - HALF_SCREEN_H, false, false, 0);
+            if (polvere_anim->done())
+                start_polvere_anim(chr_x - HALF_SCREEN_W + dir * 8, chr_y + 4 - HALF_SCREEN_H, false, false, 0);
         }
     }
     if (spinta_ticks > 0)

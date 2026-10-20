@@ -280,13 +280,18 @@ void enemy::update_attack()
 {
     if (attack_cd > 0) { attack_cd--; return; }
     if (!(attributo & (ATTR_PROJ_MASK | ATTR_MELEE | ATTR_BASH))) return;
+    
+    bn::fixed dist2dog = dist_to_dog();
+    if(dist2dog.integer()>HALF_SCREEN_W)return;
+
+
     if (!dog_in_sight() && has(ATTR_BASH)) {
         max_vx = bn::fixed(0.75);
         return;
     }
 
     // per MOVE_MELEE attacca solo quando è in range
-    if (tipo == MOVE_MELEE && dist_to_dog() > (has(ATTR_BASH) ? chase_range : melee_range)) return;
+    if (tipo == MOVE_MELEE && dist2dog > (has(ATTR_BASH) ? chase_range : melee_range)) return;
 
     currentAction = ACTION_ATTACK;
     face_dog();
@@ -369,16 +374,6 @@ void enemy::throw_shell()
     bomba.emplace(chr_x, chr_y - 4, vx, vy, /*max_bounces=*/0);
 }
 
-namespace enemy_config {
-    constexpr int PROJECTILE_LIFETIME = 120;   // frame di vita di proiettili lanciati
-    constexpr int ARROW_TILE_INDEX = 9;
-    constexpr int GRAVITY_ARROW_TILE_INDEX = 24;
-    constexpr int FIREBALL_TILE_INDEX = 23;
-    constexpr bn::fixed ARROW_SPEED = bn::fixed(2.0);
-    constexpr bn::fixed FIREBALL_SPEED = bn::fixed(1.5);
-    // Offset verticale di spawn rispetto al nemico (centro del sprite).
-    constexpr bn::fixed SPAWN_Y_OFFSET = bn::fixed(-4);
-}
 
 void enemy::throw_gravity_arrow()
 {
@@ -401,56 +396,6 @@ void enemy::throw_fireball()
         enemy_config::FIREBALL_SPEED);
 }
 
-void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t tileIndex,
-    bool ignoreGravity, bool ignoreWalls,
-    bn::fixed speed)
-{
-    if (bomba) return;   // un colpo alla volta per nemico
-
-    bn::fixed dx = g_dog->chr_x - chr_x;
-    if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
-
-    dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
-
-    bn::fixed vx, vy, angle = ZERO;
-    bool aim = has(ATTR_AIM);
-
-    if (aim && dx != ZERO)
-    {
-        // Mira a tiro: proiettile punta verso il cane (precisione intera, come in boss.cpp).
-        bn::fixed dy = g_dog->chr_y - chr_y;
-        angle = bn::degrees_atan2(dy.integer(), dx.integer());
-
-        vx = bn::degrees_lut_cos_safe(angle).multiplication(speed);
-        vy = bn::degrees_lut_sin_safe(angle).multiplication(speed);
-        angle = -angle;
-    }
-    else
-    {
-        // Tiro dritto in orizzontale, senza verticale.
-        vx = speed.multiplication(dir);
-        vy = ZERO;
-
-    }
-
-    // L'angolo di rotazione del sprite segue la traiettoria:
-    //   0° = rivolto a destra, quindi rotazione = -90° - angle.
-    bomb_def def;
-    def.tipoProjec = tipoProjec;
-    def.x = chr_x;
-    def.y = chr_y + enemy_config::SPAWN_Y_OFFSET;
-    def.vx = vx;
-    def.vy = vy;
-
-    def.ignoreGravity = ignoreGravity;
-    def.ignoreWalls = ignoreWalls;
-    def.max_bounces = 0;
-    def.ttl = enemy_config::PROJECTILE_LIFETIME;
-    def.tileIndex = tileIndex;
-    def.angle = angle;
-
-    bomba.emplace(def);
-}
 
 
 void enemy::melee()

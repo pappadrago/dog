@@ -40,6 +40,6 @@ public:
     void libera_testo() { testo_sprites.clear(); }   // rilascia subito gli sprite del numero
 private:
     const door_def* _info;
-    int current_frame = -1; // forza il primo aggiornamento del frame
+    uint_fast8_t current_frame = -1; // forza il primo aggiornamento del frame
 };
 

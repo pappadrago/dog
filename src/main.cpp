@@ -12,7 +12,7 @@
 #include "bn_regular_bg_map_ptr.h"
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_memory.h"
-#include "common_variable_8x8_sprite_font.h"
+#include "round_6x6_sprite_font.h"
 #include "bn_log.h"
 
 
@@ -215,7 +215,8 @@ int main()
 
     //show_intro_screen();
 
-    bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
+    // bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
+    bn::sprite_text_generator text_generator(round_font::round_6x6_sprite_font);
     update_text_init(&text_generator);
 
     //bn::music_items::qwak.play(0.25);
@@ -441,10 +442,6 @@ int main()
 
                     update_text_tick();
                     hud_update();
-
-                    // BN_LOG("cpu ", bn::core::last_cpu_usage(), "max ", bn::core::current_cpu_ticks);
-                   // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
-                   // BN_LOG("stack iwram:   ", bn::memory::used_stack_iwram());
                 };
 
             // Fade-in a gioco attivo: gli sprite prendono la posizione giusta
