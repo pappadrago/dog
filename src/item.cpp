@@ -9,6 +9,7 @@
 #include "piattaforma_mobile.h"
 #include "hud.h"
 #include "bn_string.h"
+#include <bn_sound_items.h>
 
 // Indici tile per tipo di oggetto: adatta agli indici reali dello spritesheet "items"
 static constexpr int TILE_CHIAVE = 31;
@@ -26,7 +27,7 @@ static int tile_per_item(uint8_t tipo)
     case ITEM_TIPO_CHIAVE:  return TILE_CHIAVE;
     case ITEM_TIPO_ENERGIA: return TILE_ENERGIA;
     case ITEM_TIPO_POWERUP: return TILE_POWERUP_BASE;
-    case ITEM_TIPO_SBLOCCO: return TILE_SBLOCCO; // Assuming a tile index for the lock item
+    case ITEM_TIPO_INTERRUTTORE: return TILE_SBLOCCO; // Assuming a tile index for the lock item
     default:                return 0;
     }
 }
@@ -101,7 +102,7 @@ void item::update_graphics() {
     animAngle++;
     bn::fixed dy = 0;
     bn::fixed dx = 0;
-    if (tipo != ITEM_TIPO_SBLOCCO) {
+    if (tipo != ITEM_TIPO_INTERRUTTORE) {
         dy = bn::degrees_lut_sin_safe(animAngle << 3) * 4 - 2;
         dx = bn::degrees_lut_cos_safe(animAngle << 2) * 6 - 2;
     }
@@ -134,45 +135,41 @@ void item::show_nr(bn::string<4> txt) {
         gen->generate(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 14,
             txt, numero_sprites);
         gen->set_left_alignment();
-        for (bn::sprite_ptr& s : numero_sprites)
+        for (bn::sprite_ptr& s : numero_sprites){
             s.set_camera(g_camera);   // il testo segue la camera come gli altri sprite del mondo
+            s.set_visible(true);
+        }
     }
 }
 
 void item::raccogli()
 {
+    // TIPO_SBLOCCO non passa da raccogli() ma va direttamente in contatto_interruttore()
     if (!active) return;
-
-    if (tipo == ITEM_TIPO_SBLOCCO)
-    {
-        commuta_sblocco();
-        show_nr(bn::to_string<4>(attributo & 0xFF));
-        return;   // l'interruttore non scompare
-    }
 
     chr_vy = MEDIUM_JUMP_VY;
     ticks2action = 30;
+
     switch (tipo)
     {
     case ITEM_TIPO_CHIAVE:
         g_dog->chiavi_raccolte++;
         g_dog->segna_chiave(attributo);
         show_nr(bn::to_string<4>(attributo & 0xFF));
+        bn::sound_items::creaky_door_short.play();
         break;
 
     case ITEM_TIPO_ENERGIA:
         g_dog->life += 30; // valore da bilanciare
         g_dog->life = capzero(g_dog->life, MAX_LIFE);
-        show_nr("+"+
-            bn::to_string<3>(30));
+        show_nr("+" + bn::to_string<3>(30));
+        bn::sound_items::heart_collect.play();
         break;
 
     case ITEM_TIPO_POWERUP:
         g_dog->applica_powerup(attributo);
+        bn::sound_items::gem_collect.play();
         break;
-    case ITEM_TIPO_SBLOCCO:
-
-
     default:
         break;
     }
@@ -197,23 +194,32 @@ void item::drop_at(bn::fixed x, bn::fixed y)
 
 void item::commuta_sblocco()
 {
+    // --- qui va la tua logica di commutazione delle piattaforme collegate ---
+    for (piattaforma* p : *g_piattaforme)
+        if (p->def.attiva_con == attributo && !p->in_transizione) {
+            p->commuta();
+            commuta_stato_grafico();
+        }
+
+    for (piattaforma_mobile* pm : *g_piattaforme_mobili)
+        if (pm->def.attiva_con == attributo && !pm->attiva) {
+            pm->attiva_piattaforma();
+            commuta_stato_grafico();
+        }
+}
+
+void item::commuta_stato_grafico()
+{
+    bn::sound_items::lock_unlock.play();
     stato ^= 1;
     sprite->set_tiles(bn::sprite_items::items.tiles_item(),
         stato ? TILE_SBLOCCO_ATTIVO : TILE_SBLOCCO);
-
-    // --- qui va la tua logica di commutazione delle piattaforme collegate ---
-    for (piattaforma* p : *g_piattaforme)
-        if (p->def.attiva_con == attributo)
-            p->commuta();
-
-    for (piattaforma_mobile* pm : *g_piattaforme_mobili)
-        if (pm->def.attiva_con == attributo)
-            pm->attiva_piattaforma();
 }
 
 void item::contatto_interruttore(bool hit)
 {
-    if (hit && !dog_sopra)      // solo sul fronte di salita del contatto
+    if (hit && !dog_sopra)    {  // solo sul fronte di salita del contatto
         commuta_sblocco();
+    }
     dog_sopra = hit;
 }

@@ -219,7 +219,7 @@ int main()
     bn::sprite_text_generator text_generator(round_font::round_6x6_sprite_font);
     update_text_init(&text_generator);
 
-    //bn::music_items::qwak.play(0.25);
+    //
     g_schema = 1;
     while (true) {
         dog_selection_screen(text_generator);
@@ -239,7 +239,7 @@ int main()
 
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;
-
+        bn::music_items::brimble_superfrog_world_1.play(0.25);
         while (!game_over)
         {
             // ------------------------------------------------------------

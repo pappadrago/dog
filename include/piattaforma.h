@@ -23,12 +23,12 @@ public:
 
     void commuta();   // avvia la transizione: non applica più tutto subito
     void update();    // da chiamare ogni frame: avanza la transizione, una tile alla volta
-
+    bool in_transizione = false;
 private:
     platform_map* _buffer;
     bn::regular_bg_map_ptr _mappa_bg;
 
-    bool in_transizione = false;
+
     int  indice_tile_corrente = 0;
     int  ticks_prossima_tile = 0;
 

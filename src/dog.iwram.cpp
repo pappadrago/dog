@@ -157,7 +157,7 @@ BN_CODE_IWRAM void dog::update()
 
         bool hit = check_collision_16(*_item->sprite);
 
-        if (_item->tipo == ITEM_TIPO_SBLOCCO)
+        if (_item->tipo == ITEM_TIPO_INTERRUTTORE)
         {
             _item->contatto_interruttore(hit);
             continue;

@@ -52,8 +52,8 @@ constexpr item_def schema1_items[] = {
 { ITEM_TIPO_POWERUP, POWERUP_CORSA, 900, 250 },
 { ITEM_TIPO_ENERGIA, 0,             200, 300 },
 { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
-{ ITEM_TIPO_SBLOCCO,  ID_PIATTAFORMA_S1_1,             800, 300 },
-{ ITEM_TIPO_SBLOCCO,  ID_PIATTAFORMA_S1_2,             1350, 100 },
+{ ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_1,             800, 300 },
+{ ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_2,             1350, 100 },
 };
 constexpr int schema1_items_count = sizeof(schema1_items) / sizeof(schema1_items[0]);
 

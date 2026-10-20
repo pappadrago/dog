@@ -5,6 +5,7 @@
 #include "bn_sprite_items_weapons.h"
 #include "bn_sprite_items_diecloud.h"
 #include "collision.h"
+#include <bn_sound_items.h>
 
 bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounces) :
     max_bounces(_max_bounces)
@@ -82,6 +83,7 @@ void bomb::explode()
     chr_vx = chr_vy = ZERO;
     sprite->set_visible(true);
     actionExplode->reset();
+    bn::sound_items::bomb.play();
 }
 
 void bomb::update_explosion()

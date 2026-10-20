@@ -12,6 +12,7 @@
 #include "bn_sprite_items_enemies2.h"
 #include "bn_math.h"
 #include "bn_log.h"
+#include <bn_sound_items.h>
 
 // genera un nuovo bonus item e lo droppa nel mondo
 static void spawn_drop(bn::fixed x, bn::fixed y)
@@ -391,6 +392,7 @@ void enemy::throw_arrow()
 
 void enemy::throw_fireball()
 {
+    bn::sound_items::fire_lighting.play();
     throw_aimed_projectile(BOMB_FIREBALL, enemy_config::FIREBALL_TILE_INDEX,
         /*ignoreGravity=*/true, /*ignoreWalls=*/true,
         enemy_config::FIREBALL_SPEED);

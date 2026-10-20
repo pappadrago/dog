@@ -13,7 +13,7 @@ class dog;
 #define ITEM_TIPO_CHIAVE  0
 #define ITEM_TIPO_POWERUP 1
 #define ITEM_TIPO_ENERGIA 2
-#define ITEM_TIPO_SBLOCCO 3
+#define ITEM_TIPO_INTERRUTTORE 3
 
 #define POWERUP_CORSA      (1<<0)
 #define POWERUP_SALTO      (1<<1)
@@ -66,4 +66,5 @@ private:
     void hide_and_finish();
     void show_nr(bn::string<4> txt);
     void commuta_sblocco();
+    void commuta_stato_grafico();
 };
