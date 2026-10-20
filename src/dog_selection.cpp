@@ -36,6 +36,7 @@ namespace
 
 void dog_selection_screen(bn::sprite_text_generator& text_generator)
 {
+    bn::music_items::superfrog_title.play(0.25);
     static constexpr int NUM_DOGS = 1;
     static constexpr int SPACING = 40;
     static constexpr int START_X = -100;
