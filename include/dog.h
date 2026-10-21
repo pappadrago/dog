@@ -128,4 +128,8 @@ public:
 bn::optional<bn::sprite_ptr> spriteAusiliario;
 bn::optional<bn::sprite_animate_action<24>> carica_anim;
 bool carica_attiva = false;
+
+u_int8_t text_ticks = 0;
+bn::vector<bn::sprite_ptr, 4> numero_sprites;
+void show_nr(bn::string<4> txt);
 };

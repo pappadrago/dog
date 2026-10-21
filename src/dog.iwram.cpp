@@ -312,6 +312,9 @@ BN_CODE_IWRAM void dog::update()
     if (spinta_ticks > 0)
         spinta_ticks--;
 
+
+
+
     if (!polvere_anim->done()) {
         polvere_anim->update();
     }

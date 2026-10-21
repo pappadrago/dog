@@ -36,8 +36,6 @@ public:
     bool update();
 
     const door_def& info() const { return *_info; }
-    bn::vector<bn::sprite_ptr, 4> testo_sprites;   // numero della chiave richiesta, mostrato se la porta è chiusa e dog è davanti
-    void libera_testo() { testo_sprites.clear(); }   // rilascia subito gli sprite del numero
 private:
     const door_def* _info;
     uint_fast8_t current_frame = -1; // forza il primo aggiornamento del frame

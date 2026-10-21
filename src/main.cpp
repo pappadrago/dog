@@ -164,35 +164,34 @@ namespace
 
 void show_intro_screen()
 {
+    
     // 1. Crea il background statico dell'intro
     bn::regular_bg_ptr intro_bg = bn::regular_bg_items::intro.create_bg(0, 0);
     bn::regular_bg_ptr mega_bg = bn::regular_bg_items::megadog.create_bg(0, 0);
 
-    // 2. Imposta inizialmente la sfumatura della palette a nero totale (intensità 1.0)
-  //  intro_bg.palette().set_fade_color(bn::color(0, 0, 0));
-  //  intro_bg.palette().set_fade_intensity(1.0);
 
-    // --- FADE IN ---
-    // Sfumatura da nero al colore originale (intensità 0.0) in 60 frame (~1 secondo)
-    //bn::regular_bg_palette_fade_to_action fade_in(intro_bg.palette(), 60, 0.0);
 
-   // while(!fade_in.done())
-   // {
-   //     fade_in.update();
-   //     bn::core::update();
-   // }
-
-    // Mantiene l'immagine visibile su schermo per 120 frame (~2 secondi)
     intro_bg.set_y(-48);   // scorrimento lento verso sinistra
     mega_bg.set_y(48);   // scorrimento lento verso sinistra
+
+
+
+    int FRAMES = 180;
+
     for (int i = 0; i < 180 * 2; ++i)
     {
-        bn::core::update();
+
+        if (i <= FRAMES) {
+            bn::fixed intensity = bn::fixed(FRAMES - i) / FRAMES;
+            bn::bg_palettes::set_fade(bn::colors::black, intensity);
+            bn::sprite_palettes::set_fade(bn::colors::black, intensity);
+        }
         intro_bg.set_y(intro_bg.y() + bn::fixed(0.25));   // scorrimento lento verso sinistra
 
         mega_bg.set_y(mega_bg.y() - bn::fixed(0.125));
         if (bn::keypad::start_pressed())
             break;
+        bn::core::update();
     }
     fade_screen(true);
 
@@ -212,8 +211,8 @@ void show_intro_screen()
 int main()
 {
     bn::core::init();
-
-    //show_intro_screen();
+    bn::music_items::superfrog_title.play(0.25);
+    show_intro_screen();
 
     // bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
     bn::sprite_text_generator text_generator(round_font::round_6x6_sprite_font);
@@ -460,9 +459,7 @@ int main()
             // ------------------------------------------------------------
             // Transizione verso lo schema di destinazione
             // ------------------------------------------------------------
-            // libera gli sprite del numero chiave prima di qualsiasi fade
-            for (door* d : doors)
-                d->libera_testo();
+
             if (game_over)
                 fade_screen_except_dog(true, text_generator);
             else
@@ -499,18 +496,18 @@ int main()
         // ordine inverso rispetto alla creazione; la camera per ultima
         // perché gli sprite ne tengono un riferimento
         reset_all(g_boss,
-                  g_healthbar,
-                  g_trampolini,          // spostato: prima della camera
-                  g_piattaforme_mobili,
-                  g_dog,
-                  g_timer,
-                  g_lava,
-                  g_piattaforme,
-                  g_items,
-                  g_enemies,
-                  g_bau_carico,
-                  g_bau,
-                  g_camera);
+            g_healthbar,
+            g_trampolini,          // spostato: prima della camera
+            g_piattaforme_mobili,
+            g_dog,
+            g_timer,
+            g_lava,
+            g_piattaforme,
+            g_items,
+            g_enemies,
+            g_bau_carico,
+            g_bau,
+            g_camera);
         // toglie il nero lasciato dal fade
         bn::bg_palettes::set_fade_intensity(0);
         bn::sprite_palettes::set_fade_intensity(0);

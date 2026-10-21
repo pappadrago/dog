@@ -15,7 +15,12 @@
 #include "bn_sprite_items_zombie.h"
 #include "bn_sprite_items_lavabubble.h"
 #include "bn_log.h"
-
+#include "hud.h"
+#include "bn_string.h"
+#include "bn_sprite_palette_item.h"
+#include "bn_sprite_palette_ptr.h"
+#include "bn_color.h"
+#include "bn_span.h"
 
 void dog::start_polvere_anim(bn::fixed x, bn::fixed y, bool groundPound, bool vertical_flip, int rotation_angle) {
     groundPound ? ground_pound_anim->reset() : polvere_anim->reset();
@@ -79,6 +84,18 @@ dog::dog()
 }
 
 void dog::update_animations() {
+
+    text_ticks--;
+    if (text_ticks > 0)
+        // il numero sale piano; lampeggia solo negli ultimi frame, per restare leggibile
+        for (bn::sprite_ptr& s : numero_sprites)
+        {
+            s.set_y(s.y() - bn::fixed(0.5));
+            s.set_visible(text_ticks > 10 || text_ticks % 2);
+        }
+    else
+        numero_sprites.clear();
+
     if (!onGround || chr_vx == 0)
         actionWalk->reset();
 
@@ -159,6 +176,7 @@ void dog::dog_damage(int amount)
         actionColpito->reset();
         colpito_anim_ticks = COLPITO_ANIM_TICKS;
         life -= amount;
+        show_nr("-" + bn::to_string<3>(amount & 0xFF));
         if (life <= 0) {
             life = 0;
         }
@@ -197,5 +215,22 @@ void dog::applica_powerup(uint16_t attributo)
     }
     if (attributo & POWERUP_GROUND_POUND) {
         ground_pound_acquisito = true;
+    }
+}
+
+
+void dog::show_nr(bn::string<4> txt) {
+    if (bn::sprite_text_generator* gen = hud_text_generator())
+    {
+        numero_sprites.clear();
+        text_ticks = 30;
+        gen->set_center_alignment();
+        gen->generate(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 8,
+            txt, numero_sprites);
+        gen->set_left_alignment();
+        for (bn::sprite_ptr& s : numero_sprites) {
+            s.set_camera(g_camera);   // il testo segue la camera come gli altri sprite del mondo
+            s.set_visible(true);
+        }
     }
 }

@@ -168,6 +168,7 @@ void item::raccogli()
 
     case ITEM_TIPO_POWERUP:
         g_dog->applica_powerup(attributo);
+        show_nr("POW!");
         bn::sound_items::gem_collect.play();
         break;
     default:
@@ -212,6 +213,7 @@ void item::commuta_stato_grafico()
 {
     bn::sound_items::lock_unlock.play();
     stato ^= 1;
+    g_dog->show_nr("CLIC");
     sprite->set_tiles(bn::sprite_items::items.tiles_item(),
         stato ? TILE_SBLOCCO_ATTIVO : TILE_SBLOCCO);
 }
