@@ -35,7 +35,7 @@ void dog::start_polvere_anim(bn::fixed x, bn::fixed y, bool groundPound, bool ve
 dog::dog()
 {
     spriteItems = bn::sprite_items::fox1632;
-
+    chr_y = 32;
     sprite = spriteItems->create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
 
     sprite->set_bg_priority(1);
@@ -54,6 +54,7 @@ dog::dog()
     polvere_sprite = bn::sprite_items::fox1632.create_sprite(0, 0, 0);
     polvere_sprite->set_camera(g_camera);
     polvere_sprite->set_bg_priority(3);
+    polvere_sprite->set_visible(false);
     polvere_anim = bn::create_sprite_animate_action_once(
         *polvere_sprite, 2, bn::sprite_items::fox1632.tiles_item(), 56, 57, 58, 59);   // 4 frame di sbuffo
     ground_pound_anim = bn::create_sprite_animate_action_once(

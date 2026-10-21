@@ -18,15 +18,17 @@
             }
         },
         "megadog_s1.tmx": {
-            "scale": 1,
-            "selectedLayer": 1,
+            "scale": 3,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 252,
-                "y": 357
+                "x": 501,
+                "y": 307.66666666666663
             }
         }
     },
+    "last.exportedFilePath": "/home/kids/gba/prendilo/tiled",
     "map.height": 32,
+    "map.lastUsedExportFilter": "File CSV (*.csv)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,

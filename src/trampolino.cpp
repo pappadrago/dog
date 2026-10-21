@@ -5,6 +5,7 @@
 #include "bn_keypad.h"
 #include "bn_math.h"
 #include "bn_sprite_items_items.h"
+#include <bn_sound_items.h>
 
 static constexpr int TILE_TRAMPOLINO_RIPOSO = 13;
 static constexpr int TILE_TRAMPOLINO_COMPRESSO = 14;
@@ -116,6 +117,7 @@ void trampolino::rimbalza(bn::fixed top)
     d.chr_vy = (bn::keypad::b_held() ? TRAMPOLINO_RIMBALZO_VY_B : TRAMPOLINO_RIMBALZO_VY)
         - d.bonus_salto;
 
+    bn::sound_items::elastic_twang.play();
     d.onGround = false;
     d.salto_in_corso = true;       // il ground pound è di nuovo possibile dopo il rimbalzo
     d.salto_pieno = true;

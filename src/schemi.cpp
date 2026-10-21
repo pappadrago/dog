@@ -1,5 +1,5 @@
 #include "schemi.h"
-
+#include "megadog_s1.h"
 #include "s1.h"
 #include "s2.h"
 
@@ -24,6 +24,7 @@ void imposta_collisione_rect(int x1, int y1, int x2, int y2, uint8_t value)
 }
 
 constexpr schema_def schemi[] = {
+    megadog_s1::make_schema_A(),
 make_schema_1(),
 make_schema_2()
 };

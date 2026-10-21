@@ -102,8 +102,8 @@ namespace
             bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg)
     {
         // Offset costanti del foreground: -(MAP_HALF) - HALF_SCREEN
-        static constexpr int FG_OFF_X = -(MAP_HALF_W + 120);
-        static constexpr int FG_OFF_Y = -(MAP_HALF_H + 80);
+        static int FG_OFF_X = -(MAP_HALF_W + 120);
+        static int FG_OFF_Y = -(MAP_HALF_H + 80);
 
         static int s_schema = -1;
         static int s_max_x = 0, s_max_y = 0;
@@ -115,6 +115,11 @@ namespace
             const collision_map_info& map = get_collision_map(g_schema);
             s_max_x = map.map_w - 240;
             s_max_y = map.map_h - 160;
+
+            FG_OFF_X = -((map.map_w>>1) + 120);
+           FG_OFF_Y = -((map.map_h>>1) + 80);
+
+
             s_schema = g_schema;
             s_last_x = s_last_y = INT_MIN;   // forza il refresh
         }

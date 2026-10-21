@@ -1,3 +1,4 @@
+#include <bn_sound_items.h>
 #include "piattaforma.h"
 #include "schemi.h"
 
@@ -32,8 +33,8 @@ void piattaforma::update()
     }
 
     int larghezza = def.tile_x2 - def.tile_x1 + 1;
-    int altezza   = def.tile_y2 - def.tile_y1 + 1;
-    int totale    = larghezza * altezza;
+    int altezza = def.tile_y2 - def.tile_y1 + 1;
+    int totale = larghezza * altezza;
 
     int tx = def.tile_x1 + (indice_tile_corrente % larghezza);
     int ty = def.tile_y1 + (indice_tile_corrente / larghezza);
@@ -53,12 +54,12 @@ void piattaforma::applica_una_tile(int tx, int ty, const uint16_t tiles_hw[4])
     int hx = tx * 2, hy = ty * 2;
 
     auto scrivi = [&](int ox, int oy, uint16_t tile_index)
-    {
-        bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
-        bn::regular_bg_map_cell_info info(cella);
-        info.set_tile_index(tile_index);
-        cella = info.cell();
-    };
+        {
+            bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
+            bn::regular_bg_map_cell_info info(cella);
+            info.set_tile_index(tile_index);
+            cella = info.cell();
+        };
 
     scrivi(0, 0, tiles_hw[0]);
     scrivi(1, 0, tiles_hw[1]);
@@ -67,6 +68,8 @@ void piattaforma::applica_una_tile(int tx, int ty, const uint16_t tiles_hw[4])
 
     _mappa_bg.reload_cells_ref();
     imposta_collisione(tx, ty, solida ? 1 : 0);   // la collisione di QUESTA tile cambia nello stesso istante del suo aspetto
+
+    bn::sound_items::paste.play();
 }
 
 void piattaforma::applica_tutte(const uint16_t tiles_hw[4])
@@ -78,12 +81,12 @@ void piattaforma::applica_tutte(const uint16_t tiles_hw[4])
             int hx = tx * 2, hy = ty * 2;
 
             auto scrivi = [&](int ox, int oy, uint16_t tile_index)
-            {
-                bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
-                bn::regular_bg_map_cell_info info(cella);
-                info.set_tile_index(tile_index);
-                cella = info.cell();
-            };
+                {
+                    bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
+                    bn::regular_bg_map_cell_info info(cella);
+                    info.set_tile_index(tile_index);
+                    cella = info.cell();
+                };
 
             scrivi(0, 0, tiles_hw[0]);
             scrivi(1, 0, tiles_hw[1]);
