@@ -55,7 +55,7 @@ public:
     bn::fixed bonus_corsa = ZERO;
     bn::fixed bonus_salto = ZERO;
     bn::fixed bonus_bau = ZERO;
-    int       bonus_resistenza = 0;
+    int bonus_resistenza = 0;
     int charge_ticks = 0;
     void applica_powerup(uint16_t attributo);
     void update_animations();
@@ -113,8 +113,8 @@ public:
 #define JUMP_BUFFER_TICKS 6
 #define SALTO_TAGLIO_VY bn::fixed(-2.0)      // velocità a cui viene tagliato il salto al rilascio (~13px di salto minimo)
 
-    int  coyote_ticks = 0;
-    int  jump_buffer_ticks = 0;
+    u_int8_t  coyote_ticks = 0;
+    u_int8_t  jump_buffer_ticks = 0;
     bool salto_tenuto = false;
     bool salto_pieno = false;   // true se il salto non è stato accorciato rilasciando il tasto in salita
     void start_polvere_anim(bn::fixed x, bn::fixed y, bool groundPound, bool vertical_flip, int rotation_angle);
