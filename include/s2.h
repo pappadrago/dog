@@ -123,6 +123,7 @@ constexpr schema_def make_schema_2()
 {
     return {
         nullptr, 0,
+        nullptr, 0,
         schema2_lava, schema2_lava_count,
         schema2_items, schema2_items_count,
         schema2_piattaforme, schema2_piattaforme_count,

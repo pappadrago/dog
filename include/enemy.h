@@ -112,6 +112,7 @@ public:
     void beHitByBark(int _dir, bn::fixed power = 0);
     void beHitByDog();
     void beHitByShockwave(int _dir);   // _dir: direzione in cui il nemico viene spinto (opposta al cane)
+    void beHitByCassa(int damage);
 
     void takeDamage(int damage);
 

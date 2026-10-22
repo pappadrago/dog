@@ -233,6 +233,7 @@ int main()
         g_bau_carico.emplace();
         g_enemies.emplace();
         g_items.emplace();
+        g_casse.emplace();
         g_piattaforme.emplace();
         g_lava.emplace();
         g_timer.emplace();
@@ -305,6 +306,18 @@ int main()
 
                 }
             }
+            // Spawn casse
+            {
+                int n_casse = 0;
+                const cassa_def* edefs = get_schema_casse(g_schema, n_casse);
+
+                for (int i = 0; i < n_casse; ++i) {
+                    cassa* new_cassa = new cassa(edefs[i]);
+                    new_cassa->def_origine = &edefs[i];
+                    g_casse->push_back(new_cassa);
+
+                }
+            }            
             // Spawn oggetti
             {
                 int n_items = 0;
@@ -378,7 +391,8 @@ int main()
                     g_dog->update();
                     for (trampolino* t : *g_trampolini)
                         t->update();
-
+                    for (cassa* e : *g_casse)
+                        e->update();
                     for (enemy* e : *g_enemies)
                         e->update();
                     g_healthbar->update();
@@ -474,6 +488,7 @@ int main()
                 *g_items,
                 doors,
                 *g_trampolini,
+                *g_casse,
                 *g_piattaforme,
                 *g_piattaforme_mobili,
                 *g_lava);
@@ -503,6 +518,7 @@ int main()
         reset_all(g_boss,
             g_healthbar,
             g_trampolini,          // spostato: prima della camera
+            g_casse,
             g_piattaforme_mobili,
             g_dog,
             g_timer,

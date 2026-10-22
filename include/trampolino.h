@@ -2,6 +2,7 @@
 
 #include "bn_fixed.h"
 #include "obj.h"
+#include "spingibile.h"
 #include <cstdint>
 
 #define TRAMPOLINO_RIMBALZO_VY   bn::fixed(-5.5)   // contro BIG_JUMP_VY = -3.8: ~100px di salto
@@ -15,7 +16,7 @@ struct trampolino_def
     int16_t x, y;   // posizione iniziale del centro (px, mondo): poi cade fino a terra
 };
 
-class trampolino : public live_obj
+class trampolino : : public spingibile
 {
 public:
     explicit trampolino(const trampolino_def& d);
@@ -29,7 +30,6 @@ private:
     void avvia_carica(bn::fixed top);
     void aggiorna_carica(bn::fixed top);
     void rimbalza(bn::fixed top);
-    void spingi(bn::fixed dx);
     void imposta_frame(int tile);
     void tieni_dog(bn::fixed top);
 };

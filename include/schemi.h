@@ -50,9 +50,11 @@ const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& cou
 const item_def* get_schema_items(int schema, int& count);
 const enemy_def* get_schema_enemies(int schema, int& count);
 const trampolino_def* get_schema_trampolini(int schema, int& count);
+const cassa_def* get_schema_casse(int schema, int& count);
 
 struct schema_def
 {
+    const cassa_def* casse; int casse_count;
     const trampolino_def* trampolini; int trampolini_count;
     const lava_zona_def* lava; int lava_count;
     const item_def* items; int items_count;

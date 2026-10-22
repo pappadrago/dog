@@ -10,13 +10,13 @@
 static constexpr int TILE_TRAMPOLINO_RIPOSO = 13;
 static constexpr int TILE_TRAMPOLINO_COMPRESSO = 14;
 
-static constexpr bn::fixed META_LARGHEZZA = 8;   // sprite 16x16
-
 trampolino::trampolino(const trampolino_def& d)
 {
     chr_x = bn::fixed(d.x);
     chr_y = bn::fixed(d.y);
 
+    velocita_spinta = TRAMPOLINO_VELOCITA_SPINTA;
+    meta_larghezza = bn::fixed(8);
     box_dim = bn::fixed(8);   // mezza altezza: i piedi/la testa stanno a chr_y +/- 8
     box_halfdim = bn::fixed(7);   // < 8: apply_map() lo usa anche in verticale e non deve leggere la riga del pavimento
 
@@ -45,15 +45,14 @@ void trampolino::update()
     {
         bn::fixed piedi = g_dog->chr_y + g_dog->box_dim;
         bn::fixed piedi_prima = piedi - g_dog->chr_vy;
-        bn::fixed testa = g_dog->chr_y - g_dog->box_dim;
         bn::fixed dx = g_dog->chr_x - chr_x;
 
         bool sopra_in_x = bn::abs(dx) < META_LARGHEZZA + g_dog->box_halfdim;
 
         if (g_dog->chr_vy > 0 && sopra_in_x && piedi_prima <= top + 1 && piedi >= top)
-            avvia_carica(top);                                                    // atterraggio dall'alto
-        else if (sopra_in_x && piedi > top + 1 && testa < chr_y + box_dim)
-            spingi(dx);                                                           // contatto laterale
+            avvia_carica(top); // atterraggio dall'alto
+        else 
+            gestisci_spinta_dog(); // contatto laterale
     }
 
     chr_vx = ZERO;

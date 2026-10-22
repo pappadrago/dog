@@ -3,6 +3,7 @@
 #include "door.h"
 #include "item.h"
 #include "lava.h"
+#include "cassa.h"
 #include "piattaforma.h"
 #include "piattaforma_mobile.h"
 #include "schemi.h"
@@ -13,6 +14,11 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 namespace megadog_s1 {
 
+    constexpr cassa_def schema1_casse[] = {
+    { CASSA_SCATOLA,  300, 400 },
+    { CASSA_INCUDINE, 700, 350 },
+};
+constexpr int schema1_casse_count = sizeof(schema1_casse) / sizeof(schema1_casse[0]);
     // constexpr trampolino_def schema1_trampolini[]
     //  = {
     //       { 300, 360 },
@@ -155,6 +161,7 @@ namespace megadog_s1 {
     constexpr schema_def make_schema_A()
     {
         return {
+            schema1_casse, schema1_casse_count,
             nullptr, 0, // schema1_trampolini, schema1_trampolini_count,
             schema1_lava, schema1_lava_count,
             schema1_items, schema1_items_count,

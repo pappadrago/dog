@@ -7,6 +7,7 @@
 #include "bau.h"
 #include "enemy.h"
 #include "item.h"
+#include "cassa.h"
 #include "dog.h"
 #include "boss.h"
 #include "piattaforma.h"
@@ -23,6 +24,7 @@ bn::optional<bau> g_bau_carico;
 bn::optional<dog> g_dog;
 bn::optional<boss> g_boss;
 bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
+bn::optional<bn::vector<cassa*, MAX_CASSE>> g_casse;
 bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 bn::optional<game_timer> g_timer;
 bn::optional<bn::vector<piattaforma*, MAX_PIATTAFORME>> g_piattaforme;

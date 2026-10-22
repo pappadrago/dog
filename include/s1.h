@@ -159,6 +159,7 @@ constexpr collision_map_info collision_map_s1_info = { collision_map_s1, collisi
 constexpr schema_def make_schema_1()
 {
     return {
+        nullptr, 0,
         schema1_trampolini, schema1_trampolini_count,
         schema1_lava, schema1_lava_count,
         schema1_items, schema1_items_count,

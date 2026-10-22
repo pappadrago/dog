@@ -544,3 +544,14 @@ void enemy::fire(int16_t type)
     }
 
 }
+
+void enemy::beHitByCassa(int damage)
+{
+    // colpo in testa: il nemico si ferma stordito sul posto, senza essere respinto
+    chr_vx = ZERO;
+    chr_accx = ZERO;
+
+    currentAction = ACTION_STUN;
+    ticks2action = 60;
+    takeDamage(damage);
+}
