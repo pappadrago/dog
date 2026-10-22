@@ -9,6 +9,7 @@
 #include "door.h"
 #include "enemy.h"
 #include "item.h"
+#include "cassa.h"
 #include "trampolino.h"
 
 
