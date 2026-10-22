@@ -389,4 +389,6 @@ BN_CODE_IWRAM void dog::update()
     sprite->set_y(chr_y - HALF_SCREEN_H);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
 
+
+    
 }

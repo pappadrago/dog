@@ -54,7 +54,7 @@ constexpr int schema1_casse_count = sizeof(schema1_casse) / sizeof(schema1_casse
     // { ITEM_TIPO_POWERUP, POWERUP_CORSA, 900, 250 },
     // { ITEM_TIPO_ENERGIA, 0,             200, 300 },
     // { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
-    { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_1,             1536 - 32 - 8, 100 },
+    { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_1,             1536 - 32 - 8-16, 100 },
      { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_2,             93 << 4, 29 << 4 },
     };
     constexpr int schema1_items_count = sizeof(schema1_items) / sizeof(schema1_items[0]);

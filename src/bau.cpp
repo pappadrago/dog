@@ -11,6 +11,7 @@ bau::bau()
     sprite = bn::sprite_items::fox1632.create_sprite(0, 0, 0);
     sprite->set_camera(g_camera);
     sprite->set_bg_priority(1);
+    sprite->set_visible(false);
 }
 
 void bau::do_spawn(int charge)

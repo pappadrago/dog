@@ -58,6 +58,8 @@ void piattaforma::applica_una_tile(int tx, int ty, const uint16_t tiles_hw[4])
             bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
             bn::regular_bg_map_cell_info info(cella);
             info.set_tile_index(tile_index);
+            info.set_horizontal_flip(false);
+            info.set_vertical_flip(false);
             cella = info.cell();
         };
 
@@ -85,6 +87,8 @@ void piattaforma::applica_tutte(const uint16_t tiles_hw[4])
                     bn::regular_bg_map_cell& cella = _buffer->cells[mi.cell_index(hx + ox, hy + oy)];
                     bn::regular_bg_map_cell_info info(cella);
                     info.set_tile_index(tile_index);
+                    info.set_horizontal_flip(false);
+                    info.set_vertical_flip(false);
                     cella = info.cell();
                 };
 
