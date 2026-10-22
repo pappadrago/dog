@@ -47,7 +47,7 @@ void trampolino::update()
         bn::fixed piedi_prima = piedi - g_dog->chr_vy;
         bn::fixed dx = g_dog->chr_x - chr_x;
 
-        bool sopra_in_x = bn::abs(dx) < META_LARGHEZZA + g_dog->box_halfdim;
+        bool sopra_in_x = bn::abs(dx) < meta_larghezza + g_dog->box_halfdim;
 
         if (g_dog->chr_vy > 0 && sopra_in_x && piedi_prima <= top + 1 && piedi >= top)
             avvia_carica(top); // atterraggio dall'alto
