@@ -131,34 +131,6 @@ void trampolino::rimbalza(bn::fixed top)
     d.stacco_anim_ticks = STACCO_ANIM_TICKS;
 }
 
-void trampolino::spingi(bn::fixed dx)
-{
-    bn::fixed contatto_x = META_LARGHEZZA + g_dog->box_halfdim;
-    bn::fixed penetrazione = contatto_x - bn::abs(dx);
-    int verso = (dx > 0) ? DIR_LEFT : DIR_RIGHT;   // il tappeto si sposta via da dog
-
-    // apply_map() guarda il lato in base al segno di chr_vx e, se trova un muro,
-    // annulla esattamente questo spostamento e azzera chr_vx
-    chr_vx = penetrazione * verso;
-    chr_x += chr_vx;
-    apply_map();
-    bool bloccato = (chr_vx == ZERO);
-    chr_vx = ZERO;
-
-    if (bloccato)
-    {
-        // il tappeto è contro un muro: è dog a non poter avanzare
-        g_dog->chr_x = chr_x - contatto_x * verso;
-        g_dog->chr_vx = ZERO;
-    }
-    else if (g_dog->chr_vx * verso > ZERO)   // dog sta davvero spingendo, non sta solo sfiorando il tappeto
-    {
-        // rallenta dog: tetto alla velocità nel verso della spinta
-        g_dog->tetto_vx_spinta = TRAMPOLINO_VELOCITA_SPINTA;
-        g_dog->spinta_ticks = 1;
-    }
-}
-
 // Tiene dog fermo sul tappeto, sempre più in basso man mano che l'attesa avanza
 void trampolino::tieni_dog(bn::fixed top)
 {
