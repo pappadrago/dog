@@ -4,6 +4,8 @@
 #include "enemy.h"
 #include "bn_sprite_items_fox1632.h"
 #include "bn_log.h"
+#include "cassa.h"
+#include "trampolino.h"
 #include "bn_sound_items.h"
 
 bau::bau()
@@ -41,63 +43,7 @@ void bau::do_spawn(int charge)
 
     hit_half = bn::fixed(8) + power.multiplication(bn::fixed(6));         // 8 -> 14
     sprite->set_scale(bn::fixed(1) + power.multiplication(bn::fixed(0.75)));
-    
+
 
     sprite->set_visible(true);
-}
-
-
-void bau::update()
-{
-    if (ticks2Anim > 0) {
-        ticks2Anim--;
-        if (ticks2Anim == 0)
-            sprite->set_visible(false);
-        else
-            sprite->set_visible(ticks2Anim % 2);
-        return;
-    }
-
-    if (ticks == 0)
-        return;
-
-    if (chr_vx != 0)
-    {
-        // bn::fixed prossimo_x = chr_x + chr_vx;
-        // bn::fixed bordo = prossimo_x + (chr_vx > 0 ? box_halfdim : -box_halfdim);
-
-        // if (is_solid_at(bordo, chr_y, g_schema)) {
-        //     chr_vx = 0;          // si ferma contro il muro
-        //     ticks = 1;
-        // }
-        // else
-        chr_x += chr_vx;
-    }
-
-    bn::fixed reach = hit_half + 8;   // 8 = mezza hitbox del nemico
-    for (enemy* enem : *g_enemies)
-    {
-        if (enem->invulnerability > 0 || enem->is_dead()) continue;
-
-        bool hit = bn::abs(enem->sprite->x() - sprite->x()) < reach &&
-            bn::abs(enem->sprite->y() - sprite->y()) < reach;
-        if (hit)
-        {
-            enem->beHitByBark(enem->chr_x < g_dog->chr_x ? DIR_LEFT : DIR_RIGHT, power);
-            if (power < bn::fixed(1)) {
-                ticks = 0;
-                ticks2Anim = 20;
-            }
-            break;
-        }
-    }
-    if (ticks > 0) {
-        ticks--;
-        if (ticks == 0) {
-            ticks2Anim = 1;
-        }
-    }
-    sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H);
-
 }

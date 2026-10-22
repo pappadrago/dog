@@ -28,10 +28,7 @@
 #define MAX_ITEMS       16
 
 
-#define MAX_CASSE 3
-#define PIATTAFORMA_X bn::fixed(400)   // coordinate fisse della piattaforma in alto: da adattare all'arena reale
-#define PIATTAFORMA_Y bn::fixed(80)
-
+#define MAX_CASSE 8
 
 #define MAX_DOORS 4 
 #define ENEMY_RESPAWN_RANGE_X bn::fixed(260)

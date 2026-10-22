@@ -168,7 +168,7 @@ void item::raccogli()
 
     case ITEM_TIPO_POWERUP:
         g_dog->applica_powerup(attributo);
-        show_nr("POW!");
+        show_nr("POWER!");
         bn::sound_items::gem_collect.play();
         break;
     default:

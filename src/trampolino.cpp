@@ -82,7 +82,8 @@ void trampolino::aggiorna_carica(bn::fixed top)
 
     bool anticipa = bn::keypad::b_pressed();
     // dog scagliato via da altro (danno, lava, bomba) o partito in dash: niente rimbalzo
-    bool interrotto = (d.chr_vy < 0 && !anticipa) || d.dash_ticks > 0;
+        bool interrotto = (d.chr_vy < 0 && !anticipa) || d.dash_ticks > 0
+                      || chr_vx != ZERO || chr_vy != ZERO;   // il tappeto è stato lanciato dal bau
 
     if (interrotto)
     {

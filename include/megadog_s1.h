@@ -15,8 +15,8 @@
 namespace megadog_s1 {
 
     constexpr cassa_def schema1_casse[] = {
-    { CASSA_SCATOLA,  300, 400 },
-    { CASSA_INCUDINE, 700, 350 },
+    { CASSA_SCATOLA,  200, 100, false },
+    { CASSA_SCATOLA, 300, 150, false },
 };
 constexpr int schema1_casse_count = sizeof(schema1_casse) / sizeof(schema1_casse[0]);
     // constexpr trampolino_def schema1_trampolini[]
