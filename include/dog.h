@@ -77,7 +77,7 @@ public:
 
     bn::optional<bn::sprite_animate_action<4>> actionWallJump;
     bn::optional<bn::sprite_animate_action<14>> actionIdle;
-    int wall_jump_anim_ticks = 0;
+    u_int8_t wall_jump_anim_ticks = 0;
 
     bool doppio_salto_acquisito = false;
     bool wall_jump_acquisito = false;
