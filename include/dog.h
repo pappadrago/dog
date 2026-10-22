@@ -60,9 +60,9 @@ public:
     void applica_powerup(uint16_t attributo);
     void update_animations();
 
-    int stordito_ticks = 0;
-    int idle_ticks = 0;
-    int dash_ticks = 0;
+    u_int8_t stordito_ticks = 0;
+    u_int8_t idle_ticks = 0;
+    u_int8_t dash_ticks = 0;
 
         // Tetto temporaneo a chr_vx, impostato da oggetti che dog sta spingendo (es. trampolino)
     int       spinta_ticks = 0;
@@ -84,9 +84,9 @@ public:
     bool dash_acquisito = false;
     bool air_dash_acquisito = false;
     bool ground_pound_acquisito = false;
-
     bool doppio_salto_disponibile = false;   // si consuma a ogni uso, si ricarica all'atterraggio
-
+    bool ground_pound_engaged = false;
+    bool wall_sliding = false;
 
 #define COLPITO_ANIM_TICKS 18        // 6 frame, placeholder: regola in base alla velocità scelta per actionColpito
 #define ATTERRAGGIO_ANIM_TICKS 12   // stessa durata dello stordimento: finiscono insieme
@@ -96,11 +96,10 @@ public:
     bn::optional<bn::sprite_animate_action<4>> actionAtterraggio;   // placeholder: aggiorna il numero quando sai i frame reali
     bn::optional<bn::sprite_animate_action<4>> actionStacco;        // idem
 
-    int colpito_anim_ticks = 0;
-    int atterraggio_anim_ticks = 0;
-    int stacco_anim_ticks = 0;
+    u_int8_t colpito_anim_ticks = 0;
+    u_int8_t atterraggio_anim_ticks = 0;
+    u_int8_t stacco_anim_ticks = 0;
 
-    bool ground_pound_engaged = false;
 
 
     // Getter e Setter per Power Land
@@ -109,7 +108,6 @@ public:
 
 
 
-    bool wall_sliding = false;
 
 #define COYOTE_TICKS 6                       // ~100 ms
 #define JUMP_BUFFER_TICKS 6
