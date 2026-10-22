@@ -44,6 +44,13 @@ const trampolino_def* get_schema_trampolini(int schema, int& count)
     return s.trampolini;
 }
 
+const trampolino_def* get_schema_casse(int schema, int& count)
+{
+    const cassa_def& s = S(schema);
+    count = s.casse_count;
+    return s.casse;
+}
+
 const enemy_def* get_schema_enemies(int schema, int& count)
 {
     const schema_def& s = S(schema);
