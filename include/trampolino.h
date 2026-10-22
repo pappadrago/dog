@@ -16,7 +16,7 @@ struct trampolino_def
     int16_t x, y;   // posizione iniziale del centro (px, mondo): poi cade fino a terra
 };
 
-class trampolino : : public spingibile
+class trampolino : public spingibile
 {
 public:
     explicit trampolino(const trampolino_def& d);
