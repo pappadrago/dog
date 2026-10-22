@@ -61,7 +61,7 @@ public:
     void update_animations();
 
     u_int8_t stordito_ticks = 0;
-    u_int8_t idle_ticks = 0;
+    u_int16_t idle_ticks = 0;
     u_int8_t dash_ticks = 0;
 
         // Tetto temporaneo a chr_vx, impostato da oggetti che dog sta spingendo (es. trampolino)
