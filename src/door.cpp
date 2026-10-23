@@ -33,7 +33,7 @@ bool door::update()
     bool mostra_numero = dog_at_door && !apribile;
 
     if (mostra_numero)
-        g_dog->show_nr(bn::to_string<4>(_info->id));
+        g_dog->show_nr(_info->id);
 
     uint_fast8_t frame;
     if (!apribile)

@@ -117,7 +117,7 @@ BN_CODE_IWRAM void dog::update()
         chr_vy = MAX_FALL;
     }
 
-    bn::fixed runningExtraSpeed = bn::keypad::l_held() ? RUN_EXTRA_SPEED : ZERO;
+    bn::fixed runningExtraSpeed = (run_acquisito && bn::keypad::l_held()) ? RUN_EXTRA_SPEED : ZERO;
 
     if (dash_ticks == 0) {
         if (bn::keypad::right_held()) {
@@ -367,10 +367,9 @@ BN_CODE_IWRAM void dog::update()
         polvere_sprite->set_rotation_angle_safe(90 * dir);
         polvere_sprite->set_x(chr_x - HALF_SCREEN_W + (dir > 0 ? (-(box_halfdim >> 1)) : 0));
         polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
-
     }
-#define WALL_SLIDE_TILE 26            
 
+#define WALL_SLIDE_TILE 26            
 
     if (wall_sliding && chr_vy > WALL_SLIDE_VY - GRAVITY)
         chr_vy = WALL_SLIDE_VY - GRAVITY;
@@ -387,8 +386,5 @@ BN_CODE_IWRAM void dog::update()
     // --- Sprite ---
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
-    sprite->set_horizontal_flip(dir == DIR_LEFT);
-
-
-    
+    sprite->set_horizontal_flip(dir == DIR_LEFT);    
 }

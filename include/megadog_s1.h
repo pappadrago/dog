@@ -15,10 +15,10 @@
 namespace megadog_s1 {
 
     constexpr cassa_def schema1_casse[] = {
-    { CASSA_SCATOLA,  200, 100, false },
-    { CASSA_SCATOLA, 300, 150, false },
-};
-constexpr int schema1_casse_count = sizeof(schema1_casse) / sizeof(schema1_casse[0]);
+    { CASSA_SCATOLA,  640, 50, false },
+    { CASSA_SCATOLA, 780, 50, false },
+    };
+    constexpr int schema1_casse_count = sizeof(schema1_casse) / sizeof(schema1_casse[0]);
     // constexpr trampolino_def schema1_trampolini[]
     //  = {
     //       { 300, 360 },
@@ -51,10 +51,10 @@ constexpr int schema1_casse_count = sizeof(schema1_casse) / sizeof(schema1_casse
     { ITEM_TIPO_CHIAVE,127,             71 << 4, 24 << 4 },
     // { ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_DOPPIO_SALTO | POWERUP_WALL_JUMP | POWERUP_DASH | POWERUP_AIR_DASH | POWERUP_GROUND_POUND, 200, 300 },
     // { ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_CORSA, 650, 300 },
-    // { ITEM_TIPO_POWERUP, POWERUP_CORSA, 900, 250 },
+     { ITEM_TIPO_POWERUP, POWERUP_CORSA, 64, 32 },
     // { ITEM_TIPO_ENERGIA, 0,             200, 300 },
     // { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
-    { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_1,             1536 - 32 - 8-16, 100 },
+    { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_1,             1536 - 32 - 8 - 16, 100 },
      { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_2,             93 << 4, 29 << 4 },
     };
     constexpr int schema1_items_count = sizeof(schema1_items) / sizeof(schema1_items[0]);

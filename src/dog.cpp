@@ -91,7 +91,7 @@ void dog::update_animations() {
         // il numero sale piano; lampeggia solo negli ultimi frame, per restare leggibile
         for (bn::sprite_ptr& s : numero_sprites)
         {
-            s.set_y(s.y() - bn::fixed(0.5));
+            s.set_y(s.y() - text_vy);
             s.set_visible(text_ticks > 10 || text_ticks % 2);
         }
     else
@@ -177,7 +177,7 @@ void dog::dog_damage(int amount)
         actionColpito->reset();
         colpito_anim_ticks = COLPITO_ANIM_TICKS;
         life -= amount;
-        show_nr("-" + bn::to_string<3>(amount & 0xFF));
+        show_nr(-amount);
         if (life <= 0) {
             life = 0;
         }
@@ -187,8 +187,8 @@ void dog::dog_damage(int amount)
 void dog::applica_powerup(uint16_t attributo)
 {
     if (attributo & POWERUP_CORSA) {
-        if (bonus_corsa == bn::fixed(0))
-            bonus_corsa = bn::fixed(0.5);
+        run_acquisito = true;
+        show_str("ORA PUOI CORRERE COL TASTO L");
     }
     if (attributo & POWERUP_SALTO) {
         if (bonus_salto == bn::fixed(0))
@@ -220,11 +220,33 @@ void dog::applica_powerup(uint16_t attributo)
 }
 
 
-void dog::show_nr(bn::string<4> txt) {
+void dog::show_nr(int n) {
+    if (bn::sprite_text_generator* gen = hud_text_generator())
+    {
+
+        bn::string<4> txt = bn::to_string<4>(n);
+        numero_sprites.clear();
+        text_ticks = 30;
+        text_vy = bn::fixed(0.5);
+        gen->set_center_alignment();
+        gen->generate(
+            chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 8,
+            txt, numero_sprites);
+        gen->set_left_alignment();
+        for (bn::sprite_ptr& s : numero_sprites) {
+            s.set_camera(g_camera);   // il testo segue la camera come gli altri sprite del mondo
+            s.set_visible(true);
+        }
+    }
+}
+
+void dog::show_str(bn::string<32> txt) {
     if (bn::sprite_text_generator* gen = hud_text_generator())
     {
         numero_sprites.clear();
-        text_ticks = 30;
+        
+        text_ticks = 180;
+        text_vy = bn::fixed(0.1);
         gen->set_center_alignment();
         gen->generate(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H - 8,
             txt, numero_sprites);

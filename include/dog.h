@@ -64,7 +64,7 @@ public:
     u_int16_t idle_ticks = 0;
     u_int8_t dash_ticks = 0;
 
-        // Tetto temporaneo a chr_vx, impostato da oggetti che dog sta spingendo (es. trampolino)
+    // Tetto temporaneo a chr_vx, impostato da oggetti che dog sta spingendo (es. trampolino)
     int       spinta_ticks = 0;
     bn::fixed tetto_vx_spinta = ZERO;
 
@@ -80,6 +80,7 @@ public:
     u_int8_t wall_jump_anim_ticks = 0;
 
     bool doppio_salto_acquisito = false;
+    bool run_acquisito = false;
     bool wall_jump_acquisito = false;
     bool dash_acquisito = false;
     bool air_dash_acquisito = false;
@@ -123,11 +124,13 @@ public:
 #define GROUND_POUND_ONDA_RAGGIO_Y bn::fixed(160)
 #define ONDA_URTO_STUN_TICKS 30
 
-bn::optional<bn::sprite_ptr> spriteAusiliario;
-bn::optional<bn::sprite_animate_action<24>> carica_anim;
-bool carica_attiva = false;
+    bn::optional<bn::sprite_ptr> spriteAusiliario;
+    bn::optional<bn::sprite_animate_action<24>> carica_anim;
+    bool carica_attiva = false;
 
-u_int8_t text_ticks = 0;
-bn::vector<bn::sprite_ptr, 4> numero_sprites;
-void show_nr(bn::string<4> txt);
+    u_int8_t text_ticks = 0;
+    bn::fixed text_vy = 0;
+    bn::vector<bn::sprite_ptr, 32> numero_sprites;
+    void show_nr(int n);
+    void show_str(bn::string<32> txt);
 };

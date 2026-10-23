@@ -116,8 +116,8 @@ namespace
             s_max_x = map.map_w - 240;
             s_max_y = map.map_h - 160;
 
-            FG_OFF_X = -((map.map_w>>1) + 120);
-           FG_OFF_Y = -((map.map_h>>1) + 80);
+            FG_OFF_X = -((map.map_w >> 1) + 120);
+            FG_OFF_Y = -((map.map_h >> 1) + 80);
 
 
             s_schema = g_schema;
@@ -169,7 +169,7 @@ namespace
 
 void show_intro_screen()
 {
-    
+
     // 1. Crea il background statico dell'intro
     bn::regular_bg_ptr intro_bg = bn::regular_bg_items::intro.create_bg(0, 0);
     bn::regular_bg_ptr mega_bg = bn::regular_bg_items::megadog.create_bg(0, 0);
@@ -216,7 +216,8 @@ void show_intro_screen()
 int main()
 {
     bn::core::init();
-    bn::music_items::superfrog_title.play(0.25);
+    if (MUSIC_ON==1)
+        bn::music_items::superfrog_title.play(0.25);
     show_intro_screen();
 
     // bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
@@ -244,7 +245,8 @@ int main()
 
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;
-        bn::music_items::brimble_superfrog_world_1.play(0.25);
+        if (MUSIC_ON==1)
+            bn::music_items::brimble_superfrog_world_1.play(0.25);
         while (!game_over)
         {
             // ------------------------------------------------------------
@@ -317,7 +319,7 @@ int main()
                     g_casse->push_back(new_cassa);
 
                 }
-            }            
+            }
             // Spawn oggetti
             {
                 int n_items = 0;
