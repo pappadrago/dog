@@ -62,6 +62,21 @@ void piattaforma_mobile::attiva_piattaforma()
     _px = _x; _py = _y;
 }
 
+// void piattaforma_mobile::calcola_posizione()
+// {
+//     bn::fixed cos_a = bn::degrees_lut_cos_safe(_angolo);
+//     bn::fixed sin_a = bn::degrees_lut_sin_safe(_angolo);
+
+//     bn::fixed lx = bn::fixed(def.semiasse_x).multiplication(cos_a);
+//     bn::fixed ly = bn::fixed(def.semiasse_y).multiplication(sin_a);
+
+//     bn::fixed cos_r = bn::degrees_lut_cos_safe(bn::fixed(def.rotazione));
+//     bn::fixed sin_r = bn::degrees_lut_sin_safe(bn::fixed(def.rotazione));
+
+//     _x = bn::fixed(def.centro_x) + lx.multiplication(cos_r) - ly.multiplication(sin_r);
+//     _y = bn::fixed(def.centro_y) + lx.multiplication(sin_r) + ly.multiplication(cos_r);
+// }
+
 void piattaforma_mobile::calcola_posizione()
 {
     bn::fixed cos_a = bn::degrees_lut_cos_safe(_angolo);
@@ -73,8 +88,11 @@ void piattaforma_mobile::calcola_posizione()
     bn::fixed cos_r = bn::degrees_lut_cos_safe(bn::fixed(def.rotazione));
     bn::fixed sin_r = bn::degrees_lut_sin_safe(bn::fixed(def.rotazione));
 
-    _x = bn::fixed(def.centro_x) + lx.multiplication(cos_r) - ly.multiplication(sin_r);
-    _y = bn::fixed(def.centro_y) + lx.multiplication(sin_r) + ly.multiplication(cos_r);
+    bn::fixed fx = bn::fixed(def.centro_x) + lx.multiplication(cos_r) - ly.multiplication(sin_r);
+    bn::fixed fy = bn::fixed(def.centro_y) + lx.multiplication(sin_r) + ly.multiplication(cos_r);
+
+    _x = bn::fixed(fx.round_integer());
+    _y = bn::fixed(fy.round_integer());
 }
 
 void piattaforma_mobile::rinasci()

@@ -225,7 +225,7 @@ int main()
     update_text_init(&text_generator);
 
     //
-    g_schema = 1;
+    
     while (true) {
         dog_selection_screen(text_generator);
         // Costruzione oggetti di gioco in ordine di dipendenza
@@ -243,6 +243,7 @@ int main()
         g_healthbar.emplace();
         g_trampolini.emplace();
 
+        // g_schema = 2; g_dog->run_acquisito = true;
 
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;

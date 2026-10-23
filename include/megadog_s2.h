@@ -85,9 +85,9 @@ namespace megadog_s2 {
     //     // int16_t  ticks_dopo_salita;     // -1 = nessuna autodistruzione da salita di dog
     //     // int16_t  ticks_prima_di_tornare;// -1 = non ricompare mai, dopo l'autodistruzione da salita
 
-     { 48<<4,27<<4, 0, 70, 0, 4, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },
-     { 59<<4,15<<4, 0, 8<<4, 0, 4, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },   
-      { 70<<4,27<<4, 0, 70, 0, 4, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },
+     { 48<<4,27<<4, 0, 40, 0, 8, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },
+     { 59<<4,15<<4, 0, 8<<4, 0, 8, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },   
+      { 70<<4,27<<4, 0, 40, 0, 8, true, true, 0, -1, PIATTAFORMA_MOBILE_SOLIDO, 0, 0, -1, -1 },
 
      };
      constexpr int schema1_piattaforme_mobili_count = 

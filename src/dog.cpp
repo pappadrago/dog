@@ -85,6 +85,17 @@ dog::dog()
 }
 
 void dog::update_animations() {
+    // posizione sprite finale del frame, dopo piattaforme mobili e collisioni
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_LEFT);
+
+    if (chr_vx == 0 && chr_vy == 0)
+        idle_ticks++;
+    else {
+        idle_ticks = 0;
+        actionIdle->reset();
+    }
 
     text_ticks--;
     if (text_ticks > 0)

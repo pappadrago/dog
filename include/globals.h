@@ -93,4 +93,4 @@ template<typename T, int N>
 constexpr int array_count(const T (&)[N]) { return N; }
 
 
-#define MUSIC_ON 0
+#define MUSIC_ON 1

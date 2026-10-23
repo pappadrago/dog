@@ -376,15 +376,4 @@ BN_CODE_IWRAM void dog::update()
 
     apply_gravity();
 
-    if (chr_vx == 0 && chr_vy == 0)
-        idle_ticks++;
-    else {
-        idle_ticks = 0;
-        actionIdle->reset();
-    }
-
-    // --- Sprite ---
-    sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H);
-    sprite->set_horizontal_flip(dir == DIR_LEFT);    
 }
