@@ -243,6 +243,7 @@ int main()
         g_healthbar.emplace();
         g_trampolini.emplace();
 
+
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;
         if (MUSIC_ON==1)
