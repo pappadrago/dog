@@ -18,7 +18,7 @@ static constexpr u_int8_t TILE_PER_TIPO[3] = { 18, 18, 18 };
 
 static bool sovrapposte_in_x(const cassa& a, const cassa& b)
 {
-    return bn::abs(a.chr_x - b.chr_x) < a.meta_larghezza + b.meta_larghezza;
+    return bn::abs(a.chr_x - b.chr_x) < a.box_halfdim + b.box_halfdim;
 }
 
 cassa::cassa(const cassa_def& d)
@@ -28,9 +28,9 @@ cassa::cassa(const cassa_def& d)
     chr_x = bn::fixed(d.x);
     chr_y = bn::fixed(d.y);
     box_dim = bn::fixed(8);
-    box_halfdim = bn::fixed(6);
+    box_halfdim = bn::fixed(7);
 
-    meta_larghezza = box_halfdim;
+    // meta_larghezza = box_halfdim;
     velocita_spinta = SPINTA_PER_TIPO[tipo];
     fattore_bau = FATTORE_BAU_PER_TIPO[tipo];
 
@@ -82,7 +82,7 @@ bool cassa::appoggia_dog()
     bn::fixed piedi       = d.chr_y + d.box_dim;
     bn::fixed piedi_prima = piedi - d.chr_vy;   // dog::update() ha già mosso chr_y in questo frame
 
-    bool sopra_in_x = bn::abs(d.chr_x - chr_x) < meta_larghezza + d.box_halfdim;
+    bool sopra_in_x = bn::abs(d.chr_x - chr_x) < box_halfdim + d.box_halfdim;
     if (!(d.chr_vy > 0 && sopra_in_x && piedi_prima <= top + 1 && piedi >= top))
         return false;
 
@@ -179,7 +179,7 @@ bool cassa::colpisci_nemici()
         if (e->distrutto || e->is_dead() || e->invulnerability > 0) continue;
 
         bn::fixed testa = e->chr_y - e->box_dim;
-        bool sopra_in_x = bn::abs(e->chr_x - chr_x) < meta_larghezza + e->box_halfdim;
+        bool sopra_in_x = bn::abs(e->chr_x - chr_x) < box_halfdim + e->box_halfdim;
 
         if (sopra_in_x && fondo_prima <= testa + 1 && fondo >= testa)
         {

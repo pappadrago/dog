@@ -41,18 +41,18 @@ static int s_frame = 0;
 // --- Stato HUD ---
 static bn::vector<bn::sprite_ptr, 2> s_life_label;
 static bn::vector<bn::sprite_ptr, 4> s_life_digits;
-static bn::vector<bn::sprite_ptr, 2> s_score_label;
-static bn::vector<bn::sprite_ptr, 8> s_score_digits;
-static bn::vector<bn::sprite_ptr, 2> s_keys_label;
-static bn::vector<bn::sprite_ptr, 4> s_keys_digits;
+// static bn::vector<bn::sprite_ptr, 2> s_score_label;
+// static bn::vector<bn::sprite_ptr, 8> s_score_digits;
+// static bn::vector<bn::sprite_ptr, 2> s_keys_label;
+// static bn::vector<bn::sprite_ptr, 4> s_keys_digits;
 
 static bool s_hud_ready = false;
 static int  s_life_shown = 0;
 static int  s_life_target = 0;
-static int  s_score_shown = 0;
-static int  s_score_target = 0;
-static int  s_keys_shown = 0;
-static int  s_keys_target = 0;
+// static int  s_score_shown = 0;
+// static int  s_score_target = 0;
+// static int  s_keys_shown = 0;
+// static int  s_keys_target = 0;
 
 static int  s_flash = 0;
 static int  s_hud_frame = 0;
@@ -141,11 +141,11 @@ namespace
         return txt;
     }
 
-    void draw_keys()
-    {
+    // void draw_keys()
+    // {
 
-        draw_right(s_keys_digits, HUD_KEYS_NUM_X, HUD_Y, padded(s_keys_shown, HUD_KEYS_DIGITS));
-    }
+    //     draw_right(s_keys_digits, HUD_KEYS_NUM_X, HUD_Y, padded(s_keys_shown, HUD_KEYS_DIGITS));
+    // }
 
     void draw_life()
     {
@@ -171,8 +171,8 @@ void hud_reset()
     // s_score_label.clear();
     // s_score_digits.clear();
 
-    s_keys_label.clear();
-    s_keys_digits.clear();
+    // s_keys_label.clear();
+    // s_keys_digits.clear();
 
     s_hud_ready = false;
     s_flash = 0;
@@ -199,7 +199,7 @@ void hud_update()
     {
         draw_left(s_life_label, HUD_LIFE_LABEL_X, HUD_Y, "H:");
 
-        draw_left(s_keys_label, HUD_KEYS_LABEL_X, HUD_Y, "K:");
+        // draw_left(s_keys_label, HUD_KEYS_LABEL_X, HUD_Y, "K:");
 
         // s_score_label.clear();
         // s_generator->set_right_alignment();
@@ -208,10 +208,10 @@ void hud_update()
 
         s_life_shown = s_life_target = life;
         // s_score_shown = s_score_target = score;
-        s_keys_shown = s_keys_target = keys;
+        // s_keys_shown = s_keys_target = keys;
         draw_life();
         // draw_score();
-        draw_keys();
+        // draw_keys();
         s_hud_ready = true;
     }
 
@@ -221,7 +221,7 @@ void hud_update()
 
     s_life_target = life;
     // s_score_target = score;
-    s_keys_target = keys;
+    // s_keys_target = keys;
 
     // Il contatore rincorre il valore reale; si rigenerano gli sprite solo se la cifra cambia
     int life_next = approach(s_life_shown, s_life_target);
@@ -238,12 +238,12 @@ void hud_update()
     //     draw_score();
     // }
 
-    int keys_next = approach(s_keys_shown, s_keys_target);
-    if (keys_next != s_keys_shown)
-    {
-        s_keys_shown = keys_next;
-        draw_keys();
-    }
+    // int keys_next = approach(s_keys_shown, s_keys_target);
+    // if (keys_next != s_keys_shown)
+    // {
+    //     s_keys_shown = keys_next;
+    //     draw_keys();
+    // }
 
     // Lampeggio dell'energia: veloce dopo il danno, lento se quasi finita
     constexpr int FLASH_FAST_PERIOD = 4;    // frames per on/off cycle (2 on, 2 off)

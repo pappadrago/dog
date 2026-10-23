@@ -269,7 +269,7 @@ BN_CODE_IWRAM void dog::update()
 
         actionAtterraggio->reset();
         atterraggio_anim_ticks = ATTERRAGGIO_ANIM_TICKS;
-
+        
         stordito_ticks = STORDIMENTO_CADUTA_TICKS;
 
         if (ground_pound_engaged) {
@@ -286,8 +286,10 @@ BN_CODE_IWRAM void dog::update()
                     enem->beHitByShockwave(allontana);
                 }
             }
+            bn::sound_items::bomb.play();
         }
         else {
+            bn::sound_items::thud.play();
             start_polvere_anim(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, false, false, 0);
         }
 

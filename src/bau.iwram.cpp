@@ -51,7 +51,7 @@ BN_CODE_IWRAM void bau::update()
         {
             if (oggetto->ticks_immune_bau > 0) return;
 
-            bool hit = bn::abs(oggetto->chr_x - chr_x) < hit_half + oggetto->meta_larghezza &&
+            bool hit = bn::abs(oggetto->chr_x - chr_x) < hit_half + oggetto->box_halfdim &&
                 bn::abs(oggetto->chr_y - chr_y) < hit_half + oggetto->box_dim;
             if (hit)
             {

@@ -4,6 +4,7 @@
 #include <bn_log.h>
 #include "constanti_fisica.h"
 #include "bn_math.h"
+#include <bn_sound_items.h>
 
 void spingibile::colpito_da_bau(int verso, bn::fixed power)
 {
@@ -45,7 +46,7 @@ bool spingibile::gestisci_spinta_dog()
     bn::fixed testa = g_dog->chr_y - g_dog->box_dim;
     bn::fixed dx    = g_dog->chr_x - chr_x;
 
-    bn::fixed contatto_x = meta_larghezza + g_dog->box_halfdim;
+    bn::fixed contatto_x = box_halfdim + g_dog->box_halfdim;
 
     // contatto laterale: sovrapposti in x, con dog sotto il bordo superiore e sopra il fondo
     if (bn::abs(dx) >= contatto_x || piedi <= top + 1 || testa >= chr_y + box_dim)

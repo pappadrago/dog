@@ -9,7 +9,7 @@ class spingibile : public live_obj
 public:
     virtual ~spingibile() = default;
 
-    bn::fixed meta_larghezza  = bn::fixed(8);      // mezza larghezza dello sprite
+    // bn::fixed meta_larghezza  = bn::fixed(8);      // mezza larghezza dello sprite
     bn::fixed velocita_spinta = bn::fixed(0.35);   // tetto a chr_vx di dog mentre spinge: più basso = più "pesante"
     bn::fixed fattore_bau     = bn::fixed(1);      // scala l'impulso del bau: 1 = come un nemico, < 1 = più pesante
     int ticks_immune_bau      = 0;                 // dopo un colpo, lo stesso bau non lo colpisce di nuovo
