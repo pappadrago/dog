@@ -464,6 +464,8 @@ int main()
 
                     update_text_tick();
                     hud_update();
+
+                    
                 };
 
             // Fade-in a gioco attivo: gli sprite prendono la posizione giusta

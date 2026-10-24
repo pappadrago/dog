@@ -50,7 +50,6 @@ item::item(const item_def& def)
     ticks2action = 0;
     active = true;
     animAngle = g_rng.get_int(100);
-
 }
 
 void item::update()
