@@ -13,7 +13,7 @@ struct piattaforma_mobile_def
     int16_t  centro_x, centro_y;
     int16_t  semiasse_x, semiasse_y;
     int16_t  rotazione;
-    uint8_t  velocita_gradi_x16;
+    uint8_t  velocita_px_x16;   // velocità lineare in px/frame * 16 (16 = 1 px/frame)
     bool     oraria;
     bool     parte_attiva;
     uint8_t  attiva_con;
@@ -48,7 +48,9 @@ private:
     bn::fixed _angolo_iniziale = 0;
     bn::fixed _x, _y;
     bn::fixed _px, _py;
-    bn::fixed _passo_angolo = 0;   // precomputed: def.velocita_gradi_x16 / 16
+
+    bn::fixed _passo_angolo = 0;       // gradi per frame: ricalcolato da calcola_posizione() a ogni frame
+    bn::fixed _velocita_lineare = 0;   // px/frame: def.velocita_px_x16 / 16
 
     int _ticks_vita = -1;
     int _ticks_pausa_rimanenti = 0;

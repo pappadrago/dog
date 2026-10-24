@@ -187,7 +187,7 @@ BN_CODE_IWRAM void dog::update()
                         enem->takeDamage(10);
                         enem->invulnerability = 60;
                         chr_vy = SMALL_JUMP_VY;
-                        chr_vx = (enem->chr_x < chr_x) ? SMALL_JUMP_VY : -SMALL_JUMP_VY;
+                        chr_vx = (enem->chr_x < chr_x) ? SMALL_VX_R : SMALL_VX_L;
                         continue;
                     }
                 }
@@ -249,10 +249,8 @@ BN_CODE_IWRAM void dog::update()
                     chr_vx = (chr_x < g_boss->wx_base) ? SMALL_VX_L : SMALL_VX_R;
                     chr_vy = SMALL_JUMP_VY;
                     invulnerability = 60;
-                    if (g_boss->weaponSprite) {
-                        g_boss->weaponTicks = 0;
-                        g_boss->weaponSprite->set_visible(false);
-                    }
+                    g_boss->weaponTicks = 0;
+                    g_boss->weaponSprite->set_visible(false);
 
                     dog_damage(3);
                 }
@@ -269,7 +267,7 @@ BN_CODE_IWRAM void dog::update()
 
         actionAtterraggio->reset();
         atterraggio_anim_ticks = ATTERRAGGIO_ANIM_TICKS;
-        
+
         stordito_ticks = STORDIMENTO_CADUTA_TICKS;
 
         if (ground_pound_engaged) {

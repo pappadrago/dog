@@ -6,13 +6,16 @@
 #include "bn_sprite_items_fox1632.h"
 
 static constexpr bn::fixed META_LARGHEZZA = 16;
-static constexpr bn::fixed META_ALTEZZA   = 4;
-static constexpr bn::fixed TOLLERANZA     = 6;
+static constexpr bn::fixed META_ALTEZZA = 4;
+static constexpr bn::fixed TOLLERANZA = 6;
 
 // `velocita_gradi_x16` è espresso in gradi * 16 (fixed-point Q8.4).
 // Per ottenere i gradi reali si divide per 16. Il divisore è costante
 // e può essere calcolato una sola volta all'inizializzazione.
 static constexpr int PASSO_DIVISORE = 16;
+static constexpr bn::fixed RAD_TO_DEG = bn::fixed(57.2958);
+static constexpr bn::fixed LUNGHEZZA_MIN = 4;   // evita divisioni per ~0 (estremi di un segmento)
+
 
 // Normalizza un angolo gradi nel range [0, 360)
 static bn::fixed normalizza_angolo(bn::fixed angolo)
@@ -28,11 +31,11 @@ static bool attraversa(bn::fixed vecchio, bn::fixed nuovo, bn::fixed target, boo
 {
     // Spostamenti relativi rispetto a `vecchio`, in funzione della direzione
     bn::fixed rel_target = oraria ? (target - vecchio) : (vecchio - target);
-    bn::fixed rel_nuovo  = oraria ? (nuovo  - vecchio) : (vecchio - nuovo);
+    bn::fixed rel_nuovo = oraria ? (nuovo - vecchio) : (vecchio - nuovo);
 
     // Normalizza nel range [0, 360) per confrontare gli avanamenti
     while (rel_target < 0) rel_target += 360;
-    while (rel_nuovo  < 0) rel_nuovo  += 360;
+    while (rel_nuovo < 0) rel_nuovo += 360;
 
     // L'attraversamento avviene se il target e stato superato durante la rotazione
     return rel_target <= rel_nuovo;
@@ -40,9 +43,10 @@ static bool attraversa(bn::fixed vecchio, bn::fixed nuovo, bn::fixed target, boo
 
 piattaforma_mobile::piattaforma_mobile(const piattaforma_mobile_def& d) : def(d)
 {
+
     _angolo = _angolo_iniziale = 0;
-    _passo_angolo = bn::fixed(def.velocita_gradi_x16).division(PASSO_DIVISORE);
-    calcola_posizione();
+    _velocita_lineare = bn::fixed(def.velocita_px_x16).division(PASSO_DIVISORE);   // px/frame
+    calcola_posizione();   // calcola anche _passo_angolo per il primo frame
     _px = _x; _py = _y;
 
     sprite = bn::sprite_items::fox1632.create_sprite(_x - HALF_SCREEN_W, _y - HALF_SCREEN_H, 60);
@@ -81,6 +85,23 @@ void piattaforma_mobile::calcola_posizione()
 {
     bn::fixed cos_a = bn::degrees_lut_cos_safe(_angolo);
     bn::fixed sin_a = bn::degrees_lut_sin_safe(_angolo);
+
+        // Passo angolare del PROSSIMO frame per avere velocità lineare costante:
+    // dθ = v / len(θ), con len(θ) = sqrt(a²·sin²θ + b²·cos²θ)
+    {
+        bn::fixed ax2 = bn::fixed(def.semiasse_x * def.semiasse_x);
+        bn::fixed ay2 = bn::fixed(def.semiasse_y * def.semiasse_y);
+        bn::fixed len2 = ax2.multiplication(sin_a.multiplication(sin_a))
+                       + ay2.multiplication(cos_a.multiplication(cos_a));
+
+        // sqrt intera con 4 bit di precisione in più: sqrt(len2 * 256) = len * 16
+        int len16 = bn::sqrt(len2.data() >> 4);
+        bn::fixed len = bn::fixed::from_data(len16 << 8);   // len16 / 16
+        if (len < LUNGHEZZA_MIN)
+            len = LUNGHEZZA_MIN;
+
+        _passo_angolo = (_velocita_lineare * RAD_TO_DEG).division(len);
+    }
 
     bn::fixed lx = bn::fixed(def.semiasse_x).multiplication(cos_a);
     bn::fixed ly = bn::fixed(def.semiasse_y).multiplication(sin_a);
@@ -243,7 +264,7 @@ bool piattaforma_mobile::continua_aggancio(live_obj& o)
 bool piattaforma_mobile::prova_nuovo_aggancio(live_obj& o)
 {
     bn::fixed piedi = o.chr_y + o.box_dim;
-    bool sopra_in_x   = bn::abs(o.chr_x - _x) < META_LARGHEZZA;
+    bool sopra_in_x = bn::abs(o.chr_x - _x) < META_LARGHEZZA;
     bool vicino_sopra = bn::abs(piedi - (_y - META_ALTEZZA)) < TOLLERANZA;
     bool non_salta_su = o.chr_vy >= 0;
 
@@ -266,7 +287,7 @@ void piattaforma_mobile::aggancia_cane_solido()
     bn::fixed dx = g_dog->chr_x - _x;
     bn::fixed dy = g_dog->chr_y - _y;
     bn::fixed overlap_x = (META_LARGHEZZA + g_dog->box_halfdim) - bn::abs(dx);
-    bn::fixed overlap_y = (META_ALTEZZA   + g_dog->box_dim)      - bn::abs(dy);
+    bn::fixed overlap_y = (META_ALTEZZA + g_dog->box_dim) - bn::abs(dy);
 
     if (overlap_x <= 0 || overlap_y <= 0)
     {
