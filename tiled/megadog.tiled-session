@@ -1,5 +1,5 @@
 {
-    "activeFile": "megadog_s2.tmx",
+    "activeFile": "megadog_s1.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -18,19 +18,19 @@
             }
         },
         "megadog_s1.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 2,
+            "scale": 3,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 768,
-                "y": 254
+                "x": 166.16666666666666,
+                "y": 190.66666666666663
             }
         },
         "megadog_s2.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 908.3333333333333,
-                "y": 274
+                "x": 768,
+                "y": 256
             }
         },
         "megadog_s3.tmx": {
@@ -57,8 +57,8 @@
     "project": "megadog.tiled-project",
     "recentFiles": [
         "/home/kids/gba/assets/farmer story bg.tsx",
-        "megadog_s1.tmx",
         "megadog_s2.tmx",
+        "megadog_s1.tmx",
         "megadog_s3.tmx",
         "Megadog_s1.tmx"
     ]

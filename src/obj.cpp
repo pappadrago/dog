@@ -11,3 +11,10 @@
 #include "bn_log.h"
 #include "schemi.h"
 
+
+void live_obj::stacca_da_scala(bn::fixed vx, bn::fixed vy)
+{
+    scala_corrente = nullptr;
+    chr_vx = vx;
+    chr_vy = vy;
+}

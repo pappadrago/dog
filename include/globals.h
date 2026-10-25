@@ -89,6 +89,11 @@ class trampolino;
 extern bn::optional<bn::vector<trampolino*, MAX_TRAMPOLINI>> g_trampolini;
 
 
+class scala;
+#define MAX_SCALE 8
+extern bn::optional<bn::vector<scala*, MAX_SCALE>> g_scale;
+
+
 template<typename T, int N> 
 constexpr int array_count(const T (&)[N]) { return N; }
 

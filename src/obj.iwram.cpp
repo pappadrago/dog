@@ -12,6 +12,10 @@
 #include "schemi.h"
 
 
+#define TILE_VUOTA  0
+#define TILE_SOLIDA 1
+#define TILE_SEMITR 2
+
 
 BN_CODE_IWRAM void live_obj::apply_friction()
 {
@@ -66,7 +70,18 @@ BN_CODE_IWRAM void live_obj::apply_gravity()
     const uint8_t tile1 = map.data[row + tx1];
     const uint8_t tile2 = map.data[row + tx2];
 
-    if (tile1 == 1 || tile2 == 1)
+    bool solido = (tile1 == TILE_SOLIDA || tile2 == TILE_SOLIDA);
+
+    // One-way (2): solida solo se sto cadendo e i piedi, al frame precedente,
+    // stavano sopra il bordo superiore della tile
+    if (!solido && falling && (tile1 == TILE_SEMITR || tile1 == TILE_SEMITR))
+    {
+        bn::fixed piedi_prima = (chr_y - chr_vy) + box_dim;
+        if (piedi_prima <= bn::fixed(ty << 4))
+            solido = true;
+    }
+
+    if (solido)
     {
         if (falling)
         {
@@ -106,7 +121,7 @@ BN_CODE_IWRAM void live_obj::apply_map() {
 
         uint8_t tile_side1 = map.data[ty1 * map.columns + tx];
         uint8_t tile_side2 = map.data[ty2 * map.columns + tx];
-        if ((tile_side1 == 1 || tile_side2 == 1))
+        if ((tile_side1 == TILE_SOLIDA || tile_side2 == TILE_SOLIDA))
         {
             chr_x -= chr_vx;
             chr_vx = ZERO;
@@ -142,8 +157,8 @@ BN_CODE_IWRAM void live_obj::apply_map() {
         if (ty2 < 0) ty2 = 0;
         if (ty2 > map.rows - 1) ty2 = map.rows - 1;
 
-        bool muro_destra = map.data[ty1 * map.columns + txd] == 1 || map.data[ty2 * map.columns + txd] == 1;
-        bool muro_sinistra = map.data[ty1 * map.columns + txs] == 1 || map.data[ty2 * map.columns + txs] == 1;
+        bool muro_destra = map.data[ty1 * map.columns + txd] == TILE_SOLIDA || map.data[ty2 * map.columns + txd] == TILE_SOLIDA;
+        bool muro_sinistra = map.data[ty1 * map.columns + txs] == TILE_SOLIDA || map.data[ty2 * map.columns + txs] == TILE_SOLIDA;
 
         if (muro_destra)        muro_lato = DIR_RIGHT;
         else if (muro_sinistra) muro_lato = DIR_LEFT;
@@ -169,3 +184,12 @@ BN_CODE_IWRAM bool is_solid_at(bn::fixed x, bn::fixed y, int schema)
     return map.data[ty * map.columns + tx] == 1;
 }
 
+BN_CODE_IWRAM bool is_standable_at(bn::fixed x, bn::fixed y, int schema)
+{
+    const collision_map_info& map = get_collision_map(schema);
+    if (x < 0 || y < 0) return true;
+    int tx = x.integer() >> 4;
+    int ty = y.integer() >> 4;
+    if (tx >= map.columns || ty >= map.rows) return true;
+    return map.data[ty * map.columns + tx] != 0;
+}

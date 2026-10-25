@@ -37,6 +37,8 @@ public:
     bn::fixed box_halfdim = bn::fixed(7);
 };
 
+class scala;
+
 class live_obj : public obj
 {
 public:
@@ -55,9 +57,22 @@ public:
     void apply_gravity();
     void apply_friction();
     void apply_map();
+
+    // --- scale ---
+    bool puo_scalare = false;        // dog: true; enemy: true solo con ATTR_CLIMB
+    scala* scala_corrente = nullptr;
+    scala* scala_bloccata = nullptr;  // scala da cui sono appena uscito automaticamente
+    int    scala_blocco_dir = 0;      // direzione (-1 su / +1 giù) che non deve riagganciarmi
+    int    intent_scala = 0;
+    bool su_scala() const { return scala_corrente != nullptr; }
+    void stacca_da_scala(bn::fixed vx = ZERO, bn::fixed vy = ZERO); // salto/rilascio manuale
+
+
+
 };
 
 
 // true se il punto (x, y) in coordinate mondo cade in un tile solido
 // (fuori mappa conta come solido)
 bool is_solid_at(bn::fixed x, bn::fixed y, int schema);
+bool is_standable_at(bn::fixed x, bn::fixed y, int schema);

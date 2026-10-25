@@ -205,7 +205,7 @@ void enemy::move_patrol()
     bool muro_o_bordo = (x_avanti <= 0) || (x_avanti >= bn::fixed(mappa.map_w))
         || is_solid_at(x_avanti, chr_y, g_schema);
 
-    bool gradino = !is_solid_at(x_avanti, y_sotto, g_schema);   // niente terreno sotto: è un bordo di piattaforma
+    bool gradino = !is_standable_at(x_avanti, y_sotto, g_schema);
 
     if (muro_o_bordo || gradino) {
         dir = -dir;
@@ -281,9 +281,9 @@ void enemy::update_attack()
 {
     if (attack_cd > 0) { attack_cd--; return; }
     if (!(attributo & (ATTR_PROJ_MASK | ATTR_MELEE | ATTR_BASH))) return;
-    
+
     bn::fixed dist2dog = dist_to_dog();
-    if(dist2dog.integer()>HALF_SCREEN_W)return;
+    if (dist2dog.integer() > HALF_SCREEN_W)return;
 
 
     if (!dog_in_sight() && has(ATTR_BASH)) {
@@ -424,7 +424,7 @@ void enemy::beHitByShockwave(int _dir)
     chr_accx = bn::fixed(0);
 
     currentAction = ACTION_STUN;
-    ticks2action= invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
+    ticks2action = invulnerability = ONDA_URTO_STUN_TICKS;  // 30 frame, niente danno al nemico
     takeDamage(5);
 }
 

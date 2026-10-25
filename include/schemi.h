@@ -9,6 +9,7 @@
 #include "door.h"
 #include "enemy.h"
 #include "item.h"
+#include "scala.h"
 #include "cassa.h"
 #include "trampolino.h"
 
@@ -52,6 +53,7 @@ const item_def* get_schema_items(int schema, int& count);
 const enemy_def* get_schema_enemies(int schema, int& count);
 const trampolino_def* get_schema_trampolini(int schema, int& count);
 const cassa_def* get_schema_casse(int schema, int& count);
+const scala_def* get_schema_scale(int schema, int& count);
 
 struct schema_def
 {
@@ -67,5 +69,6 @@ struct schema_def
     const bn::regular_bg_item parallax_bg_item;  // background in parallasse 0 e 1
     const bn::regular_bg_item foreground_item;  // foreground, davanti agli sprite
     const collision_map_info* map_info;
+    const scala_def* scale; int scale_count;
 };
 

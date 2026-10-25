@@ -14,12 +14,16 @@
 #include "bn_sprite_items_zombie.h"
 #include "bn_log.h"
 
+
 BN_CODE_IWRAM void dog::update()
 {
     //Dato che in main.cpp g_dog->update() gira prima di lava_zona::update() nello stesso frame (verificato nel tuo game_step),
     //  resettare qui a ogni frame e lasciare che un'eventuale zona di lava la rialzi più tardi nello stesso giro 
     // produce il comportamento corretto
     sprite->set_bg_priority(1);
+
+
+
 
     // --- Timer di tolleranza ---
     if (onGround)
@@ -32,6 +36,20 @@ BN_CODE_IWRAM void dog::update()
 
     //bool in_arrampicata = agganciato_cornice && ledge_climb_ticks > 0;
     bool b_premuto = bn::keypad::b_pressed() /* && !in_arrampicata*/;
+
+    // intenzione di scalare (la porta ha priorità: se dog è davanti a una porta, up apre la porta)
+    intent_scala = bn::keypad::up_held() ? -1 : (bn::keypad::down_held() ? 1 : 0);
+
+    if (su_scala())
+    {
+        // B = salta via dalla scala nella direzione premuta
+        if (b_premuto) {
+            int d = bn::keypad::right_held() ? DIR_RIGHT : (bn::keypad::left_held() ? DIR_LEFT : 0);
+            stacca_da_scala(SMALL_VX_R.multiplication(bn::fixed(d)), SMALL_JUMP_VY);
+        }
+        // altrimenti salta accelerazione orizzontale, wall slide, apply_map e apply_gravity:
+        // la posizione la gestisce scala::muovi()
+    }
 
     if (b_premuto)
     {
@@ -325,9 +343,10 @@ BN_CODE_IWRAM void dog::update()
     else
         polvere_sprite->set_visible(false);
 
-
-    chr_x += chr_vx;
-    apply_map();
+    if (!su_scala()) {
+        chr_x += chr_vx;
+        apply_map();
+    }
 
     if (((dash_acquisito && onGround) || (air_dash_acquisito && !onGround)) &&
         dash_ticks == 0 && bn::keypad::r_pressed()) {
@@ -369,11 +388,11 @@ BN_CODE_IWRAM void dog::update()
         polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
     }
 
-#define WALL_SLIDE_TILE 26            
 
     if (wall_sliding && chr_vy > WALL_SLIDE_VY - GRAVITY)
         chr_vy = WALL_SLIDE_VY - GRAVITY;
 
-    apply_gravity();
+    if (!su_scala())
+        apply_gravity();
 
 }

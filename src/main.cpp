@@ -179,8 +179,6 @@ void show_intro_screen()
     intro_bg.set_y(-48);   // scorrimento lento verso sinistra
     mega_bg.set_y(48);   // scorrimento lento verso sinistra
 
-
-
     int FRAMES = 180;
 
     for (int i = 0; i < 180 * 2; ++i)
@@ -216,7 +214,7 @@ void show_intro_screen()
 int main()
 {
     bn::core::init();
-    if (MUSIC_ON==1)
+    if (MUSIC_ON == 1)
         bn::music_items::superfrog_title.play(0.25);
     show_intro_screen();
 
@@ -225,7 +223,7 @@ int main()
     update_text_init(&text_generator);
 
     //
-    
+
     while (true) {
         dog_selection_screen(text_generator);
         // Costruzione oggetti di gioco in ordine di dipendenza
@@ -242,12 +240,13 @@ int main()
         g_piattaforme_mobili.emplace();
         g_healthbar.emplace();
         g_trampolini.emplace();
+        g_scale.emplace();
 
         // g_schema = 2; g_dog->run_acquisito = true;
 
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;
-        if (MUSIC_ON==1)
+        if (MUSIC_ON == 1)
             bn::music_items::brimble_superfrog_world_1.play(0.25);
         while (!game_over)
         {
@@ -321,6 +320,12 @@ int main()
                     g_casse->push_back(new_cassa);
 
                 }
+            }
+            // spawn, accanto a lava/piattaforme mobili
+            {
+                int n = 0;
+                const scala_def* sdefs = get_schema_scale(g_schema, n);
+                for (int i = 0; i < n; i++) g_scale->push_back(new scala(sdefs[i]));
             }
             // Spawn oggetti
             {
@@ -437,6 +442,11 @@ int main()
                     for (piattaforma_mobile* pm : *g_piattaforme_mobili)
                         pm->verifica_nuovo_aggancio();
 
+                    for (scala* s : *g_scale) {
+                        s->aggiorna(*g_dog);
+                        for (enemy* e : *g_enemies) s->aggiorna(*e);
+                    }
+
                     g_dog->update_animations();
 
                     g_bau->update();
@@ -465,7 +475,7 @@ int main()
                     update_text_tick();
                     hud_update();
 
-                    
+
                 };
 
             // Fade-in a gioco attivo: gli sprite prendono la posizione giusta

@@ -10,6 +10,7 @@
 #include "cassa.h"
 #include "dog.h"
 #include "boss.h"
+#include "scala.h"
 #include "piattaforma.h"
 #include "game_timer.h"
 
@@ -150,3 +151,4 @@ void fade_screen_except_dog(bool to_black, bn::sprite_text_generator& text_gener
 }
 
 bn::optional<bn::vector<trampolino*, MAX_TRAMPOLINI>> g_trampolini;
+bn::optional<bn::vector<scala*, MAX_SCALE>> g_scale;
