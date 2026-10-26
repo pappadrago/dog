@@ -15,7 +15,7 @@
 #include "game_timer.h"
 
 
-
+uint16_t g_powerup_pending = 0;
 
 bn::random g_rng;
 bn::optional<bn::camera_ptr> g_camera;

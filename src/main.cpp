@@ -14,7 +14,7 @@
 #include "bn_memory.h"
 #include "round_6x6_sprite_font.h"
 #include "bn_log.h"
-
+#include "powerup_fx.h"
 
 #include "bn_color.h"
 #include "bn_regular_bg_ptr.h"
@@ -96,6 +96,7 @@ namespace
     // Camera e parallasse: la posizione e' clampata ai bordi della mappa,
     // cosi' funziona subito anche dopo un cambio schema.
 #include <climits>
+
 
     BN_CODE_IWRAM   // opzionale: esegue la funzione dalla IWRAM (più veloce della ROM)
         void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
@@ -486,7 +487,13 @@ int main()
             while (!used_door && !game_over)
             {
                 game_step();
-                bn::core::update();
+                if (g_powerup_pending)
+                {
+                    g_powerup_pending = 0;
+                    powerup_freeze(text_generator);
+                }
+                else
+                    bn::core::update();
                 if (g_dog->life <= 0)
                     game_over = true;
             }

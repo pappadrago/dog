@@ -173,7 +173,8 @@ namespace megadog_s2 {
             bn::regular_bg_items::megadog_s2,
             bn::regular_bg_items::bg_s1,
             bn::regular_bg_items::megadog_s2fg,
-            &collision_map_s1_info
+            &collision_map_s1_info,
+            nullptr, 0, // scale
         };
     }
 }

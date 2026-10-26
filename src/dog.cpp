@@ -84,9 +84,17 @@ dog::dog()
         *spriteAusiliario, 1, bn::sprite_items::lavabubble.tiles_item(), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
     
     puo_scalare = true;
+
+        actionScalaSu = bn::create_sprite_animate_action_forever(
+        *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);   // placeholder: frame di salita
+
+    actionScalaGiu = bn::create_sprite_animate_action_forever(
+        *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);   // placeholder: frame di discesa
 }
 
 void dog::update_animations() {
+
+
     // posizione sprite finale del frame, dopo piattaforme mobili e collisioni
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
@@ -113,13 +121,29 @@ void dog::update_animations() {
     if (!onGround || chr_vx == 0)
         actionWalk->reset();
 
+    // appena agganciato: riparte dal primo frame
+    if (su_scala() && !era_su_scala) {
+        actionScalaSu->reset();
+        actionScalaGiu->reset();
+    }
+    era_su_scala = su_scala();
+
+
     if (colpito_anim_ticks > 0)
     {
         colpito_anim_ticks--;
         if (!actionColpito->done())
             actionColpito->update();
     }
-    else if (dash_ticks > 0)
+    else if (su_scala())
+    {
+        // fermo sulla scala: l'animazione si congela sul frame corrente
+        if (intent_scala < 0)
+            actionScalaSu->update();
+        else if (intent_scala > 0)
+            actionScalaGiu->update();
+    }
+        else if (dash_ticks > 0)
     {
         sprite->set_tiles(spriteItems->tiles_item(), 25);
     }

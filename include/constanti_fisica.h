@@ -3,9 +3,9 @@
 #define WALL_JUMP_VX bn::fixed(2.5)
 #define WALL_JUMP_VY bn::fixed(-2.0) 
 
-#define BIG_JUMP_VY bn::fixed(-3.8) // impulso verticale iniziale
-#define MEDIUM_JUMP_VY bn::fixed(-2.8)
-#define SMALL_JUMP_VY bn::fixed(-1.8)
+#define BIG_JUMP_VY bn::fixed(-3.9) // impulso verticale iniziale
+#define MEDIUM_JUMP_VY bn::fixed(-2.9)
+#define SMALL_JUMP_VY bn::fixed(-1.9)
 
 #define BIG_VX_R bn::fixed(4.0)
 #define MEDIUM_VX_R bn::fixed(3.0)

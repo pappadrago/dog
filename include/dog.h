@@ -77,6 +77,10 @@ public:
 
     bn::optional<bn::sprite_animate_action<4>> actionWallJump;
     bn::optional<bn::sprite_animate_action<14>> actionIdle;
+    bn::optional<bn::sprite_animate_action<8>> actionScalaSu;
+    bn::optional<bn::sprite_animate_action<8>> actionScalaGiu;
+    bool era_su_scala = false;   // per resettare le animazioni all'aggancio
+        
     u_int8_t wall_jump_anim_ticks = 0;
 
     bool doppio_salto_acquisito = false;

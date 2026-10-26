@@ -51,6 +51,10 @@ BN_CODE_IWRAM void dog::update()
         // la posizione la gestisce scala::muovi()
     }
 
+    // all'inizio di update(), dopo aver calcolato intent_scala:
+    if (su_scala())
+        idle_ticks = 0;   // altrimenti, scesi dalla scala, parte subito l'idle lungo (> 120 tick)
+
     if (b_premuto)
     {
         jump_buffer_ticks = JUMP_BUFFER_TICKS;   // il comando viene sempre registrato
@@ -348,8 +352,10 @@ BN_CODE_IWRAM void dog::update()
         apply_map();
     }
 
-    if (((dash_acquisito && onGround) || (air_dash_acquisito && !onGround)) &&
-        dash_ticks == 0 && bn::keypad::r_pressed()) {
+
+
+    if (!su_scala() && (((dash_acquisito && onGround) || (air_dash_acquisito && !onGround)) &&
+        dash_ticks == 0 && bn::keypad::r_pressed())) {
         dash_ticks = DASH_TICKS;
         polvere_sprite->set_visible(true);
         polvere_sprite->set_vertical_flip(false);
@@ -376,8 +382,7 @@ BN_CODE_IWRAM void dog::update()
     wall_sliding = wall_jump_acquisito && !onGround && muro_lato != 0 && chr_vy > 0
         && !ground_pound_engaged && dash_ticks == 0 && (
             (muro_lato == DIR_RIGHT && bn::keypad::right_held()) || (muro_lato == DIR_LEFT && bn::keypad::left_held())
-            );
-
+            ) && !su_scala();
     if (wall_sliding) {
         if (polvere_anim->done())
             polvere_anim->reset();

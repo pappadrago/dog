@@ -168,6 +168,7 @@ void item::raccogli()
     case ITEM_TIPO_POWERUP:
         g_dog->applica_powerup(attributo);
         bn::sound_items::gem_collect.play();
+        g_powerup_pending = attributo ? attributo : 1;
         break;
     default:
         break;
