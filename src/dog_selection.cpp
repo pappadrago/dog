@@ -41,7 +41,6 @@ void dog_selection_screen(bn::sprite_text_generator& text_generator)
     static constexpr int SPACING = 40;
     static constexpr int START_X = -100;
     static constexpr int DOG_Y = -48;
-    static constexpr int CURSOR_Y = DOG_Y - 8;
 
     static constexpr int      CAMEO_Y = 64;    // "in basso", coordinata fissa
     static constexpr bn::fixed CAMEO_EDGE_X = 150;   // fuori schermo, entrata/uscita

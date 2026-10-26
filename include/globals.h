@@ -99,3 +99,8 @@ constexpr int array_count(const T (&)[N]) { return N; }
 extern uint16_t g_powerup_pending;   // 0 = nessuna animazione; altrimenti l'attributo del power up raccolto
 
 #define MUSIC_ON 0
+
+#include "bn_regular_bg_ptr.h"
+
+void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
+                   bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg);
