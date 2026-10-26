@@ -225,7 +225,6 @@ void dog::applica_powerup(uint16_t attributo)
 {
     if (attributo & POWERUP_CORSA) {
         run_acquisito = true;
-        show_str("ORA PUOI CORRERE COL TASTO L");
     }
     if (attributo & POWERUP_SALTO) {
         if (bonus_salto == bn::fixed(0))

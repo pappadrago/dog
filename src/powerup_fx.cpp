@@ -8,7 +8,7 @@
 #include "bn_optional.h"
 #include "bn_sprite_ptr.h"
 #include "bn_sprite_palette_ptr.h"
- // nuovo asset (vedi sotto)
+// nuovo asset (vedi sotto)
 #include "bn_sprite_items_enemies.h"
 #include "bn_sprite_items_enemies2.h"
 #include "bn_sprite_items_weapons.h"
@@ -18,15 +18,17 @@
 #include "bn_sprite_items_diecloud.h"
 #include "bn_sprite_items_healthbar.h"
 #include "bn_sprite_items_zombie.h"
+#include "item.h"
+#include <bn_log.h>
 
 namespace
 {
-    constexpr int FX_FRAMES     = 8;    // frame dello spritesheet powerup_fx
-    constexpr int FX_TICKS      = 5;    // update per frame di animazione
-    constexpr int HOLD_FRAMES   = 30;   // pausa dopo l'ultimo frame
-    constexpr int FADE_IN       = 20;
-    constexpr int FADE_OUT      = 20;
-    constexpr int TOTAL_FRAMES  = FX_FRAMES * FX_TICKS + HOLD_FRAMES;
+    constexpr int FX_FRAMES = 23;    // frame dello spritesheet powerup_fx
+    constexpr int FX_TICKS = 5;    // update per frame di animazione
+    constexpr int HOLD_FRAMES = 30;   // pausa dopo l'ultimo frame
+    constexpr int FADE_IN = 20;
+    constexpr int FADE_OUT = 20;
+    constexpr int TOTAL_FRAMES = FX_FRAMES * FX_TICKS + HOLD_FRAMES;
     constexpr bn::fixed MAX_DARK = bn::fixed(0.75);   // 1.0 = nero totale
 }
 
@@ -36,10 +38,10 @@ void powerup_freeze(bn::sprite_text_generator& text_generator)
     // create_palette_optional riusa le palette già in VRAM.
     bn::vector<bn::sprite_palette_ptr, 10> palettes;
     auto add = [&](auto&& opt)
-    {
-        if (opt.has_value())
-            palettes.push_back(*opt);
-    };
+        {
+            if (opt.has_value())
+                palettes.push_back(*opt);
+        };
     add(bn::sprite_items::enemies.palette_item().create_palette_optional());
     add(bn::sprite_items::enemies2.palette_item().create_palette_optional());
     add(bn::sprite_items::weapons.palette_item().create_palette_optional());
@@ -55,14 +57,18 @@ void powerup_freeze(bn::sprite_text_generator& text_generator)
 
     // Sprite dell'animazione, centrato sul cane (coordinate mondo + camera, come gli altri sprite)
     bn::sprite_ptr fx = bn::sprite_items::lavabubble.create_sprite(
-        g_dog->chr_x - HALF_SCREEN_W, g_dog->chr_y - HALF_SCREEN_H - 8, 0);
+        g_dog->chr_x - HALF_SCREEN_W, g_dog->chr_y - HALF_SCREEN_H, 0);
     fx.set_camera(g_camera);
     fx.set_bg_priority(0);
     fx.set_z_order(-16);
 
     bn::vector<bn::sprite_ptr, 16> txt;
     text_generator.set_center_alignment();
-    text_generator.generate(0, -56, "POWER UP!", txt);
+
+    if (g_powerup_pending & POWERUP_CORSA)
+        text_generator.generate(0, -56, "CORRI PREMENDO IL TASTO L", txt);
+    else
+        text_generator.generate(0, -56, "POWER UP!", txt);
     text_generator.set_left_alignment();
 
     for (int f = 0; f < TOTAL_FRAMES; ++f)

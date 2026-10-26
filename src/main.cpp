@@ -489,8 +489,8 @@ int main()
                 game_step();
                 if (g_powerup_pending)
                 {
-                    g_powerup_pending = 0;
                     powerup_freeze(text_generator);
+                    g_powerup_pending = 0;
                 }
                 else
                     bn::core::update();
