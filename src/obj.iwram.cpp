@@ -74,7 +74,7 @@ BN_CODE_IWRAM void live_obj::apply_gravity()
 
     // One-way (2): solida solo se sto cadendo e i piedi, al frame precedente,
     // stavano sopra il bordo superiore della tile
-    if (!solido && falling && (tile1 == TILE_SEMITR || tile1 == TILE_SEMITR))
+    if (!solido && falling && (tile1 == TILE_SEMITR || tile2 == TILE_SEMITR))
     {
         bn::fixed piedi_prima = (chr_y - chr_vy) + box_dim;
         if (piedi_prima <= bn::fixed(ty << 4))

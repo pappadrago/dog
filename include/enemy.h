@@ -61,6 +61,8 @@ enum enemy_attr : int16_t
 #define MELEE_RECOVERY 3
 
 
+#define BASH_MAX_VX_REST bn::fixed(0.75)
+#define BASH_MAX_VX_ATTACK bn::fixed(2.0)
 #define ENEMY_DEATH_FRAMES 90
 #define ENEMY_DEATH_SHRINK 60   // ultimi frame in cui si rimpicciolisce
 
@@ -158,6 +160,7 @@ private:
     bool  dog_in_sight() const;
     bool  dog_is_looking_at_me() const;
     bn::fixed dist_to_dog() const;
+    bn::fixed disty_to_dog() const;
     void  face_dog();
     void  walk_towards(int d, bn::fixed accel);
     void  fire(int16_t proj_type);

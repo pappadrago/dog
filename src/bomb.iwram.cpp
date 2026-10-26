@@ -69,10 +69,17 @@ BN_CODE_IWRAM void bomb::update()
         g_dog->chr_vx = (g_dog->chr_x < chr_x) ? SMALL_VX_L : SMALL_VX_R;
         g_dog->chr_vy = SMALL_JUMP_VY;
         g_dog->invulnerability = 60;
-        if (tipoProjec != BOMB_DAGGER) {
-            hide_and_finish();
+
+        if (tipoProjec == BOMB_BOMB){
+            explode(); // dopo l'animazione di esplosione, si nasconderà da solo
+            g_dog->dog_damage(15);
         }
-        g_dog->dog_damage(3);
+        else {
+            g_dog->dog_damage(3);
+            if (tipoProjec != BOMB_DAGGER) { // se non è una spada, nascondi
+                hide_and_finish();
+            }
+        }
     }
 
 

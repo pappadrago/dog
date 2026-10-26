@@ -12,7 +12,7 @@ void spingibile::colpito_da_bau(int verso, bn::fixed power)
         return;   // con un carico sopra non si muove
     // stessa formula di enemy::beHitByBark(), scalata dal peso
     chr_vy = ENEMY_SMALL_JUMP_VY - power.multiplication(fattore_bau);
-    chr_vx = bn::fixed(0.5+power).multiplication(verso);
+    chr_vx = (0.5+power).multiplication(verso);
     onGround = false;
 }
 

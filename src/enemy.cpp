@@ -284,10 +284,11 @@ void enemy::update_attack()
 
     bn::fixed dist2dog = dist_to_dog();
     if (dist2dog.integer() > HALF_SCREEN_W)return;
-
+    bn::fixed disty2dog = disty_to_dog();
+    if (disty2dog.integer() > HALF_SCREEN_H)return;
 
     if (!dog_in_sight() && has(ATTR_BASH)) {
-        max_vx = bn::fixed(0.75);
+        max_vx = BASH_MAX_VX_REST;
         return;
     }
 
@@ -298,7 +299,7 @@ void enemy::update_attack()
     face_dog();
 
     if (has(ATTR_BASH)) {
-        max_vx = bn::fixed(2);
+        max_vx = BASH_MAX_VX_ATTACK;
     }
     else if (has(ATTR_MELEE)) {
         melee();
@@ -485,6 +486,7 @@ void enemy::update_death()
 // Helper
 bool enemy::dog_in_sight() const { return dist_to_dog() <= sight_range; }
 bn::fixed enemy::dist_to_dog() const { return bn::abs(g_dog->chr_x - chr_x); }
+bn::fixed enemy::disty_to_dog() const { return bn::abs(g_dog->chr_y - chr_y); }
 void enemy::face_dog() { dir = (g_dog->chr_x > chr_x) ? DIR_RIGHT : DIR_LEFT; }
 
 bool enemy::dog_is_looking_at_me() const
