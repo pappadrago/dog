@@ -1,4 +1,5 @@
 #include "scala.h"
+#include "globals.h"
 #include "bn_math.h"
 #include "constanti_fisica.h"
 
@@ -14,7 +15,7 @@ void scala::rilascia(live_obj& o, int dir_uscita)
 {
     o.scala_corrente = nullptr;
     o.scala_bloccata = this;
-    o.scala_blocco_dir = dir_uscita;   // finché tieni premuta questa direzione, non si riaggancia
+    o.scala_blocco_dir = dir_uscita;
     o.scala_vy = ZERO;
 }
 
@@ -23,17 +24,15 @@ bool scala::prova_aggancio(live_obj& o)
     if (o.scala_bloccata == this)
     {
         if (o.intent_scala == o.scala_blocco_dir && in_colonna(o))
-            return false;            // ancora premuto verso l'uscita: niente riaggancio
-        o.scala_bloccata = nullptr;  // tasto lasciato o spostato fuori colonna: sblocca
+            return false;
+        o.scala_bloccata = nullptr;
     }
 
     if (!o.puo_scalare || o.intent_scala == 0 || !in_colonna(o)) return false;
 
     bn::fixed piedi = o.chr_y + o.box_dim;
 
-    // Salire: i piedi devono stare dentro la scala (o appena sotto il fondo)
-    bool sale_ok  = o.intent_scala < 0 && piedi > y_cima() && piedi <= y_fondo() + TOLLERANZA_CIMA;
-    // Scendere: solo dalla cima di una scala con piano, o da dentro la scala
+    bool sale_ok = o.intent_scala < 0 && piedi > y_cima() && piedi <= y_fondo() + TOLLERANZA_CIMA;
     bool scende_ok = o.intent_scala > 0 &&
         ((def.tipo == SCALA_CON_PIANO && bn::abs(piedi - y_cima()) < TOLLERANZA_CIMA) ||
          (piedi > y_cima() && piedi < y_fondo()));
@@ -41,12 +40,12 @@ bool scala::prova_aggancio(live_obj& o)
     if (!sale_ok && !scende_ok) return false;
 
     o.scala_corrente = this;
-    o.chr_x = x_centro();          // si centra sulla scala
+    o.chr_x = x_centro();
     o.chr_vx = o.chr_vy = ZERO;
     o.scala_vy = ZERO;
     o.onGround = false;
     if (scende_ok && bn::abs(piedi - y_cima()) < TOLLERANZA_CIMA)
-        o.chr_y = y_cima() - o.box_dim + 2;   // entra nella scala dalla cima
+        o.chr_y = y_cima() - o.box_dim + 2;
     return true;
 }
 
@@ -64,9 +63,10 @@ void scala::muovi(live_obj& o)
         else
             o.scala_vy += movimento * SCALA_ACCELERAZIONE;
 
-        o.scala_vy = cap(o.scala_vy, SCALA_VELOCITA);
-        if (o.scala_vy * movimento < ZERO)
-            o.scala_vy = ZERO;
+        if (o.scala_vy > SCALA_VELOCITA)
+            o.scala_vy = SCALA_VELOCITA;
+        else if (o.scala_vy < -SCALA_VELOCITA)
+            o.scala_vy = -SCALA_VELOCITA;
     }
     else
     {
@@ -84,21 +84,21 @@ void scala::muovi(live_obj& o)
 
     bn::fixed piedi = o.chr_y + o.box_dim;
 
-    if (piedi <= y_cima())                       // cima raggiunta: sgancio automatico
+    if (piedi <= y_cima())
     {
         if (def.tipo == SCALA_CON_PIANO)
         {
-            o.chr_y = y_cima() - o.box_dim;      // in piedi sul piano
+            o.chr_y = y_cima() - o.box_dim;
             o.onGround = true;
         }
         else
         {
-            o.chr_y = y_cima() - o.box_dim - 1;  // scala senza piano: piccolo scatto fuori
+            o.chr_y = y_cima() - o.box_dim - 1;
             o.chr_vy = MEDIUM_JUMP_VY;
         }
         rilascia(o, -1);
     }
-    else if (piedi >= y_fondo())                 // fondo raggiunto: sgancio automatico
+    else if (piedi >= y_fondo())
     {
         o.chr_y = y_fondo() - o.box_dim;
         o.onGround = true;
@@ -109,9 +109,8 @@ void scala::muovi(live_obj& o)
 bool scala::appoggia_in_cima(live_obj& o)
 {
     if (def.tipo != SCALA_CON_PIANO || o.su_scala()) return false;
-    if (o.chr_vy < 0 || o.intent_scala > 0) return false;   // salta su o vuole scendere: non regge
+    if (o.chr_vy < 0 || o.intent_scala > 0) return false;
 
-    // il piano copre la colonna, un po' più larga della sola scala
     if (bn::abs(o.chr_x - x_centro()) >= 16) return false;
 
     bn::fixed piedi = o.chr_y + o.box_dim;
