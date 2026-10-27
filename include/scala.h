@@ -6,7 +6,9 @@
 #define SCALA_NORMALE   0   // la cima non regge: si esce in aria
 #define SCALA_CON_PIANO 1   // la cima è un piano "cloud": ci si sta sopra e si scende premendo giù
 
-#define SCALA_VELOCITA  bn::fixed(1.0)
+#define SCALA_VELOCITA         bn::fixed(1.0)
+#define SCALA_ACCELERAZIONE    bn::fixed(0.18)
+#define SCALA_FRENATA         bn::fixed(0.22)
 #define SCALA_MEZZA_LARGHEZZA 6   // tolleranza orizzontale per agganciarsi (px dal centro)
 
 struct scala_def
