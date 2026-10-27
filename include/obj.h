@@ -64,6 +64,7 @@ public:
     scala* scala_bloccata = nullptr;  // scala da cui sono appena uscito automaticamente
     int    scala_blocco_dir = 0;      // direzione (-1 su / +1 giù) che non deve riagganciarmi
     int    intent_scala = 0;
+    bn::fixed scala_vy = ZERO;        // velocità verticale durante la scala, con inerzia
     bool su_scala() const { return scala_corrente != nullptr; }
     void stacca_da_scala(bn::fixed vx = ZERO, bn::fixed vy = ZERO); // salto/rilascio manuale
 
