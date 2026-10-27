@@ -3,6 +3,7 @@
 #include "constanti_fisica.h"
 
 static constexpr bn::fixed TOLLERANZA_CIMA = 6;
+static constexpr bn::fixed SCALA_SALTO_INIZIO = bn::fixed(0.3);
 
 bool scala::in_colonna(const live_obj& o) const
 {
@@ -14,6 +15,7 @@ void scala::rilascia(live_obj& o, int dir_uscita)
     o.scala_corrente = nullptr;
     o.scala_bloccata = this;
     o.scala_blocco_dir = dir_uscita;   // finché tieni premuta questa direzione, non si riaggancia
+    o.scala_vy = ZERO;
 }
 
 bool scala::prova_aggancio(live_obj& o)
@@ -41,6 +43,7 @@ bool scala::prova_aggancio(live_obj& o)
     o.scala_corrente = this;
     o.chr_x = x_centro();          // si centra sulla scala
     o.chr_vx = o.chr_vy = ZERO;
+    o.scala_vy = ZERO;
     o.onGround = false;
     if (scende_ok && bn::abs(piedi - y_cima()) < TOLLERANZA_CIMA)
         o.chr_y = y_cima() - o.box_dim + 2;   // entra nella scala dalla cima
@@ -50,8 +53,34 @@ bool scala::prova_aggancio(live_obj& o)
 void scala::muovi(live_obj& o)
 {
     o.chr_vx = ZERO;
+
+    bn::fixed movimento = bn::fixed(o.intent_scala);
+    if (o.intent_scala != 0)
+    {
+        if (o.scala_vy == ZERO)
+            o.scala_vy = movimento * SCALA_SALTO_INIZIO;
+        else if (o.scala_vy * movimento < ZERO)
+            o.scala_vy = o.scala_vy * bn::fixed(0.75) + movimento * SCALA_SALTO_INIZIO;
+        else
+            o.scala_vy += movimento * SCALA_ACCELERAZIONE;
+
+        o.scala_vy = cap(o.scala_vy, SCALA_VELOCITA);
+        if (o.scala_vy * movimento < ZERO)
+            o.scala_vy = ZERO;
+    }
+    else
+    {
+        if (o.scala_vy > ZERO)
+            o.scala_vy -= SCALA_FRENATA;
+        else if (o.scala_vy < ZERO)
+            o.scala_vy += SCALA_FRENATA;
+
+        if (bn::abs(o.scala_vy) < SCALA_FRENATA)
+            o.scala_vy = ZERO;
+    }
+
+    o.chr_y += o.scala_vy;
     o.chr_vy = ZERO;
-    o.chr_y += SCALA_VELOCITA.multiplication(bn::fixed(o.intent_scala));
 
     bn::fixed piedi = o.chr_y + o.box_dim;
 
