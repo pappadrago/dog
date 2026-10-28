@@ -212,7 +212,7 @@ void item::commuta_stato_grafico()
 {
     bn::sound_items::lock_unlock.play();
     stato ^= 1;
-    g_dog->show_str("CLICK");
+    g_dog->show_str("click");
     sprite->set_tiles(bn::sprite_items::items.tiles_item(),
         stato ? TILE_SBLOCCO_ATTIVO : TILE_SBLOCCO);
 }
