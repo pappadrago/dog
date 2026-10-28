@@ -313,6 +313,7 @@ int main()
             const door_def* used_door = nullptr;
 
             //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
+            g_boss.emplace(400, 100, 10, boss_tipo::BALLER);
 
             // Un frame di gioco (senza bn::core::update)
             auto game_step = [&]()

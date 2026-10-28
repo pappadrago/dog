@@ -6,6 +6,13 @@
 #include "dog.h"
 #include "globals.h"
 #include "enemy.h"   // per enemy_attr::ATTR_*/ACTION_*, condivisi con enemy
+#include "bomb.h"
+
+enum class boss_tipo : uint8_t
+{
+    BOMBER,
+    BALLER
+};
 
 class boss : public live_obj
 {
@@ -33,9 +40,10 @@ public:
     int melee_damage = 0;   // 0 = niente attacco melee configurato
 
     boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t attributo = enemy_attr::ATTR_NONE, bn::fixed dimensione = 32);
+    boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo tipo, bn::fixed dimensione = 32);
     void update();
 
-    void subisci_colpo() { if (colpi_rimasti > 0) { colpi_rimasti--; invulnerability = 30; } }
+    bool subisci_colpo(int danno = 1);
     bool sconfitto() const { return colpi_rimasti <= 0; }
     bool dog_in_melee_range() const;
     bool dog_in_bash_range() const;
@@ -48,4 +56,20 @@ public:
     void avvia_summon();
     void interrompi_summon();
     void completa_summon();
+
+private:
+    bool bomber_mode = false;
+    bool baller_mode = false;
+    bn::fixed patrol_origin_x = ZERO;
+    int bomber_ticks_to_jump = 180;
+    int bomber_ticks_to_throw = 60;
+    int bomber_shots_in_burst = 0;
+    int bomber_throw_animation_ticks = 0;
+    bn::optional<bomb> bomber_bombs[MAX_ENEMY_BOMBS];
+    bn::optional<bomb> baller_fireball;
+
+    void update_bomber();
+    bool throw_bomber_bomb();
+    void update_baller();
+    bool throw_baller_fireball();
 };

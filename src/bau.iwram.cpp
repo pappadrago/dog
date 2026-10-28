@@ -2,6 +2,8 @@
 #include "dog.h"
 #include "collision.h"
 #include "enemy.h"
+#include "boss.h"
+#include "bau.h"
 #include "item.h"
 #include "bn_sprite_items_fox1632.h"
 #include "bn_log.h"
@@ -44,6 +46,20 @@ BN_CODE_IWRAM void bau::update()
                 ticks2Anim = 20;
             }
             break;
+        }
+    }
+
+    if (g_boss.has_value() && g_boss->invulnerability == 0)
+    {
+        bn::fixed boss_half = g_boss->dimensione / 2;
+        bool hit_boss = bn::abs(g_boss->chr_x - chr_x) < hit_half + boss_half &&
+            bn::abs(g_boss->chr_y - chr_y) < hit_half + boss_half;
+        if (hit_boss)
+        {
+            int damage = (BAU_DAMAGE + power.multiplication(BAU_DAMAGE)).integer();
+            g_boss->subisci_colpo(damage);
+            ticks = 0;
+            ticks2Anim = 20;
         }
     }
 

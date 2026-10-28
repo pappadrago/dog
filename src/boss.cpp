@@ -7,11 +7,14 @@
 #include "bn_random.h"
 #include "bn_math.h"
 #include "bn_log.h"
+#include "healthbar.h"
+#include <bn_sound_items.h>
 
 boss::boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t _attributo, bn::fixed _dimensione)
 {
     chr_x = x;
     chr_y = y;
+    patrol_origin_x = x;
     colpi_rimasti = num_colpi;
     colpi_totali = num_colpi;
     attributo = _attributo;
@@ -49,6 +52,18 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t _attributo, bn::fixe
     ticks_prossimo_attacco = 120;
 }
 
+boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo tipo, bn::fixed _dimensione) :
+    boss(x, y, num_colpi, enemy_attr::ATTR_NONE, _dimensione)
+{
+    bomber_mode = tipo == boss_tipo::BOMBER;
+    baller_mode = tipo == boss_tipo::BALLER;
+    if (baller_mode)
+    {
+        max_vx = bn::fixed(1);
+        ticks_prossimo_attacco = 120;
+    }
+}
+
 void boss::update()
 {
     // --- Lancio arma a distanza: indipendente dalla scelta sopra, il boss può farlo comunque durante ACTION_MOVE ---
@@ -64,6 +79,19 @@ void boss::update()
         if (weaponTicks == 0)
             weaponSprite->set_visible(false);
     }
+
+    if (bomber_mode)
+    {
+        update_bomber();
+        return;
+    }
+
+    if (baller_mode)
+    {
+        update_baller();
+        return;
+    }
+
     if (in_summon)
     {
         summon_ticks--;
@@ -218,9 +246,207 @@ void boss::update()
         sprite->set_visible(true);
 }
 
+void boss::update_bomber()
+{
+    for (bn::optional<bomb>& projectile : bomber_bombs)
+    {
+        if (projectile)
+        {
+            projectile->update();
+            if (projectile->finished)
+                projectile.reset();
+        }
+    }
+
+    chr_accx = ZERO;
+    chr_vx = ZERO;
+    apply_map();
+    apply_gravity();
+
+    if (bomber_ticks_to_jump > 0)
+        bomber_ticks_to_jump--;
+    if (bomber_ticks_to_jump <= 0 && onGround)
+    {
+        chr_vy = ENEMY_BIG_JUMP_VY;
+        onGround = false;
+
+        int total_energy = colpi_totali > 0 ? colpi_totali : 1;
+        int remaining_energy = colpi_rimasti;
+        if (remaining_energy < 0)
+            remaining_energy = 0;
+        if (remaining_energy > total_energy)
+            remaining_energy = total_energy;
+        bomber_ticks_to_jump = 45 + 135 * remaining_energy / total_energy;
+    }
+
+    if (bomber_ticks_to_throw > 0)
+        bomber_ticks_to_throw--;
+    if (bomber_ticks_to_throw <= 0 && throw_bomber_bomb())
+    {
+        if (bomber_shots_in_burst == 0 && actionSummon.has_value())
+            actionSummon->reset();
+        bomber_shots_in_burst++;
+        bomber_throw_animation_ticks = 24;
+
+        if (bomber_shots_in_burst == MAX_ENEMY_BOMBS)
+        {
+            bomber_shots_in_burst = 0;
+            bomber_ticks_to_throw = 180;
+        }
+        else
+            bomber_ticks_to_throw = 60;
+    }
+
+    bool throwing = bomber_throw_animation_ticks > 0;
+    if (throwing)
+    {
+        bomber_throw_animation_ticks--;
+        if (actionSummon.has_value())
+            actionSummon->update();
+    }
+    else
+        actionStand->update();
+
+    if (g_dog->chr_x != chr_x)
+        dir = g_dog->chr_x > chr_x ? DIR_RIGHT : DIR_LEFT;
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_LEFT);
+
+    if (invulnerability > 0)
+    {
+        invulnerability--;
+        sprite->set_visible(invulnerability % 2);
+    }
+    else
+        sprite->set_visible(true);
+}
+
+bool boss::throw_bomber_bomb()
+{
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    if (dx != ZERO)
+        dir = dx > ZERO ? DIR_RIGHT : DIR_LEFT;
+    bn::fixed vx = cap(dx.division(70), bn::fixed(2.5));
+
+    for (bn::optional<bomb>& projectile : bomber_bombs)
+    {
+        if (! projectile)
+        {
+            projectile.emplace(chr_x + bn::fixed(8).multiplication(dir), chr_y - 4,
+                               vx, bn::fixed(-4.0));
+            return true;
+        }
+    }
+    return false;
+}
+
+void boss::update_baller()
+{
+    if (baller_fireball)
+    {
+        baller_fireball->update();
+        if (baller_fireball->finished)
+            baller_fireball.reset();
+    }
+
+    static constexpr bn::fixed PATROL_HALF_RANGE = 96;
+    static constexpr bn::fixed JUMP_VY = ENEMY_BIG_JUMP_VY;
+    static constexpr int FIREBALL_COOLDOWN = 120;
+    bn::fixed patrol_left = patrol_origin_x - PATROL_HALF_RANGE;
+    bn::fixed patrol_right = patrol_origin_x + PATROL_HALF_RANGE;
+
+    if ((dir == DIR_RIGHT && chr_x >= patrol_right) ||
+        (dir == DIR_LEFT && chr_x <= patrol_left))
+    {
+        dir = -dir;
+        chr_x = dir == DIR_LEFT ? patrol_right : patrol_left;
+        chr_vx = ZERO;
+    }
+
+    bool blocked_ahead = muro_lato == dir ||
+        is_solid_at(chr_x + bn::fixed(dir).multiplication(box_halfdim + 2), chr_y, g_schema);
+    if (onGround && blocked_ahead)
+    {
+        chr_vy = JUMP_VY;
+        onGround = false;
+    }
+
+    chr_accx = onGround ? GROUND_ACCEL : AIR_ACCEL;
+    chr_vx += chr_accx.multiplication(dir);
+    chr_vx = cap(chr_vx, max_vx);
+    chr_x += chr_vx;
+    apply_map();
+    apply_friction();
+    apply_gravity();
+
+    if (ticks_prossimo_attacco > 0)
+        ticks_prossimo_attacco--;
+    if (ticks_prossimo_attacco <= 0 && ! baller_fireball && throw_baller_fireball())
+        ticks_prossimo_attacco = FIREBALL_COOLDOWN;
+
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_LEFT);
+    if (onGround && chr_vx != ZERO)
+        actionWalk->update();
+    else
+        actionStand->update();
+
+    if (invulnerability > 0)
+    {
+        invulnerability--;
+        sprite->set_visible(invulnerability % 2);
+    }
+    else
+        sprite->set_visible(true);
+}
+
+bool boss::throw_baller_fireball()
+{
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    if (bn::abs(dx) > SCREEN_W)
+        return false;
+
+    bn::fixed dy = g_dog->chr_y - chr_y;
+    bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
+    bomb_def def;
+    def.tipoProjec = BOMB_FIREBALL;
+    def.x = chr_x;
+    def.y = chr_y + enemy_config::SPAWN_Y_OFFSET;
+    def.vx = bn::degrees_lut_cos_safe(angle).multiplication(enemy_config::FIREBALL_SPEED);
+    def.vy = bn::degrees_lut_sin_safe(angle).multiplication(enemy_config::FIREBALL_SPEED);
+    def.ignoreGravity = true;
+    def.ignoreWalls = true;
+    def.max_bounces = 0;
+    def.ttl = enemy_config::PROJECTILE_LIFETIME;
+    def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
+    def.angle = -angle;
+
+    baller_fireball.emplace(def);
+    bn::sound_items::fire_lighting.play();
+    return true;
+
+}
+
 bool boss::dog_in_melee_range() const
 {
     return bn::abs(g_dog->chr_x - chr_x) < 70;
+}
+
+bool boss::subisci_colpo(int danno)
+{
+    if (life <= 0 || invulnerability > 0)
+        return false;
+
+    if (danno < 1)
+        danno = 1;
+    life -= danno;
+    if (life < 0)
+        life = 0;
+    invulnerability = 30;
+    g_healthbar->show(this);
+    return true;
 }
 
 bool boss::dog_in_bash_range() const

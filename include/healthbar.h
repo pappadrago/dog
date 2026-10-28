@@ -4,6 +4,7 @@
 #include "bn_sprite_ptr.h"
 
 class enemy;
+class boss;
 
 #define HEALTHBAR_FRAMES   9      // deve coincidere con il BMP
 #define HEALTHBAR_DURATA   60    // 3 secondi
@@ -14,10 +15,12 @@ class healthbar
 public:
     bn::optional<bn::sprite_ptr> sprite;
     const enemy* target = nullptr;
+    const boss* boss_target = nullptr;
     int ticks = 0;
 
     healthbar();
 
     void show(const enemy* e);   // chiamata quando un nemico viene colpito
+    void show(const boss* b);
     void update();               // una volta per frame
 };
