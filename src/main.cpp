@@ -345,8 +345,8 @@ int main()
                         {
                             if ((e->attributo & enemy_attr::ATTR_RESPAWN) && e->def_origine && !da_rinascere.full())
                                 da_rinascere.push_back(e->def_origine);   // tornerà quando dog si allontana
-                            if (g_healthbar->target == e) {
-                                g_healthbar->target = nullptr;
+                            if (g_healthbar->obj_target == e) {
+                                g_healthbar->obj_target = nullptr;
                                 g_healthbar->ticks = 0;
                                 g_healthbar->sprite->set_visible(false);
                             }

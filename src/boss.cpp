@@ -1,6 +1,7 @@
 #include "boss.h"
 #include "globals.h"
 #include "dog.h"
+#include "obj.h"
 #include "schemi.h"
 #include "bn_sprite_items_zombie.h"
 #include "bn_sprite_items_weapons.h"
