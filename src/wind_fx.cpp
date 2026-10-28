@@ -1,7 +1,7 @@
 #include "wind_fx.h"
 #include "globals.h"
 #include "bn_math.h"
-#include "bn_sprite_items_fox1632.h"
+#include "bn_sprite_items_windgust.h"
 
 namespace
 {
@@ -32,7 +32,7 @@ wind_fx::wind_fx()
 
     for(int i = 0; i < NUM_SPRITES; ++i)
     {
-        bn::sprite_ptr spr = bn::sprite_items::fox1632.create_sprite(0, 0, 57);
+        bn::sprite_ptr spr = bn::sprite_items::windgust.create_sprite(0, 0, 0);
         spr.set_bg_priority(1);
         spr.set_z_order(-5);
         spr.set_visible(false);
@@ -54,7 +54,7 @@ void wind_fx::update()
         return;
     }
 
-    int frame = aw < MEDIUM_WIND ? 57 : (aw < STRONG_WIND ? 58 : 59);
+    int frame = aw < MEDIUM_WIND ? 0 : (aw < STRONG_WIND ? 1 : 2);
     bool change_frame = (frame != _frame);
     _frame = frame;
 
@@ -84,7 +84,7 @@ void wind_fx::update()
         s.set_position(p.x, p.y + wobble);
         s.set_horizontal_flip(w < 0);
         if(change_frame)
-            s.set_tiles(bn::sprite_items::fox1632.tiles_item(), frame);
+            s.set_tiles(bn::sprite_items::windgust.tiles_item(), frame);
         s.set_visible(true);
     }
 }
