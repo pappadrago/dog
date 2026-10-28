@@ -224,3 +224,5 @@ void item::contatto_interruttore(bool hit)
     }
     dog_sopra = hit;
 }
+
+    

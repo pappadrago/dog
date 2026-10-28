@@ -9,7 +9,7 @@ class wind_fx
 {
 public:
     static constexpr int NUM_PARTICLES = 8;
-    static constexpr int NUM_SPRITES   = NUM_PARTICLES / 2;
+    static constexpr int NUM_SPRITES   = NUM_PARTICLES / 4;
 
     wind_fx();
     void update();   // una volta per frame, dopo wind_update()

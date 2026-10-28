@@ -2,12 +2,13 @@
 #include "dog.h"
 #include "collision.h"
 #include "enemy.h"
+#include "item.h"
 #include "bn_sprite_items_fox1632.h"
 #include "bn_log.h"
 #include "cassa.h"
 #include "trampolino.h"
 #include "bn_sound_items.h"
-
+#include "bn_string.h"
 
 BN_CODE_IWRAM void bau::update()
 {
@@ -46,6 +47,24 @@ BN_CODE_IWRAM void bau::update()
         }
     }
 
+    if (power >= bn::fixed(1)) {
+        for (item* switch_item : *g_items)
+        {
+            if (!switch_item->active || switch_item->tipo != ITEM_TIPO_INTERRUTTORE)
+                continue;
+
+            bool hit = bn::abs(switch_item->chr_x - chr_x) < hit_half + switch_item->box_halfdim &&
+                bn::abs(switch_item->chr_y - chr_y) < hit_half + switch_item->box_dim;
+            if (hit)
+            {
+                switch_item->commuta_sblocco();
+                g_dog->show_str("yeah");
+                ticks = 0;
+                ticks2Anim = 20;
+                break;
+            }
+        }
+    }
     // Oggetti spingibili: il bau li lancia in orizzontale e in verticale
     auto colpisci = [&](spingibile* oggetto)
         {
@@ -55,9 +74,9 @@ BN_CODE_IWRAM void bau::update()
                 bn::abs(oggetto->chr_y - chr_y) < hit_half + oggetto->box_dim;
             if (hit)
             {
-                oggetto->colpito_da_bau(chr_vx<0? DIR_LEFT : DIR_RIGHT, power);   // via in direzione del bau
+                oggetto->colpito_da_bau(chr_vx < 0 ? DIR_LEFT : DIR_RIGHT, power);   // via in direzione del bau
                 oggetto->ticks_immune_bau = ticks + 1;   // un solo colpo per bau, come i nemici
-                
+
                 ticks = 0;
                 ticks2Anim = 20;
             }

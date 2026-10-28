@@ -56,15 +56,16 @@ public:
     // Applica l'effetto (chiave/powerup/energia) e marca l'item come raccolto.
     void raccogli();
     void drop_at(bn::fixed x, bn::fixed y);
+    bool colpito_da_bau(bn::fixed power);
     uint8_t stato = 0;          // solo SBLOCCO: 0 = spento, 1 = attivo
     bool    dog_sopra = false;  // solo SBLOCCO: dog era in contatto nel frame precedente
     void contatto_interruttore(bool hit);   // da chiamare ogni frame con l'esito della collisione
-
+    void commuta_sblocco();
 private:
     void update_physics();
     void update_graphics();
     void hide_and_finish();
     void show_nr(bn::string<4> txt);
-    void commuta_sblocco();
+
     void commuta_stato_grafico();
 };
