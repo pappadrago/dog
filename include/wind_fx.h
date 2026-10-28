@@ -4,12 +4,12 @@
 #include "bn_vector.h"
 #include "bn_fixed.h"
 
-// Scie di vento in coordinate schermo (senza camera): non seguono la mappa,
-// ma scorrono in base a g_wind_x.
+// 8 particelle logiche, 4 sprite: ogni frame si disegna una metà delle particelle
 class wind_fx
 {
 public:
     static constexpr int NUM_PARTICLES = 8;
+    static constexpr int NUM_SPRITES   = NUM_PARTICLES / 2;
 
     wind_fx();
     void update();   // una volta per frame, dopo wind_update()
@@ -17,13 +17,17 @@ public:
 private:
     struct particle
     {
-        bn::sprite_ptr sprite;
-        bn::fixed speed_mul;    // 1.0..2.0: velocità diverse danno profondità
-        bn::fixed base_y;
-        int phase;              // sfasamento dell'ondeggiamento verticale
+        bn::fixed x;
+        bn::fixed y;            // y corrente (fascia + ondeggiamento)
+        bn::fixed speed_mul;    // 1.0..2.0
+        int band;               // fascia verticale 0..7
+        int phase;
     };
 
-    bn::vector<particle, NUM_PARTICLES> _particles;
-    int _frame = -1;            // frame corrente (-1 = da impostare)
+    particle _particles[NUM_PARTICLES];
+    bn::vector<bn::sprite_ptr, NUM_SPRITES> _sprites;
+    int _frame = -1;
     int _ticks = 0;
+
+    static bn::fixed band_y(int band);
 };
