@@ -82,10 +82,10 @@ dog::dog()
     spriteAusiliario->set_visible(false);
     carica_anim = bn::create_sprite_animate_action_forever(
         *spriteAusiliario, 1, bn::sprite_items::lavabubble.tiles_item(), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
-    
+
     puo_scalare = true;
 
-        actionScalaSu = bn::create_sprite_animate_action_forever(
+    actionScalaSu = bn::create_sprite_animate_action_forever(
         *sprite, 2, spriteItems->tiles_item(), 5, 6, 7, 8, 9, 10, 11, 12);   // placeholder: frame di salita
 
     actionScalaGiu = bn::create_sprite_animate_action_forever(
@@ -143,7 +143,7 @@ void dog::update_animations() {
         else if (intent_scala > 0)
             actionScalaGiu->update();
     }
-        else if (dash_ticks > 0)
+    else if (dash_ticks > 0)
     {
         sprite->set_tiles(spriteItems->tiles_item(), 25);
     }
@@ -280,7 +280,7 @@ void dog::show_str(bn::string<32> txt) {
     if (bn::sprite_text_generator* gen = hud_text_generator())
     {
         numero_sprites.clear();
-        
+
         text_ticks = 180;
         text_vy = bn::fixed(0.1);
         gen->set_center_alignment();
@@ -296,7 +296,7 @@ void dog::show_str(bn::string<32> txt) {
 
 
 
- void dog::update()
+void dog::update()
 {
     //Dato che in main.cpp g_dog->update() gira prima di lava_zona::update() nello stesso frame (verificato nel tuo game_step),
     //  resettare qui a ogni frame e lasciare che un'eventuale zona di lava la rialzi più tardi nello stesso giro 
@@ -631,6 +631,9 @@ void dog::show_str(bn::string<32> txt) {
     if (!su_scala()) {
         chr_x += chr_vx;
         apply_map();
+
+        if (dash_ticks == 0 && !ground_pound_engaged)
+            apply_wind();
     }
 
 

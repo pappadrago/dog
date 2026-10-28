@@ -147,3 +147,17 @@ const collision_map_info& get_collision_map(int schema)
         return s_attiva;
     return *S(schema).map_info;
 }
+
+
+static constexpr wind_def s_wind[NUM_SCHEMI] =
+{
+    { bn::fixed(0.3), bn::fixed(0.2) },   // s2
+    { bn::fixed(0),   bn::fixed(0)   },   // s1: niente vento
+};
+
+const wind_def& get_schema_wind(int schema)
+{
+    int i = schema - 1;
+    if(i < 0 || i >= NUM_SCHEMI) i = 0;
+    return s_wind[i];
+}

@@ -55,6 +55,9 @@ const trampolino_def* get_schema_trampolini(int schema, int& count);
 const cassa_def* get_schema_casse(int schema, int& count);
 const scala_def* get_schema_scale(int schema, int& count);
 
+struct wind_def { bn::fixed base, amp; };
+const wind_def& get_schema_wind(int schema);
+
 struct schema_def
 {
     const cassa_def* casse; int casse_count;

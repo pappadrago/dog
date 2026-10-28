@@ -68,7 +68,8 @@ public:
     bool su_scala() const { return scala_corrente != nullptr; }
     void stacca_da_scala(bn::fixed vx = ZERO, bn::fixed vy = ZERO); // salto/rilascio manuale
 
-
+    bn::fixed wind_factor = 1;   // 0 = immune, <1 = pesante
+    void apply_wind();
 
 };
 

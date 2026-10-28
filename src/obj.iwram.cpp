@@ -193,3 +193,22 @@ BN_CODE_IWRAM bool is_standable_at(bn::fixed x, bn::fixed y, int schema)
     if (tx >= map.columns || ty >= map.rows) return true;
     return map.data[ty * map.columns + tx] != 0;
 }
+
+
+BN_CODE_IWRAM void live_obj::apply_wind()
+{
+    if(g_wind_x == ZERO || wind_factor == ZERO) return;
+
+    bn::fixed w = g_wind_x.multiplication(wind_factor);
+    if(onGround) w = w.multiplication(bn::fixed(0.5));   // a terra il vento pesa meno
+
+    bn::fixed next = chr_x + w;
+    bn::fixed edge = next + (w > 0 ? box_halfdim : -box_halfdim);
+
+    // stessi due punti di controllo di apply_map(): metà corpo e piedi
+    if(is_solid_at(edge, chr_y, g_schema) ||
+       is_solid_at(edge, chr_y + box_halfdim, g_schema))
+        return;   // il muro blocca il vento
+
+    chr_x = next;
+}

@@ -152,3 +152,19 @@ void fade_screen_except_dog(bool to_black, bn::sprite_text_generator& text_gener
 
 bn::optional<bn::vector<trampolino*, MAX_TRAMPOLINI>> g_trampolini;
 bn::optional<bn::vector<scala*, MAX_SCALE>> g_scale;
+
+#include "wind_fx.h"
+#include "schemi.h"
+#include "bn_math.h"
+
+bn::fixed g_wind_x = 0;
+bn::optional<wind_fx> g_wind_fx;
+static bn::fixed s_wind_phase = 0;
+
+void wind_update()
+{
+    const wind_def& w = get_schema_wind(g_schema);
+    s_wind_phase += 2;
+    if(s_wind_phase >= 360) s_wind_phase -= 360;
+    g_wind_x = w.base + w.amp.multiplication(bn::degrees_lut_sin_safe(s_wind_phase));
+}

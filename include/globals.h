@@ -38,7 +38,7 @@ extern bn::random              g_rng;
 extern bn::optional<bn::camera_ptr> g_camera;
 
 extern bn::optional<bau>       g_bau;
-extern bn::optional<bau> g_bau_carico;     
+extern bn::optional<bau> g_bau_carico;
 extern bn::optional<dog>       g_dog;
 extern bn::optional<game_timer> g_timer;
 
@@ -94,8 +94,8 @@ class scala;
 extern bn::optional<bn::vector<scala*, MAX_SCALE>> g_scale;
 
 
-template<typename T, int N> 
-constexpr int array_count(const T (&)[N]) { return N; }
+template<typename T, int N>
+constexpr int array_count(const T(&)[N]) { return N; }
 extern uint16_t g_powerup_pending;   // 0 = nessuna animazione; altrimenti l'attributo del power up raccolto
 
 #define MUSIC_ON 0
@@ -103,4 +103,11 @@ extern uint16_t g_powerup_pending;   // 0 = nessuna animazione; altrimenti l'att
 #include "bn_regular_bg_ptr.h"
 
 void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
-                   bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg);
+    bn::regular_bg_ptr& foreground, bn::regular_bg_ptr& foregroundfg);
+
+
+extern bn::fixed g_wind_x;      // px/frame, >0 = verso destra
+void wind_update();
+
+class wind_fx;
+extern bn::optional<wind_fx> g_wind_fx;

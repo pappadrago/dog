@@ -15,6 +15,7 @@
 #include "round_6x6_sprite_font.h"
 #include "bn_log.h"
 #include "powerup_fx.h"
+#include "wind_fx.h"
 
 #include "bn_color.h"
 #include "bn_regular_bg_ptr.h"
@@ -168,6 +169,7 @@ int main()
         g_healthbar.emplace();
         g_trampolini.emplace();
         g_scale.emplace();
+        g_wind_fx.emplace();
         g_schema = 1;
         // g_schema = 2; g_dog->run_acquisito = true;
 
@@ -324,6 +326,8 @@ int main()
                     for (piattaforma_mobile* pm : *g_piattaforme_mobili)
                         pm->trasporta_se_agganciato();
 
+                    wind_update();
+                    g_wind_fx->update();
                     g_dog->update();
                     for (trampolino* t : *g_trampolini)
                         t->update();
@@ -379,6 +383,7 @@ int main()
                     g_bau->update();
                     g_bau_carico->update();
 
+
                     if (g_boss.has_value())
                         g_boss->update();
 
@@ -423,8 +428,8 @@ int main()
                 if (g_dog->life <= 0)
                     game_over = true;
 
-                BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
-                BN_LOG("iwram stack:   ", bn::memory::used_stack_iwram());
+                // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
+                // BN_LOG("iwram stack:   ", bn::memory::used_stack_iwram());
             }
 
             // ------------------------------------------------------------
@@ -480,6 +485,7 @@ int main()
             g_enemies,
             g_bau_carico,
             g_bau,
+            g_wind_fx,
             g_camera);
         // toglie il nero lasciato dal fade
         bn::bg_palettes::set_fade_intensity(0);
