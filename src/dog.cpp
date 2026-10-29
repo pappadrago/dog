@@ -298,6 +298,25 @@ void dog::show_str(bn::string<32> txt) {
 
 void dog::update()
 {
+    auto maybe_show_jump_str = [this]()
+    {
+        if (text_ticks > 0 || g_rng.get_int(5) != 0)
+            return;
+
+        switch (g_rng.get_int(3))
+        {
+        case 0:
+            show_str("op!");
+            break;
+        case 1:
+            show_str("oplà!");
+            break;
+        default:
+            show_str("issa!");
+            break;
+        }
+    };
+
     //Dato che in main.cpp g_dog->update() gira prima di lava_zona::update() nello stesso frame (verificato nel tuo game_step),
     //  resettare qui a ogni frame e lasciare che un'eventuale zona di lava la rialzi più tardi nello stesso giro 
     // produce il comportamento corretto
@@ -356,6 +375,7 @@ void dog::update()
         onGround = false;
         chr_vy = BIG_JUMP_VY - bonus_salto;
         doppio_salto_disponibile = doppio_salto_acquisito;
+        maybe_show_jump_str();
 
         actionStacco->reset();
         stacco_anim_ticks = STACCO_ANIM_TICKS;
@@ -372,6 +392,7 @@ void dog::update()
             chr_vx = WALL_JUMP_VX.multiplication(bn::fixed(direzione_spinta));
             chr_vy = WALL_JUMP_VY;
             dir = direzione_spinta;
+            maybe_show_jump_str();
 
             actionWallJump->reset();
             wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
@@ -391,6 +412,7 @@ void dog::update()
             actionWallJump->reset();
             wall_jump_anim_ticks = WALL_JUMP_ANIM_TICKS;
             salto_in_corso = true;
+            maybe_show_jump_str();
             start_polvere_anim(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H + box_dim, false, true, 0);
         }
         // altrimenti il comando resta in buffer per JUMP_BUFFER_TICKS frame
