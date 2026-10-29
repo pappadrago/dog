@@ -475,7 +475,7 @@ void boss::update_flyer()
     else if (target_x > map.map_w - 16)
         target_x = bn::fixed(map.map_w - 16);
 
-    bn::fixed target_y = g_dog->chr_y - 100;
+    bn::fixed target_y = flyer_fireball_pending ? g_dog->chr_y : g_dog->chr_y - 100;
     chr_x += cap(target_x - chr_x, bn::fixed(2));
     chr_y += cap(target_y - chr_y, bn::fixed(2));
 
