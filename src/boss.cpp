@@ -58,6 +58,7 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo tipo, bn::fixed _d
 {
     bomber_mode = tipo == boss_tipo::BOMBER;
     baller_mode = tipo == boss_tipo::BALLER;
+    flyer_mode = tipo == boss_tipo::FLYER;
     if (baller_mode)
     {
         max_vx = bn::fixed(1);
@@ -90,6 +91,12 @@ void boss::update()
     if (baller_mode)
     {
         update_baller();
+        return;
+    }
+
+    if (flyer_mode)
+    {
+        update_flyer();
         return;
     }
 
@@ -428,6 +435,112 @@ bool boss::throw_baller_fireball()
     bn::sound_items::fire_lighting.play();
     return true;
 
+}
+
+void boss::update_flyer()
+{
+    for (bn::optional<bomb>& projectile : flyer_bombs)
+    {
+        if (projectile)
+        {
+            projectile->update();
+            if (projectile->finished)
+                projectile.reset();
+        }
+    }
+
+    if (flyer_fireball)
+    {
+        flyer_fireball->update();
+        if (flyer_fireball->finished)
+            flyer_fireball.reset();
+    }
+
+    if (flyer_ticks_to_bomb > 0)
+        flyer_ticks_to_bomb--;
+    if (flyer_ticks_to_bomb <= 0 && throw_flyer_bomb())
+        flyer_ticks_to_bomb = 120;
+
+    if (flyer_ticks_to_fireball > 0)
+        flyer_ticks_to_fireball--;
+    if (flyer_ticks_to_fireball <= 0)
+        flyer_fireball_pending = true;
+
+    const collision_map_info& map = get_collision_map(g_schema);
+    bn::fixed target_x = g_dog->chr_x;
+    if (flyer_fireball_pending)
+        target_x += bn::fixed(g_dog->dir * 48);
+    if (target_x < 16)
+        target_x = 16;
+    else if (target_x > map.map_w - 16)
+        target_x = bn::fixed(map.map_w - 16);
+
+    bn::fixed target_y = g_dog->chr_y - 100;
+    chr_x += cap(target_x - chr_x, bn::fixed(2));
+    chr_y += cap(target_y - chr_y, bn::fixed(2));
+
+    if (flyer_fireball_pending &&
+        bn::abs(target_x - chr_x) <= 2 &&
+        bn::abs(target_y - chr_y) <= 2 &&
+        !flyer_fireball && throw_flyer_fireball())
+    {
+        flyer_fireball_pending = false;
+        flyer_ticks_to_fireball = 420;
+    }
+
+    dir = g_dog->chr_x > chr_x ? DIR_RIGHT : DIR_LEFT;
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_LEFT);
+    actionWalk->update();
+
+    if (invulnerability > 0)
+    {
+        invulnerability--;
+        sprite->set_visible(invulnerability % 2);
+    }
+    else
+        sprite->set_visible(true);
+}
+
+bool boss::throw_flyer_bomb()
+{
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    bn::fixed vx = cap(dx.division(90), bn::fixed(2.5));
+
+    for (bn::optional<bomb>& projectile : flyer_bombs)
+    {
+        if (!projectile)
+        {
+            projectile.emplace(chr_x, chr_y + 8, vx, ZERO);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool boss::throw_flyer_fireball()
+{
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    bn::fixed dy = g_dog->chr_y - chr_y;
+    bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
+
+    bomb_def def;
+    def.tipoProjec = BOMB_FIREBALL;
+    def.x = chr_x;
+    def.y = chr_y + enemy_config::SPAWN_Y_OFFSET;
+    def.vx = bn::degrees_lut_cos_safe(angle).multiplication(enemy_config::FIREBALL_SPEED);
+    def.vy = bn::degrees_lut_sin_safe(angle).multiplication(enemy_config::FIREBALL_SPEED);
+    def.ignoreGravity = true;
+    def.ignoreWalls = true;
+    def.max_bounces = 0;
+    def.ttl = enemy_config::PROJECTILE_LIFETIME;
+    def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
+    def.angle = -angle;
+
+    flyer_fireball.emplace(def);
+    bn::sound_items::fire_lighting.play();
+    return true;
 }
 
 bool boss::dog_in_melee_range() const
