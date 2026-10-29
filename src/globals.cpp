@@ -20,10 +20,10 @@ uint16_t g_powerup_pending = 0;
 bn::random g_rng;
 bn::optional<bn::camera_ptr> g_camera;
 
-bn::optional<bau> g_bau;
-bn::optional<bau> g_bau_carico;
-bn::optional<dog> g_dog;
-bn::optional<boss> g_boss;
+BN_DATA_EWRAM_BSS bn::optional<bau> g_bau;
+BN_DATA_EWRAM_BSS bn::optional<bau> g_bau_carico;
+BN_DATA_EWRAM_BSS bn::optional<dog> g_dog;
+BN_DATA_EWRAM_BSS bn::optional<boss> g_boss;
 bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
 bn::optional<bn::vector<cassa*, MAX_CASSE>> g_casse;
 bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
@@ -50,9 +50,9 @@ int capzero(int val, int max) {
     return val;
 }
 
-int g_shake_ticks = 0;
-int g_shake_durata = 1;      // mai 0: serve da divisore
-int g_shake_ampiezza = 0;
+ int g_shake_ticks = 0;
+ int g_shake_durata = 1;      // mai 0: serve da divisore
+ int g_shake_ampiezza = 0;
 
 void screen_shake(int ticks, int ampiezza)
 {
@@ -61,7 +61,7 @@ void screen_shake(int ticks, int ampiezza)
 }
 
 #include "healthbar.h"
-bn::optional<healthbar> g_healthbar;
+BN_DATA_EWRAM_BSS bn::optional<healthbar> g_healthbar;
 
 
 

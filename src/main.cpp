@@ -429,8 +429,9 @@ int main()
                 if (g_dog->life <= 0)
                     game_over = true;
 
-                // BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
-                // BN_LOG("iwram stack:   ", bn::memory::used_stack_iwram());
+                BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
+                BN_LOG("ewram statica: ", bn::memory::used_static_ewram());
+               //  BN_LOG("iwram stack:   ", bn::memory::used_stack_iwram());
             }
 
             // ------------------------------------------------------------
