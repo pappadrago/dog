@@ -4,6 +4,7 @@
 #include "obj.h"
 #include "schemi.h"
 #include "bn_sprite_items_zombie.h"
+#include "bn_sprite_items_bat.h"
 #include "bn_sprite_items_weapons.h"
 #include "bn_random.h"
 #include "bn_math.h"
@@ -11,75 +12,99 @@
 #include "healthbar.h"
 #include <bn_sound_items.h>
 
-boss::boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t _attributo, bn::fixed _dimensione)
+boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo tipo, bn::fixed _dimensione)
 {
+    bomber_mode = tipo == boss_tipo::BOMBER;
+    baller_mode = tipo == boss_tipo::BALLER;
+    flyer_mode = tipo == boss_tipo::FLYER;
+
     chr_x = x;
     chr_y = y;
     patrol_origin_x = x;
     colpi_rimasti = num_colpi;
     colpi_totali = num_colpi;
-    attributo = _attributo;
+    attributo = enemy_attr::ATTR_NONE;
 
     dimensione = _dimensione;
 
     box_dim = dimensione / 2;
     box_halfdim = dimensione / 4;
+    if (flyer_mode) {
+        sprite = bn::sprite_items::bat.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
+        actionStand = actionWalk = actionMelee = actionSummon = bn::create_sprite_animate_action_forever(
+            *sprite, 6, bn::sprite_items::bat.tiles_item(), 0, 1, 2, 1);
+    }
+    else {
+        sprite = bn::sprite_items::zombie.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 10, bn::sprite_items::zombie.tiles_item(), 0, 1, 2, 3);
 
-    sprite = bn::sprite_items::zombie.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 5, bn::sprite_items::zombie.tiles_item(), 4, 5, 6, 7, 8, 9, 10);
+
+        if (attributo & enemy_attr::ATTR_MELEE)
+        {
+            actionMelee = bn::create_sprite_animate_action_forever(
+                *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14);   // placeholder: frame dedicati
+            melee_damage = 20;
+        }
+        actionSummon = bn::create_sprite_animate_action_forever(
+            *sprite, 4, bn::sprite_items::zombie.tiles_item(), 15, 16);
+
+    }
     sprite->set_camera(g_camera);
     sprite->set_bg_priority(1);
-    actionStand = bn::create_sprite_animate_action_forever(
-        *sprite, 10, bn::sprite_items::zombie.tiles_item(), 0, 1, 2, 3);
 
-    actionWalk = bn::create_sprite_animate_action_forever(
-        *sprite, 5, bn::sprite_items::zombie.tiles_item(), 4, 5, 6, 7, 8, 9, 10);
 
-    if (attributo & enemy_attr::ATTR_MELEE)
-    {
-        actionMelee = bn::create_sprite_animate_action_forever(
-            *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14);   // placeholder: frame dedicati
-        melee_damage = 20;
-    }
-
-    weaponSprite = bn::sprite_items::weapons.create_sprite(x, y, 29);
-    weaponSprite->set_visible(false);
-    weaponSprite->set_camera(g_camera);
     dir = DIR_RIGHT;
     max_vx = bn::fixed(.5);
 
-    actionSummon = bn::create_sprite_animate_action_forever(
-        *sprite, 4, bn::sprite_items::zombie.tiles_item(), 15, 16);
 
     ticks_prossimo_attacco = 120;
-}
 
-boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo tipo, bn::fixed _dimensione) :
-    boss(x, y, num_colpi, enemy_attr::ATTR_NONE, _dimensione)
-{
-    bomber_mode = tipo == boss_tipo::BOMBER;
-    baller_mode = tipo == boss_tipo::BALLER;
-    flyer_mode = tipo == boss_tipo::FLYER;
+    flyer_target_x = x;
+    flyer_target_y = y;
     if (baller_mode)
     {
         max_vx = bn::fixed(1);
         ticks_prossimo_attacco = 120;
     }
+
 }
 
 void boss::update()
 {
-    // --- Lancio arma a distanza: indipendente dalla scelta sopra, il boss può farlo comunque durante ACTION_MOVE ---
-    if (weaponTicks > 0)
+    if (life <= 0)
     {
-        wx_base += wpn_vx;
-        wy_base += wpn_vy;
-        weaponSprite->set_x(wx_base - HALF_SCREEN_W);
-        weaponSprite->set_y(wy_base - HALF_SCREEN_H);
-        weaponTicks--;
-        if (weaponTicks < 30)
-            weaponSprite->set_visible(weaponTicks % 2);
-        if (weaponTicks == 0)
-            weaponSprite->set_visible(false);
+        static constexpr int DEATH_FRAMES = 90;
+        static constexpr int DEATH_SHRINK_FRAMES = 60;
+
+        invulnerability = 1;
+        sprite->set_x(chr_x - HALF_SCREEN_W);
+        sprite->set_y(chr_y - HALF_SCREEN_H);
+
+        if (deathTicks > 0)
+            deathTicks--;
+
+        int elapsed = DEATH_FRAMES - deathTicks;
+        sprite->set_rotation_angle_safe(bn::fixed(elapsed * (dir >= 0 ? -31 : 31)));
+
+        if (deathTicks < DEATH_SHRINK_FRAMES)
+        {
+            bn::fixed scale = bn::fixed(deathTicks) / DEATH_SHRINK_FRAMES;
+            if (scale < bn::fixed(0.1))
+                scale = bn::fixed(0.1);
+            sprite->set_scale(scale);
+            sprite->set_visible(deathTicks % 2);
+        }
+
+        if (deathTicks == 0)
+        {
+            distrutto = true;
+            sprite->set_visible(false);
+            sprite->remove_affine_mat();
+        }
+        return;
     }
 
     if (bomber_mode)
@@ -147,7 +172,7 @@ void boss::update()
                 chr_accx = bn::fixed(0);
             }
         }
-        else if ((attributo & enemy_attr::ATTR_SUMMON) && dist_x < RANGE_SUMMON && ticks_prossimo_summon <= 0 && onGround && weaponTicks == 0)
+        else if ((attributo & enemy_attr::ATTR_SUMMON) && dist_x < RANGE_SUMMON && ticks_prossimo_summon <= 0 && onGround)
         {
             // Priorità 2: troppo lontano per colpire, ma nel raggio del summon
             dir = cane_a_destra ? DIR_RIGHT : DIR_LEFT;
@@ -196,26 +221,7 @@ void boss::update()
     if (attributo & enemy_attr::ATTR_FIREBALL) {
         if (currentAction == ACTION_MOVE || currentAction == ACTION_STAND)
         {
-            if (ticks_prossimo_attacco > 0)
-                ticks_prossimo_attacco--;
-            else
-            {
-                wx_base = chr_x;
-                wy_base = chr_y;
 
-                bn::fixed dx = g_dog->chr_x + 16 - wx_base;
-                bn::fixed dy = g_dog->chr_y + 8 - wy_base;
-                bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
-                bn::fixed gittata = SCREEN_DG;
-                bn::fixed weapon_time = bn::fixed(180.0);
-
-                wpn_vx = bn::degrees_lut_cos_safe(angle).multiplication(gittata).division(weapon_time);
-                wpn_vy = bn::degrees_lut_sin_safe(angle).multiplication(gittata).division(weapon_time);
-                weaponTicks = weapon_time.integer();
-                weaponSprite->set_rotation_angle_safe(-90 - angle);
-                weaponSprite->set_visible(true);
-                ticks_prossimo_attacco = 120 + g_rng.get_int(120);
-            }
         }
     }
 
@@ -339,10 +345,10 @@ bool boss::throw_bomber_bomb()
 
     for (bn::optional<bomb>& projectile : bomber_bombs)
     {
-        if (! projectile)
+        if (!projectile)
         {
             projectile.emplace(chr_x + bn::fixed(8).multiplication(dir), chr_y - 4,
-                               vx, bn::fixed(-4.0));
+                vx, bn::fixed(-4.0));
             return true;
         }
     }
@@ -390,7 +396,7 @@ void boss::update_baller()
 
     if (ticks_prossimo_attacco > 0)
         ticks_prossimo_attacco--;
-    if (ticks_prossimo_attacco <= 0 && ! baller_fireball && throw_baller_fireball())
+    if (ticks_prossimo_attacco <= 0 && !baller_fireball && throw_baller_fireball())
         ticks_prossimo_attacco = FIREBALL_COOLDOWN;
 
     sprite->set_x(chr_x - HALF_SCREEN_W);
@@ -467,17 +473,57 @@ void boss::update_flyer()
         flyer_fireball_pending = true;
 
     const collision_map_info& map = get_collision_map(g_schema);
-    bn::fixed target_x = g_dog->chr_x;
-    if (flyer_fireball_pending)
-        target_x += bn::fixed(g_dog->dir * 48);
+    bn::fixed target_x = g_dog->chr_x + bn::fixed(g_dog->dir * 80);
     if (target_x < 16)
         target_x = 16;
     else if (target_x > map.map_w - 16)
         target_x = bn::fixed(map.map_w - 16);
 
-    bn::fixed target_y = flyer_fireball_pending ? g_dog->chr_y : g_dog->chr_y - 100;
-    chr_x += cap(target_x - chr_x, bn::fixed(2));
-    chr_y += cap(target_y - chr_y, bn::fixed(2));
+    bn::fixed target_y = flyer_fireball_pending ? g_dog->chr_y : g_dog->chr_y - 60;
+
+    if (!flyer_moving)
+    {
+        if (flyer_move_delay > 0)
+            flyer_move_delay--;
+        if (flyer_move_delay == 0)
+        {
+            flyer_start_x = chr_x;
+            flyer_start_y = chr_y;
+            flyer_target_x = target_x;
+            flyer_target_y = target_y;
+            flyer_move_ticks = 0;
+            flyer_moving = true;
+        }
+    }
+
+    if (flyer_moving)
+    {
+        static constexpr int MOVE_FRAMES = 90;
+        static constexpr bn::fixed SWAY = bn::fixed(12);
+
+        if (flyer_move_ticks < MOVE_FRAMES)
+            flyer_move_ticks++;
+
+        bn::fixed progress = bn::fixed(flyer_move_ticks).division(MOVE_FRAMES);
+        bn::fixed eased = progress.multiplication(progress).multiplication(
+            bn::fixed(3) - bn::fixed(2).multiplication(progress));
+        bn::fixed dx = flyer_target_x - flyer_start_x;
+        bn::fixed dy = flyer_target_y - flyer_start_y;
+        bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
+        bn::fixed sway = bn::degrees_lut_sin_safe(bn::fixed(180).multiplication(progress))
+            .multiplication(SWAY);
+
+        chr_x = flyer_start_x + dx.multiplication(eased) -
+            bn::degrees_lut_sin_safe(angle).multiplication(sway);
+        chr_y = flyer_start_y + dy.multiplication(eased) +
+            bn::degrees_lut_cos_safe(angle).multiplication(sway);
+
+        if (flyer_move_ticks == MOVE_FRAMES)
+        {
+            flyer_moving = false;
+            flyer_move_delay = 30;
+        }
+    }
 
     if (flyer_fireball_pending &&
         bn::abs(target_x - chr_x) <= 2 &&
@@ -560,6 +606,16 @@ bool boss::subisci_colpo(int danno)
         life = 0;
     invulnerability = 30;
     g_healthbar->show(this);
+    if (life == 0)
+    {
+        deathTicks = 90;
+        chr_vx = ZERO;
+        chr_vy = ZERO;
+        chr_accx = ZERO;
+        sprite->set_visible(true);
+        sprite->set_scale(1);
+        sprite->set_rotation_angle_safe(0);
+    }
     return true;
 }
 

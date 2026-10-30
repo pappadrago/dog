@@ -107,14 +107,15 @@ void dog::update_animations() {
         actionIdle->reset();
     }
 
-    text_ticks--;
-    if (text_ticks > 0)
+    if (text_ticks > 0) {
+        text_ticks--;
         // il numero sale piano; lampeggia solo negli ultimi frame, per restare leggibile
         for (bn::sprite_ptr& s : numero_sprites)
         {
             s.set_y(s.y() - text_vy);
             s.set_visible(text_ticks > 10 || text_ticks % 2);
         }
+    }
     else
         numero_sprites.clear();
 
@@ -299,23 +300,25 @@ void dog::show_str(bn::string<32> txt) {
 void dog::update()
 {
     auto maybe_show_jump_str = [this]()
-    {
-        if (text_ticks > 0 || g_rng.get_int(5) != 0)
-            return;
-
-        switch (g_rng.get_int(3))
         {
-        case 0:
-            show_str("op!");
-            break;
-        case 1:
-            show_str("oplà!");
-            break;
-        default:
-            show_str("issa!");
-            break;
-        }
-    };
+            int R = g_rng.get_int(5);
+            BN_LOG("text_ticks: ", text_ticks, ", R: ", R);
+            if (text_ticks > 0 || R != 0)
+                return;
+
+            switch (g_rng.get_int(3))
+            {
+            case 0:
+                show_str("op!");
+                break;
+            case 1:
+                show_str("opla!");
+                break;
+            default:
+                show_str("issa!");
+                break;
+            }
+        };
 
     //Dato che in main.cpp g_dog->update() gira prima di lava_zona::update() nello stesso frame (verificato nel tuo game_step),
     //  resettare qui a ogni frame e lasciare che un'eventuale zona di lava la rialzi più tardi nello stesso giro 
@@ -566,19 +569,6 @@ void dog::update()
                 invulnerability = 60;
                 dog_damage(hitByMelee ? g_boss->melee_damage : g_boss->contact_damage);
                 chr_vx = new_vx;
-            }
-            else if (g_boss->weaponSprite && g_boss->weaponTicks > 0) {
-                hit = check_collision_16(*g_boss->weaponSprite);
-                if (hit)
-                {
-                    chr_vx = (chr_x < g_boss->wx_base) ? SMALL_VX_L : SMALL_VX_R;
-                    chr_vy = SMALL_JUMP_VY;
-                    invulnerability = 60;
-                    g_boss->weaponTicks = 0;
-                    g_boss->weaponSprite->set_visible(false);
-
-                    dog_damage(3);
-                }
             }
         }
     }

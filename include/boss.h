@@ -25,12 +25,8 @@ public:
     uint8_t attributo = enemy_attr::ATTR_NONE;    // enemy_attr::ATTR_BASH, enemy_attr::ATTR_MELEE (bitmask)
     uint8_t currentAction = ACTION_MOVE;
 
-    bn::optional<bn::sprite_ptr> weaponSprite;
     bn::optional<bn::sprite_animate_action<10>> actionMelee;
 
-    bn::fixed wx_base, wy_base;
-    bn::fixed wpn_vx, wpn_vy;
-    int weaponTicks = 0;
     int meleeTicks = 0;
     int ticks_attacco_melee = 0;
     int ticks_prossimo_attacco = 90;
@@ -39,6 +35,8 @@ public:
 
     int contact_damage = 2;
     int melee_damage = 0;   // 0 = niente attacco melee configurato
+    int deathTicks = 0;
+    bool distrutto = false;
 
     boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t attributo = enemy_attr::ATTR_NONE, bn::fixed dimensione = 32);
     boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo tipo, bn::fixed dimensione = 32);
@@ -74,6 +72,13 @@ private:
     int flyer_ticks_to_bomb = 120;
     int flyer_ticks_to_fireball = 420;
     bool flyer_fireball_pending = false;
+    bn::fixed flyer_target_x = ZERO;
+    bn::fixed flyer_target_y = ZERO;
+    bn::fixed flyer_start_x = ZERO;
+    bn::fixed flyer_start_y = ZERO;
+    int flyer_move_delay = 30;
+    int flyer_move_ticks = 0;
+    bool flyer_moving = false;
 
     void update_bomber();
     bool throw_bomber_bomb();

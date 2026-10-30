@@ -386,7 +386,19 @@ int main()
 
 
                     if (g_boss.has_value())
+                    {
                         g_boss->update();
+                        if (g_boss->distrutto)
+                        {
+                            if (g_healthbar->obj_target == &*g_boss)
+                            {
+                                g_healthbar->obj_target = nullptr;
+                                g_healthbar->ticks = 0;
+                                g_healthbar->sprite->set_visible(false);
+                            }
+                            g_boss.reset();
+                        }
+                    }
 
                     for (item* e : *g_items)
                         e->update();
@@ -429,8 +441,8 @@ int main()
                 if (g_dog->life <= 0)
                     game_over = true;
 
-                BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
-                BN_LOG("ewram statica: ", bn::memory::used_static_ewram());
+                //BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
+                //BN_LOG("ewram statica: ", bn::memory::used_static_ewram());
                //  BN_LOG("iwram stack:   ", bn::memory::used_stack_iwram());
             }
 
