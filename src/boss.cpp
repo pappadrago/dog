@@ -12,11 +12,13 @@
 #include "healthbar.h"
 #include <bn_sound_items.h>
 
-boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo tipo, bn::fixed _dimensione)
+boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _dimensione)
 {
+    tipo = _tipo;
     bomber_mode = tipo == boss_tipo::BOMBER;
     baller_mode = tipo == boss_tipo::BALLER;
     flyer_mode = tipo == boss_tipo::FLYER;
+    summoner_mode = tipo == boss_tipo::SUMMONER;
 
     chr_x = x;
     chr_y = y;
@@ -107,23 +109,28 @@ void boss::update()
         return;
     }
 
-    if (bomber_mode)
+    switch (tipo)
     {
-        update_bomber();
-        return;
-    }
-
-    if (baller_mode)
-    {
+    case boss_tipo::BALLER:
         update_baller();
-        return;
+        break;
+    case boss_tipo::BOMBER:
+        update_bomber();
+        break;
+    case boss_tipo::SUMMONER:
+        update_summoner();
+        break;
+    case boss_tipo::FLYER:
+        update_flyer();
+        break;
+    default:
+        break;
     }
 
-    if (flyer_mode)
-    {
-        update_flyer();
-        return;
-    }
+}
+
+void boss::update_summoner()
+{
 
     if (in_summon)
     {
@@ -499,7 +506,6 @@ void boss::update_flyer()
     if (flyer_moving)
     {
         static constexpr int MOVE_FRAMES = 90;
-        static constexpr bn::fixed SWAY = bn::fixed(12);
 
         if (flyer_move_ticks < MOVE_FRAMES)
             flyer_move_ticks++;
@@ -509,14 +515,8 @@ void boss::update_flyer()
             bn::fixed(3) - bn::fixed(2).multiplication(progress));
         bn::fixed dx = flyer_target_x - flyer_start_x;
         bn::fixed dy = flyer_target_y - flyer_start_y;
-        bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
-        bn::fixed sway = bn::degrees_lut_sin_safe(bn::fixed(180).multiplication(progress))
-            .multiplication(SWAY);
-
-        chr_x = flyer_start_x + dx.multiplication(eased) -
-            bn::degrees_lut_sin_safe(angle).multiplication(sway);
-        chr_y = flyer_start_y + dy.multiplication(eased) +
-            bn::degrees_lut_cos_safe(angle).multiplication(sway);
+        chr_x = flyer_start_x + dx.multiplication(eased);
+        chr_y = flyer_start_y + dy.multiplication(eased);
 
         if (flyer_move_ticks == MOVE_FRAMES)
         {

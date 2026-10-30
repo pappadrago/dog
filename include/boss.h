@@ -12,7 +12,8 @@ enum class boss_tipo : uint8_t
 {
     BOMBER,
     BALLER,
-    FLYER
+    FLYER,
+    SUMMONER
 };
 
 class boss : public live_obj
@@ -60,6 +61,10 @@ private:
     bool bomber_mode = false;
     bool baller_mode = false;
     bool flyer_mode = false;
+    bool summoner_mode = false;
+
+    boss_tipo tipo;
+
     bn::fixed patrol_origin_x = ZERO;
     int bomber_ticks_to_jump = 180;
     int bomber_ticks_to_throw = 60;
@@ -85,6 +90,7 @@ private:
     void update_baller();
     bool throw_baller_fireball();
     void update_flyer();
+    void update_summoner();
     bool throw_flyer_bomb();
     bool throw_flyer_fireball();
 };
