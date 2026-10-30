@@ -39,19 +39,19 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _
     else {
         sprite = bn::sprite_items::zombie.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
         actionStand = bn::create_sprite_animate_action_forever(
-            *sprite, 10, bn::sprite_items::zombie.tiles_item(), 0, 1, 2, 3);
+            *sprite, 10, bn::sprite_items::zombie.tiles_item(), 0, 1, 2, 3, 4, 5);
 
         actionWalk = bn::create_sprite_animate_action_forever(
-            *sprite, 5, bn::sprite_items::zombie.tiles_item(), 4, 5, 6, 7, 8, 9, 10);
+            *sprite, 5, bn::sprite_items::zombie.tiles_item(), 6, 7, 8, 9, 10);
 
         if (attributo & enemy_attr::ATTR_MELEE)
         {
             actionMelee = bn::create_sprite_animate_action_forever(
-                *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14);   // placeholder: frame dedicati
+                *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14, 15,16, 17); 
             melee_damage = 20;
         }
         actionSummon = bn::create_sprite_animate_action_forever(
-            *sprite, 4, bn::sprite_items::zombie.tiles_item(), 15, 16);
+            *sprite, 4, bn::sprite_items::zombie.tiles_item(), 12, 13);
 
     }
     sprite->set_camera(g_camera);
@@ -242,7 +242,7 @@ void boss::update_summoner()
 
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
-    sprite->set_horizontal_flip(dir == DIR_LEFT);
+    sprite->set_horizontal_flip(dir == DIR_RIGHT);
 
     if (currentAction == ACTION_ATTACK && actionMelee.has_value())
     {
