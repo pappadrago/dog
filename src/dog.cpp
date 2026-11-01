@@ -10,7 +10,6 @@
 #include "bn_math.h"
 #include "bn_random.h"
 #include "bn_sound_items.h"
-#include "bn_sprite_items_fox.h"
 #include "bn_sprite_items_fox1632.h"
 #include "bn_sprite_items_zombie.h"
 #include "bn_sprite_items_lavabubble.h"

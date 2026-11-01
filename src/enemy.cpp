@@ -8,7 +8,6 @@
 #include "bn_random.h"
 #include "bn_sprite_items_weapons.h"
 #include "bn_sprite_items_enemies.h"
-#include "bn_sprite_items_king.h"
 #include "bn_sprite_items_enemies2.h"
 #include "bn_math.h"
 #include "bn_log.h"

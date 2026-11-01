@@ -13,7 +13,8 @@ enum class boss_tipo : uint8_t
     BOMBER,
     BALLER,
     FLYER,
-    SUMMONER
+    SUMMONER,
+    SKELETON
 };
 
 class boss : public live_obj

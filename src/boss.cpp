@@ -4,6 +4,7 @@
 #include "obj.h"
 #include "schemi.h"
 #include "bn_sprite_items_zombie.h"
+#include "bn_sprite_items_skeleton.h"
 #include "bn_sprite_items_bat.h"
 #include "bn_sprite_items_weapons.h"
 #include "bn_random.h"
@@ -29,12 +30,33 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _
 
     dimensione = _dimensione;
 
+    if (tipo == boss_tipo::SUMMONER)
+        attributo |= enemy_attr::ATTR_SUMMON;
+    if (tipo == boss_tipo::SKELETON)
+        attributo |= enemy_attr::ATTR_MELEE;
+
     box_dim = dimensione / 2;
     box_halfdim = dimensione / 4;
-    if (flyer_mode) {
+    if (tipo == boss_tipo::FLYER) {
         sprite = bn::sprite_items::bat.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
         actionStand = actionWalk = actionMelee = actionSummon = bn::create_sprite_animate_action_forever(
             *sprite, 6, bn::sprite_items::bat.tiles_item(), 0, 1, 2, 1);
+    }
+    else if (tipo == boss_tipo::SKELETON) {
+        sprite = bn::sprite_items::skeleton.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 10, bn::sprite_items::skeleton.tiles_item(), 0, 1, 2, 3, 4, 5);
+
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 5, bn::sprite_items::skeleton.tiles_item(), 6, 7, 8, 9, 10, 11);
+
+        if (attributo & enemy_attr::ATTR_MELEE)
+        {
+            actionMelee = bn::create_sprite_animate_action_forever(
+                *sprite, 8, bn::sprite_items::skeleton.tiles_item(),12, 13, 14, 15, 16, 17);
+            melee_damage = 20;
+        }
+
     }
     else {
         sprite = bn::sprite_items::zombie.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
@@ -47,7 +69,7 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _
         if (attributo & enemy_attr::ATTR_MELEE)
         {
             actionMelee = bn::create_sprite_animate_action_forever(
-                *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14, 15,16, 17); 
+                *sprite, 8, bn::sprite_items::zombie.tiles_item(), 11, 12, 13, 14, 15, 16, 17);
             melee_damage = 20;
         }
         actionSummon = bn::create_sprite_animate_action_forever(
@@ -118,6 +140,7 @@ void boss::update()
         update_bomber();
         break;
     case boss_tipo::SUMMONER:
+    case boss_tipo::SKELETON:
         update_summoner();
         break;
     case boss_tipo::FLYER:
