@@ -174,8 +174,15 @@ void snake::aggiorna_sprite()
             s.set_tiles(bn::sprite_items::snake.tiles_item(), tile);
     }
 
-    _segs[0].set_horizontal_flip(dir == DIR_LEFT);
-    _segs[_segment_count - 1].set_horizontal_flip(_dir_coda == DIR_LEFT);
+    bn::fixed head_dx = _x[0] - _x[1];
+    bn::fixed head_dy = _y[0] - _y[1];
+    bn::fixed tail_dx = _x[_segment_count - 2] - _x[_segment_count - 1];
+    bn::fixed tail_dy = _y[_segment_count - 2] - _y[_segment_count - 1];
+    _segs[0].set_rotation_angle_safe(
+        bn::degrees_atan2(head_dy.integer(), head_dx.integer()));
+    _segs[_segment_count - 1].set_rotation_angle_safe(
+        bn::degrees_atan2(tail_dy.integer(), tail_dx.integer()));
+
     for (int k = _segment_count; k < SNAKE_SEGMENTS; ++k)
         _segs[k].set_visible(false);
 }
