@@ -61,6 +61,13 @@ const enemy_def* get_schema_enemies(int schema, int& count)
     return s.enemies;
 }
 
+const snake_def* get_schema_snakes(int schema, int& count)
+{
+    const schema_def& s = S(schema);
+    count = s.snakes_count;
+    return s.snakes;
+}
+
 const lava_zona_def* get_schema_lava(int schema, int& count)
 {
     const schema_def& s = S(schema);

@@ -31,6 +31,7 @@
 #include "hud.h"
 #include "bau.h"
 #include "enemy.h"
+#include "snake.h"
 #include "item.h"
 #include "door.h"
 #include "dog.h"
@@ -159,6 +160,7 @@ int main()
         g_bau.emplace();
         g_bau_carico.emplace();
         g_enemies.emplace();
+        g_snakes.emplace();
         g_items.emplace();
         g_casse.emplace();
         g_piattaforme.emplace();
@@ -238,6 +240,18 @@ int main()
 
                 }
             }
+            // Spawn serpenti
+            {
+                int n_snakes = 0;
+                const snake_def* sdefs = get_schema_snakes(g_schema, n_snakes);
+
+                for (int i = 0; i < n_snakes; ++i) {
+                    snake* new_snake = new snake(sdefs[i]);
+                    g_snakes->push_back(new_snake);
+                }
+            }
+ 
+ 
             // Spawn casse
             {
                 int n_casse = 0;
@@ -313,7 +327,7 @@ int main()
             const door_def* used_door = nullptr;
 
             //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
-            g_boss.emplace(360, 400, 10, boss_tipo::SKELETON);
+            //g_boss.emplace(360, 400, 10, boss_tipo::FLYER);
 
             // Un frame di gioco (senza bn::core::update)
             auto game_step = [&]()
@@ -336,7 +350,20 @@ int main()
                         e->update();
                     for (enemy* e : *g_enemies)
                         e->update();
+                    for (snake* s : *g_snakes)
+                        s->update();
                     g_healthbar->update();
+
+
+                    for (int i = g_snakes->size() - 1; i >= 0; --i)
+                    {
+                        snake* s = (*g_snakes)[i];
+                        if (s->distrutto)
+                        {
+                            delete s;
+                            g_snakes->erase(g_snakes->begin() + i);
+                        }
+                    }
 
                     for (int i = g_enemies->size() - 1; i >= 0; --i)
                     {
@@ -457,6 +484,7 @@ int main()
 
             delete_all(*g_enemies,
                 *g_items,
+                *g_snakes,
                 doors,
                 *g_trampolini,
                 *g_casse,
@@ -497,6 +525,7 @@ int main()
             g_piattaforme,
             g_items,
             g_enemies,
+            g_snakes,
             g_bau_carico,
             g_bau,
             g_wind_fx,

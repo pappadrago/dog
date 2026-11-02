@@ -114,6 +114,24 @@ namespace megadog_s1 {
 
 
 
+//     struct snake_def
+// {
+//     int16_t  centro_x, centro_y;
+//     int16_t  semiasse_x, semiasse_y;
+//     uint8_t  percorso;          // snake_percorso
+//     uint8_t  velocita_x10;      // px/frame x10 (12 = 1.2 px/frame), costante lungo tutto il percorso
+//     bool     oraria;
+//     int16_t  fase_iniziale;     // gradi 0..359: punto di partenza della testa sul percorso
+//     uint16_t fireball_period;   // frame tra due fireball
+//     int16_t  life;              // <= START_LIFE, altrimenti la healthbar non si riempie
+//     uint16_t delay;             // frame prima della prima fireball
+// };
+
+    const snake_def schema1_snakes[] = {
+        { 300, 200, 100, 50, snake_percorso::SNAKE_OTTO, 12, false, 0, 120, 100, 240},
+    };
+    constexpr int schema1_snakes_count = sizeof(schema1_snakes) / sizeof(schema1_snakes[0]);
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     constexpr uint8_t collision_map_columns_s1 = 96;
@@ -181,7 +199,8 @@ constexpr int schema1_scale_count = sizeof(schema1_scale) / sizeof(schema1_scale
             bn::regular_bg_items::bg_s1,
             bn::regular_bg_items::megadog_s1fg,
             &collision_map_s1_info,
-            schema1_scale, schema1_scale_count
+            schema1_scale, schema1_scale_count,
+            schema1_snakes, schema1_snakes_count
         };
     }
 }

@@ -111,3 +111,8 @@ void wind_update();
 
 class wind_fx;
 extern bn::optional<wind_fx> g_wind_fx;
+
+
+class snake;
+#define MAX_SNAKES 2
+extern bn::optional<bn::vector<snake*, MAX_SNAKES>> g_snakes;

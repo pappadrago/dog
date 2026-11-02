@@ -175,6 +175,7 @@ namespace megadog_s2 {
             bn::regular_bg_items::megadog_s2fg,
             &collision_map_s1_info,
             nullptr, 0, // scale
+            nullptr, 0, // snakes
         };
     }
 }

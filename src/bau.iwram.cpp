@@ -5,6 +5,7 @@
 #include "boss.h"
 #include "bau.h"
 #include "item.h"
+#include "snake.h"
 #include "bn_sprite_items_fox1632.h"
 #include "bn_log.h"
 #include "cassa.h"
@@ -46,6 +47,16 @@ BN_CODE_IWRAM void bau::update()
                 ticks2Anim = 20;
             }
             break;
+        }
+    }
+
+    for (snake* s : *g_snakes)
+    {
+        if (s->invulnerability > 0 || s->is_dead()) continue;
+        if (s->overlaps(chr_x, chr_y, reach))
+        {
+            s->be_hit_by_bark(power);
+            s->invulnerability = ticks + 1;
         }
     }
 

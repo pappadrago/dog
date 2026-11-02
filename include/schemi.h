@@ -8,6 +8,7 @@
 #include "lava.h"
 #include "door.h"
 #include "enemy.h"
+#include "snake.h"
 #include "item.h"
 #include "scala.h"
 #include "cassa.h"
@@ -51,6 +52,7 @@ const lava_zona_def* get_schema_lava(int schema, int& count);
 const piattaforma_mobile_def* get_schema_piattaforme_mobili(int schema, int& count);
 const item_def* get_schema_items(int schema, int& count);
 const enemy_def* get_schema_enemies(int schema, int& count);
+const snake_def* get_schema_snakes(int schema, int& count);
 const trampolino_def* get_schema_trampolini(int schema, int& count);
 const cassa_def* get_schema_casse(int schema, int& count);
 const scala_def* get_schema_scale(int schema, int& count);
@@ -73,5 +75,6 @@ struct schema_def
     const bn::regular_bg_item foreground_item;  // foreground, davanti agli sprite
     const collision_map_info* map_info;
     const scala_def* scale; int scale_count;
+    const snake_def* snakes; int snakes_count;
 };
 
