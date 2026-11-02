@@ -30,6 +30,7 @@ class dog;
 class game_timer;
 class cassa;
 class boss;
+class bomb;
 
 // --- Globali ---
 // Definiti in globals.cpp, accessibili ovunque includendo questo file.
@@ -45,6 +46,7 @@ extern bn::optional<game_timer> g_timer;
 // Il vector di enemy è allocato come optional per evitare
 // il costruttore globale con template non banale.
 extern bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
+extern bn::optional<bn::vector<bomb*, MAX_BOMBS>> g_bombs;
 extern bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 extern bn::optional<boss> g_boss;
 extern bn::optional<bn::vector<cassa*, MAX_CASSE>> g_casse;

@@ -42,6 +42,7 @@
 #include <bn_blending.h>
 #include "piattaforma.h"
 #include "healthbar.h"
+#include "bomb.h"
 
 
 namespace
@@ -160,6 +161,7 @@ int main()
         g_bau.emplace();
         g_bau_carico.emplace();
         g_enemies.emplace();
+        g_bombs.emplace();
         g_snakes.emplace();
         g_items.emplace();
         g_casse.emplace();
@@ -344,6 +346,16 @@ int main()
                     wind_update();
                     g_wind_fx->update();
                     g_dog->update();
+                    for (int i = g_bombs->size() - 1; i >= 0; --i)
+                    {
+                        bomb* projectile = (*g_bombs)[i];
+                        projectile->update();
+                        if (projectile->finished)
+                        {
+                            delete projectile;
+                            g_bombs->erase(g_bombs->begin() + i);
+                        }
+                    }
                     for (trampolino* t : *g_trampolini)
                         t->update();
                     for (cassa* e : *g_casse)
@@ -482,7 +494,8 @@ int main()
             else
                 fade_screen(true);
 
-            delete_all(*g_enemies,
+            delete_all(*g_bombs,
+                *g_enemies,
                 *g_items,
                 *g_snakes,
                 doors,
@@ -524,8 +537,9 @@ int main()
             g_lava,
             g_piattaforme,
             g_items,
-            g_enemies,
             g_snakes,
+            g_bombs,
+            g_enemies,
             g_bau_carico,
             g_bau,
             g_wind_fx,

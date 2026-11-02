@@ -129,6 +129,7 @@ namespace megadog_s1 {
 
     const snake_def schema1_snakes[] = {
         { 300, 200, 100, 50, snake_percorso::SNAKE_OTTO, 12, false, 0, 120, 100, 240},
+        { 300, 200, 50, 50, snake_percorso::SNAKE_RETTANGOLO, 12, true, 0, 120, 100, 240},
     };
     constexpr int schema1_snakes_count = sizeof(schema1_snakes) / sizeof(schema1_snakes[0]);
 

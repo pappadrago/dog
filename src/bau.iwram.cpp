@@ -53,9 +53,10 @@ BN_CODE_IWRAM void bau::update()
     for (snake* s : *g_snakes)
     {
         if (s->invulnerability > 0 || s->is_dead()) continue;
-        if (s->overlaps(chr_x, chr_y, reach))
+        int segment_index = s->overlapping_segment(chr_x, chr_y, reach);
+        if (segment_index >= 0)
         {
-            s->be_hit_by_bark(power);
+            s->be_hit_by_bark(power, segment_index);
             s->invulnerability = ticks + 1;
         }
     }

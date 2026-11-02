@@ -6,11 +6,9 @@
 #include "bn_sprite_ptr.h"
 #include "bn_fixed.h"
 #include "obj.h"
-#include "bomb.h"
 #include <cstdint>
 
-#define SNAKE_SEGMENTS       8   // 0 = testa, 1..7 = corpo, 8 = coda
-#define SNAKE_MAX_FIREBALLS  2    // fireball contemporaneamente in volo
+#define SNAKE_SEGMENTS       16   // testa, 6 segmenti del corpo, coda
 #define SNAKE_SPACING_PX     9    // distanza lungo il percorso tra due segmenti (sprite 16x16 sovrapposti)
 
 enum snake_percorso : uint8_t
@@ -45,12 +43,11 @@ public:
 
     void update();
 
-    bool is_dead() const { return life <= 0; }
-    void take_damage(int damage);
-    void be_hit_by_bark(bn::fixed power);
+    bool is_dead() const { return _dying; }
+    void be_hit_by_bark(bn::fixed power, int segment_index);
 
-    // true se un qualunque segmento si sovrappone al quadrato di centro (x,y) e semilato reach (coordinate mondo)
-    bool overlaps(bn::fixed x, bn::fixed y, bn::fixed reach) const;
+    // Indice del segmento colpibile sovrapposto, oppure -1 se nessuno.
+    int overlapping_segment(bn::fixed x, bn::fixed y, bn::fixed reach) const;
 
 private:
     snake_def def;
@@ -58,6 +55,9 @@ private:
     bn::vector<bn::sprite_ptr, SNAKE_SEGMENTS> _segs;
     bn::array<bn::fixed, SNAKE_SEGMENTS> _x;
     bn::array<bn::fixed, SNAKE_SEGMENTS> _y;
+    bn::array<int, SNAKE_SEGMENTS> _segment_life;
+    int _segment_count = SNAKE_SEGMENTS;
+    bool _dying = false;
 
     bn::fixed _perimetro;
     bn::fixed _fase;     // fase della testa, gradi 0..360
@@ -70,12 +70,10 @@ private:
     int _fire_cd = 0;
     int _death_ticks = 0;
 
-    bn::array<bn::optional<bomb>, SNAKE_MAX_FIREBALLS> _fireballs;
-
+    void take_damage(int damage, int segment_index);
     void punto(bn::fixed fase, bn::fixed& x, bn::fixed& y) const;
     void calcola_posizioni();
     void aggiorna_sprite();
-    void update_fireballs();
     bool spara();
     void check_dog();
     void update_death();

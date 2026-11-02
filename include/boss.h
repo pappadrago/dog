@@ -6,7 +6,6 @@
 #include "dog.h"
 #include "globals.h"
 #include "enemy.h"   // per enemy_attr::ATTR_*/ACTION_*, condivisi con enemy
-#include "bomb.h"
 
 enum class boss_tipo : uint8_t
 {
@@ -71,10 +70,6 @@ private:
     int bomber_ticks_to_throw = 60;
     int bomber_shots_in_burst = 0;
     int bomber_throw_animation_ticks = 0;
-    bn::optional<bomb> bomber_bombs[MAX_ENEMY_BOMBS];
-    bn::optional<bomb> baller_fireball;
-    bn::optional<bomb> flyer_bombs[MAX_ENEMY_BOMBS];
-    bn::optional<bomb> flyer_fireball;
     int flyer_ticks_to_bomb = 120;
     int flyer_ticks_to_fireball = 420;
     bool flyer_fireball_pending = false;

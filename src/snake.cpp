@@ -1,4 +1,5 @@
 #include "snake.h"
+#include "bomb.h"
 #include "globals.h"
 #include "dog.h"
 #include "collision.h"
@@ -18,7 +19,6 @@ static constexpr int       FIREBALL_TILE  = 23;
 static constexpr int       FIREBALL_TTL   = 120;
 static constexpr bn::fixed FIREBALL_SPEED = bn::fixed(1.5);
 
-static constexpr int       DEATH_FRAMES   = SNAKE_SEGMENTS * 4;   // un segmento sparisce ogni 4 frame
 static constexpr bn::fixed SOGLIA_DIR     = bn::fixed(0.05);
 
 static bn::fixed wrap360(bn::fixed a)
@@ -45,6 +45,7 @@ static bn::fixed calcola_perimetro(const snake_def& d)
 snake::snake(const snake_def& d) : def(d)
 {
     life = d.life;
+    _dying = life <= 0;
     _perimetro = calcola_perimetro(d);
     _step  = bn::fixed(SNAKE_SPACING_PX * 360).division(_perimetro);
     _delta = bn::fixed(d.velocita_x10 * 36).division(_perimetro);   // (v/10) * 360 / perimetro
@@ -58,6 +59,7 @@ snake::snake(const snake_def& d) : def(d)
 
     for (int k = 0; k < SNAKE_SEGMENTS; ++k)
     {
+        _segment_life[k] = d.life;
         int tile = (k == 0) ? TILE_TESTA
                  : (k == SNAKE_SEGMENTS - 1) ? TILE_CODA
                  : ((k & 1) ? TILE_CORPO_A : TILE_CORPO_B);
@@ -66,7 +68,7 @@ snake::snake(const snake_def& d) : def(d)
             _x[k] - HALF_SCREEN_W, _y[k] - HALF_SCREEN_H, tile);
         s.set_camera(g_camera);
         s.set_bg_priority(1);
-        s.set_z_order(k);          // la testa davanti, la coda dietro
+        s.set_z_order(k == 0 ? 0 : 1);
         _segs.push_back(bn::move(s));
     }
 }
@@ -111,14 +113,12 @@ void snake::punto(bn::fixed fase, bn::fixed& x, bn::fixed& y) const
 // Niente buffer di storico, solo 16 valutazioni da LUT per frame.
 void snake::calcola_posizioni()
 {
-    for (int k = 0; k < SNAKE_SEGMENTS; ++k)
+    for (int k = 0; k < _segment_count; ++k)
         punto(wrap360(_fase - _step * (k * _sgn)), _x[k], _y[k]);
 }
 
 void snake::update()
 {
-    update_fireballs();
-
     if (is_dead())
     {
         update_death();
@@ -129,7 +129,7 @@ void snake::update()
         invulnerability--;
 
     bn::fixed old_head = _x[0];
-    bn::fixed old_tail = _x[SNAKE_SEGMENTS - 1];
+    bn::fixed old_tail = _x[_segment_count - 1];
 
     _fase = wrap360(_fase + _delta * _sgn);
     calcola_posizioni();
@@ -140,7 +140,7 @@ void snake::update()
     if (dh > SOGLIA_DIR)       dir = DIR_RIGHT;
     else if (dh < -SOGLIA_DIR) dir = DIR_LEFT;
 
-    bn::fixed dt = _x[SNAKE_SEGMENTS - 1] - old_tail;
+    bn::fixed dt = _x[_segment_count - 1] - old_tail;
     if (dt > SOGLIA_DIR)       _dir_coda = DIR_RIGHT;
     else if (dt < -SOGLIA_DIR) _dir_coda = DIR_LEFT;
 
@@ -160,33 +160,24 @@ void snake::aggiorna_sprite()
     bool anima_corpo = (_anim & 7) == 0;
     bool visibile = invulnerability == 0 || (invulnerability % 2);
 
-    for (int k = 0; k < SNAKE_SEGMENTS; ++k)
+    for (int k = 0; k < _segment_count; ++k)
     {
         bn::sprite_ptr& s = _segs[k];
         s.set_x(_x[k] - HALF_SCREEN_W);
         s.set_y(_y[k] - HALF_SCREEN_H);
         s.set_visible(visibile);
 
-        if (anima_corpo && k > 0 && k < SNAKE_SEGMENTS - 1)
-            s.set_tiles(bn::sprite_items::snake.tiles_item(),
-                        (((_anim >> 3) + k) & 1) ? TILE_CORPO_A : TILE_CORPO_B);
+        int tile = k == 0 ? TILE_TESTA
+                 : k == _segment_count - 1 ? TILE_CODA
+                 : (((_anim >> 3) + k) & 1) ? TILE_CORPO_A : TILE_CORPO_B;
+        if (k == 0 || k == _segment_count - 1 || anima_corpo)
+            s.set_tiles(bn::sprite_items::snake.tiles_item(), tile);
     }
 
     _segs[0].set_horizontal_flip(dir == DIR_LEFT);
-    _segs[SNAKE_SEGMENTS - 1].set_horizontal_flip(_dir_coda == DIR_LEFT);
-}
-
-void snake::update_fireballs()
-{
-    for (bn::optional<bomb>& fb : _fireballs)
-    {
-        if (fb)
-        {
-            fb->update();
-            if (fb->finished)
-                fb.reset();
-        }
-    }
+    _segs[_segment_count - 1].set_horizontal_flip(_dir_coda == DIR_LEFT);
+    for (int k = _segment_count; k < SNAKE_SEGMENTS; ++k)
+        _segs[k].set_visible(false);
 }
 
 // Fireball SENZA aim: dritta in orizzontale, nel verso in cui guarda la testa
@@ -195,29 +186,25 @@ bool snake::spara()
     if (bn::abs(g_dog->chr_x - chr_x) > SCREEN_W)   // fuori schermo: non sprecare uno slot
         return false;
 
-    for (bn::optional<bomb>& fb : _fireballs)
-    {
-        if (!fb)
-        {
-            bomb_def d;
-            d.tipoProjec    = BOMB_FIREBALL;
-            d.x             = chr_x + bn::fixed(8 * dir);
-            d.y             = chr_y;
-            d.vx            = FIREBALL_SPEED * dir;
-            d.vy            = ZERO;
-            d.ignoreGravity = true;
-            d.ignoreWalls   = true;
-            d.max_bounces   = 0;
-            d.ttl           = FIREBALL_TTL;
-            d.tileIndex     = FIREBALL_TILE;
-            d.angle         = ZERO;   // 0 = niente rotazione, il flip segue il segno di vx
+    if (g_bombs->full())
+        return false;
 
-            fb.emplace(d);
-            bn::sound_items::fire_lighting.play();
-            return true;
-        }
-    }
-    return false;
+    bomb_def d;
+    d.tipoProjec    = BOMB_FIREBALL;
+    d.x             = chr_x + bn::fixed(8 * dir);
+    d.y             = chr_y;
+    d.vx            = FIREBALL_SPEED * dir;
+    d.vy            = ZERO;
+    d.ignoreGravity = true;
+    d.ignoreWalls   = true;
+    d.max_bounces   = 0;
+    d.ttl           = FIREBALL_TTL;
+    d.tileIndex     = FIREBALL_TILE;
+    d.angle         = ZERO;   // 0 = niente rotazione, il flip segue il segno di vx
+
+    g_bombs->push_back(new bomb(d));
+    bn::sound_items::fire_lighting.play();
+    return true;
 }
 
 // Contatto col cane: vale per qualunque segmento
@@ -239,36 +226,72 @@ void snake::check_dog()
     }
 }
 
-bool snake::overlaps(bn::fixed x, bn::fixed y, bn::fixed reach) const
+int snake::overlapping_segment(bn::fixed x, bn::fixed y, bn::fixed reach) const
 {
-    for (int k = 0; k < SNAKE_SEGMENTS; ++k)
+    int first = _segment_count > 2 ? 1 : 0;
+    int last = _segment_count > 2 ? _segment_count - 1 : _segment_count;
+    int closest = -1;
+    bn::fixed closest_distance = bn::fixed(32767);
+
+    for (int k = first; k < last; ++k)
+    {
         if (bn::abs(_x[k] - x) < reach && bn::abs(_y[k] - y) < reach)
-            return true;
-    return false;
+        {
+            bn::fixed distance = bn::abs(_x[k] - x) + bn::abs(_y[k] - y);
+            if (closest < 0 || distance < closest_distance)
+            {
+                closest = k;
+                closest_distance = distance;
+            }
+        }
+    }
+
+    return closest;
 }
 
-void snake::take_damage(int damage)
+void snake::take_damage(int damage, int segment_index)
 {
     if (is_dead())
         return;
 
-    life -= damage;
+    if (damage < 1 || segment_index < 0 || segment_index >= _segment_count)
+        return;
+
+    if (_segment_count > 2 && (segment_index == 0 || segment_index == _segment_count - 1))
+        return;
+
+    _segment_life[segment_index] -= damage;
+    if (_segment_life[segment_index] < 0)
+        _segment_life[segment_index] = 0;
+
+    life = _segment_life[segment_index];
     g_healthbar->show(this);   // richiede healthbar::show(const live_obj*)
 
-    if (life <= 0)
+    if (_segment_life[segment_index] == 0)
     {
-        life = 0;
-        _death_ticks = DEATH_FRAMES;
-        invulnerability = 0;
-        screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
-        // spawn_drop(chr_x, chr_y - 8);   // oggi e' static in enemy.cpp: rendila visibile per usarla qui
+        if (segment_index == 0 || segment_index == _segment_count - 1)
+        {
+            _dying = true;
+            life = 0;
+            _death_ticks = _segment_count * 4;
+            invulnerability = 0;
+            screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
+        }
+        else
+        {
+            for (int k = segment_index; k < _segment_count - 1; ++k)
+                _segment_life[k] = _segment_life[k + 1];
+
+            --_segment_count;
+            _segs[_segment_count].set_visible(false);
+        }
     }
 }
 
-void snake::be_hit_by_bark(bn::fixed power)
+void snake::be_hit_by_bark(bn::fixed power, int segment_index)
 {
     int damage = (BAU_DAMAGE + power.multiplication(bn::fixed(BAU_DAMAGE))).integer();
-    take_damage(damage);
+    take_damage(damage, segment_index);
     invulnerability = 30;   // bau::update() lo sovrascrive con la durata del bau per evitare colpi multipli
 }
 
@@ -280,15 +303,10 @@ void snake::update_death()
 
     int vivi = (_death_ticks + 3) / 4;
     for (int k = 0; k < SNAKE_SEGMENTS; ++k)
-        _segs[k].set_visible(k < vivi);
+        _segs[k].set_visible(k < _segment_count && k < vivi);
 
     if (_death_ticks == 0)
     {
-        // aspetta che le fireball in volo finiscano, poi si puo' eliminare
-        bool in_volo = false;
-        for (const bn::optional<bomb>& fb : _fireballs)
-            if (fb) in_volo = true;
-        if (!in_volo)
-            distrutto = true;
+        distrutto = true;
     }
 }

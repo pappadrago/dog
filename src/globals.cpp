@@ -25,6 +25,7 @@ BN_DATA_EWRAM_BSS bn::optional<bau> g_bau_carico;
 BN_DATA_EWRAM_BSS bn::optional<dog> g_dog;
 BN_DATA_EWRAM_BSS bn::optional<boss> g_boss;
 bn::optional<bn::vector<enemy*, MAX_ENEMIES>> g_enemies;
+bn::optional<bn::vector<bomb*, MAX_BOMBS>> g_bombs;
 bn::optional<bn::vector<cassa*, MAX_CASSE>> g_casse;
 bn::optional<bn::vector<item*, MAX_ENEMIES>> g_items;
 bn::optional<game_timer> g_timer;

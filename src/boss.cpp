@@ -1,4 +1,5 @@
 #include "boss.h"
+#include "bomb.h"
 #include "globals.h"
 #include "dog.h"
 #include "obj.h"
@@ -292,16 +293,6 @@ void boss::update_summoner()
 
 void boss::update_bomber()
 {
-    for (bn::optional<bomb>& projectile : bomber_bombs)
-    {
-        if (projectile)
-        {
-            projectile->update();
-            if (projectile->finished)
-                projectile.reset();
-        }
-    }
-
     chr_accx = ZERO;
     chr_vx = ZERO;
     apply_map();
@@ -368,32 +359,21 @@ void boss::update_bomber()
 
 bool boss::throw_bomber_bomb()
 {
+    if (g_bombs->full())
+        return false;
+
     bn::fixed dx = g_dog->chr_x - chr_x;
     if (dx != ZERO)
         dir = dx > ZERO ? DIR_RIGHT : DIR_LEFT;
     bn::fixed vx = cap(dx.division(70), bn::fixed(2.5));
 
-    for (bn::optional<bomb>& projectile : bomber_bombs)
-    {
-        if (!projectile)
-        {
-            projectile.emplace(chr_x + bn::fixed(8).multiplication(dir), chr_y - 4,
-                vx, bn::fixed(-4.0));
-            return true;
-        }
-    }
-    return false;
+    g_bombs->push_back(new bomb(chr_x + bn::fixed(8).multiplication(dir),
+        chr_y - 4, vx, bn::fixed(-4.0)));
+    return true;
 }
 
 void boss::update_baller()
 {
-    if (baller_fireball)
-    {
-        baller_fireball->update();
-        if (baller_fireball->finished)
-            baller_fireball.reset();
-    }
-
     static constexpr bn::fixed PATROL_HALF_RANGE = 96;
     static constexpr bn::fixed JUMP_VY = ENEMY_BIG_JUMP_VY;
     static constexpr int FIREBALL_COOLDOWN = 120;
@@ -426,7 +406,7 @@ void boss::update_baller()
 
     if (ticks_prossimo_attacco > 0)
         ticks_prossimo_attacco--;
-    if (ticks_prossimo_attacco <= 0 && !baller_fireball && throw_baller_fireball())
+    if (ticks_prossimo_attacco <= 0 && throw_baller_fireball())
         ticks_prossimo_attacco = FIREBALL_COOLDOWN;
 
     sprite->set_x(chr_x - HALF_SCREEN_W);
@@ -448,6 +428,9 @@ void boss::update_baller()
 
 bool boss::throw_baller_fireball()
 {
+    if (g_bombs->full())
+        return false;
+
     bn::fixed dx = g_dog->chr_x - chr_x;
     if (bn::abs(dx) > SCREEN_W)
         return false;
@@ -467,7 +450,7 @@ bool boss::throw_baller_fireball()
     def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
     def.angle = -angle;
 
-    baller_fireball.emplace(def);
+    g_bombs->push_back(new bomb(def));
     bn::sound_items::fire_lighting.play();
     return true;
 
@@ -475,23 +458,6 @@ bool boss::throw_baller_fireball()
 
 void boss::update_flyer()
 {
-    for (bn::optional<bomb>& projectile : flyer_bombs)
-    {
-        if (projectile)
-        {
-            projectile->update();
-            if (projectile->finished)
-                projectile.reset();
-        }
-    }
-
-    if (flyer_fireball)
-    {
-        flyer_fireball->update();
-        if (flyer_fireball->finished)
-            flyer_fireball.reset();
-    }
-
     if (flyer_ticks_to_bomb > 0)
         flyer_ticks_to_bomb--;
     if (flyer_ticks_to_bomb <= 0 && throw_flyer_bomb())
@@ -551,7 +517,7 @@ void boss::update_flyer()
     if (flyer_fireball_pending &&
         bn::abs(target_x - chr_x) <= 2 &&
         bn::abs(target_y - chr_y) <= 2 &&
-        !flyer_fireball && throw_flyer_fireball())
+        throw_flyer_fireball())
     {
         flyer_fireball_pending = false;
         flyer_ticks_to_fireball = 420;
@@ -574,22 +540,21 @@ void boss::update_flyer()
 
 bool boss::throw_flyer_bomb()
 {
+    if (g_bombs->full())
+        return false;
+
     bn::fixed dx = g_dog->chr_x - chr_x;
     bn::fixed vx = cap(dx.division(90), bn::fixed(2.5));
 
-    for (bn::optional<bomb>& projectile : flyer_bombs)
-    {
-        if (!projectile)
-        {
-            projectile.emplace(chr_x, chr_y + 8, vx, ZERO);
-            return true;
-        }
-    }
-    return false;
+    g_bombs->push_back(new bomb(chr_x, chr_y + 8, vx, ZERO));
+    return true;
 }
 
 bool boss::throw_flyer_fireball()
 {
+    if (g_bombs->full())
+        return false;
+
     bn::fixed dx = g_dog->chr_x - chr_x;
     bn::fixed dy = g_dog->chr_y - chr_y;
     bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
@@ -607,7 +572,7 @@ bool boss::throw_flyer_fireball()
     def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
     def.angle = -angle;
 
-    flyer_fireball.emplace(def);
+    g_bombs->push_back(new bomb(def));
     bn::sound_items::fire_lighting.play();
     return true;
 }

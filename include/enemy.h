@@ -6,7 +6,6 @@
 #include "bn_fixed.h"
 #include "game_constants.h"
 #include "obj.h"
-#include "bomb.h"
 
 class ball;
 class bau;
@@ -81,7 +80,6 @@ struct enemy_def
 class enemy : public live_obj
 {
 public:
-    bn::optional<bomb> bomba;   // creata al lancio, distrutta a esplosione finita
     void throw_bomb();
     void throw_shell();   // variante mortaio: arco alto, esplode al primo impatto
     void throw_arrow();
@@ -144,7 +142,6 @@ private:
     void update_physics();
     void update_movement();
     void update_attack();
-    void update_projectile();
     void update_graphics();
 
     // movimenti
