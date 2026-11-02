@@ -58,6 +58,28 @@ bomb::bomb(const bomb_def& def)
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
 }
 
+bomb* spawn_bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int max_bounces)
+{
+    if (!g_bombs || g_bombs->full())
+        return nullptr;
+
+    bomb* projectile = new bomb(x, y, vx, vy, max_bounces);
+    g_bombs->push_back(projectile);
+    return projectile;
+}
+
+bomb* spawn_bomb(const bomb_def& def, int direction)
+{
+    if (!g_bombs || g_bombs->full())
+        return nullptr;
+
+    bomb* projectile = new bomb(def);
+    if (direction != 0)
+        projectile->dir = direction;
+    g_bombs->push_back(projectile);
+    return projectile;
+}
+
 namespace bomb_config {
     constexpr bn::fixed GROUND_BOUNCE_DAMPING = bn::fixed(0.75); // energia persa al rimbalzo al suolo
     constexpr bn::fixed WALL_BOUNCE_DAMPING = bn::fixed(0.5);  // energia persa al rimbalzo laterale

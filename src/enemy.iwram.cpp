@@ -17,8 +17,6 @@ BN_CODE_IWRAM void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t til
     bool ignoreGravity, bool ignoreWalls,
     bn::fixed speed)
 {
-    if (g_bombs->full()) return;
-
     bn::fixed dx = g_dog->chr_x - chr_x;
     if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
 
@@ -61,5 +59,5 @@ BN_CODE_IWRAM void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t til
     def.tileIndex = tileIndex;
     def.angle = angle;
 
-    g_bombs->push_back(new bomb(def));
+    spawn_bomb(def);
 }

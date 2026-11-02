@@ -359,17 +359,13 @@ void boss::update_bomber()
 
 bool boss::throw_bomber_bomb()
 {
-    if (g_bombs->full())
-        return false;
-
     bn::fixed dx = g_dog->chr_x - chr_x;
     if (dx != ZERO)
         dir = dx > ZERO ? DIR_RIGHT : DIR_LEFT;
     bn::fixed vx = cap(dx.division(70), bn::fixed(2.5));
 
-    g_bombs->push_back(new bomb(chr_x + bn::fixed(8).multiplication(dir),
-        chr_y - 4, vx, bn::fixed(-4.0)));
-    return true;
+    return spawn_bomb(chr_x + bn::fixed(8).multiplication(dir),
+        chr_y - 4, vx, bn::fixed(-4.0)) != nullptr;
 }
 
 void boss::update_baller()
@@ -428,9 +424,6 @@ void boss::update_baller()
 
 bool boss::throw_baller_fireball()
 {
-    if (g_bombs->full())
-        return false;
-
     bn::fixed dx = g_dog->chr_x - chr_x;
     if (bn::abs(dx) > SCREEN_W)
         return false;
@@ -450,7 +443,8 @@ bool boss::throw_baller_fireball()
     def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
     def.angle = -angle;
 
-    g_bombs->push_back(new bomb(def));
+    if (!spawn_bomb(def))
+        return false;
     bn::sound_items::fire_lighting.play();
     return true;
 
@@ -540,21 +534,14 @@ void boss::update_flyer()
 
 bool boss::throw_flyer_bomb()
 {
-    if (g_bombs->full())
-        return false;
-
     bn::fixed dx = g_dog->chr_x - chr_x;
     bn::fixed vx = cap(dx.division(90), bn::fixed(2.5));
 
-    g_bombs->push_back(new bomb(chr_x, chr_y + 8, vx, ZERO));
-    return true;
+    return spawn_bomb(chr_x, chr_y + 8, vx, ZERO) != nullptr;
 }
 
 bool boss::throw_flyer_fireball()
 {
-    if (g_bombs->full())
-        return false;
-
     bn::fixed dx = g_dog->chr_x - chr_x;
     bn::fixed dy = g_dog->chr_y - chr_y;
     bn::fixed angle = bn::degrees_atan2(dy.integer(), dx.integer());
@@ -572,7 +559,8 @@ bool boss::throw_flyer_fireball()
     def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
     def.angle = -angle;
 
-    g_bombs->push_back(new bomb(def));
+    if (!spawn_bomb(def))
+        return false;
     bn::sound_items::fire_lighting.play();
     return true;
 }

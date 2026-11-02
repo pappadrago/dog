@@ -186,9 +186,6 @@ bool snake::spara()
     if (bn::abs(g_dog->chr_x - chr_x) > SCREEN_W)   // fuori schermo: non sprecare uno slot
         return false;
 
-    if (g_bombs->full())
-        return false;
-
     bomb_def d;
     d.tipoProjec    = BOMB_FIREBALL;
     d.x             = chr_x + bn::fixed(8 * dir);
@@ -202,7 +199,8 @@ bool snake::spara()
     d.tileIndex     = FIREBALL_TILE;
     d.angle         = ZERO;   // 0 = niente rotazione, il flip segue il segno di vx
 
-    g_bombs->push_back(new bomb(d));
+    if (!spawn_bomb(d))
+        return false;
     bn::sound_items::fire_lighting.play();
     return true;
 }

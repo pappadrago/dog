@@ -336,21 +336,18 @@ void enemy::beHitByDog()
 
 void enemy::throw_bomb()
 {
-    if (g_bombs->full()) return;
-
     bn::fixed dx = g_dog->chr_x - chr_x;
     if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
 
     dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
     bn::fixed vx = cap(dx.division(70), bn::fixed(2.5));
 
-    g_bombs->push_back(new bomb(
-        chr_x + bn::fixed(8).multiplication(dir), chr_y - 4, vx, bn::fixed(-4.0)));
+    spawn_bomb(chr_x + bn::fixed(8).multiplication(dir),
+        chr_y - 4, vx, bn::fixed(-4.0));
 }
 
 void enemy::throw_shell()
 {
-    if (g_bombs->full()) return;
     bn::fixed dx = g_dog->chr_x - chr_x;
     if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
 
@@ -361,7 +358,7 @@ void enemy::throw_shell()
     bn::fixed vx = dx.division(SHELL_FLIGHT_TIME);
     bn::fixed vy = -bn::fixed(0.5).multiplication(GRAVITY).multiplication(SHELL_FLIGHT_TIME);
 
-    g_bombs->push_back(new bomb(chr_x, chr_y - 4, vx, vy, /*max_bounces=*/0));
+    spawn_bomb(chr_x, chr_y - 4, vx, vy, /*max_bounces=*/0);
 }
 
 
@@ -391,15 +388,10 @@ void enemy::throw_fireball()
 
 void enemy::melee()
 {
-    if (g_bombs->full()) return;
-
     bn::fixed dx = g_dog->chr_x - chr_x;
 
     bomb_def def = { BOMB_DAGGER, chr_x + ((dx > 0) ? 12 : -12), chr_y - 8, ZERO, ZERO, true, true, 0, 30, 7, 0 };
-
-    bomb* projectile = new bomb(def);
-    projectile->dir = dir;
-    g_bombs->push_back(projectile);
+    spawn_bomb(def, dir);
 }
 
 bool enemy::dog_in_melee_range() const
