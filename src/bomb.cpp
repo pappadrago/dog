@@ -38,8 +38,10 @@ bomb::bomb(const bomb_def& def)
     chr_vy = def.vy;
     max_bounces = def.max_bounces;
     ignoreWalls = def.ignoreWalls;
-    ignoreGravity = def.ignoreGravity;
-    ttl = def.ttl;
+    ignoreGravity = tipoProjec == BOMB_MINA ? false : def.ignoreGravity;
+    ttl = tipoProjec == BOMB_MINA ? 0 : def.ttl;
+    if (tipoProjec == BOMB_MINA)
+        mina_fuse_ticks = BOMB_MINA_FUSE_TICKS;
 
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);

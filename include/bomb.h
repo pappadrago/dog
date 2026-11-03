@@ -11,6 +11,7 @@
 #define BOMB_EXPLOSION_FRAME_TICKS  3   // durata dell'esplosione (frame)
 #define BOMB_EXPLOSION_RADIUS 20   // raggio del danno (px)
 #define BOMB_TILE_INDEX       11    // frame di bn::sprite_items::weapons usato per la bomba (da adattare)
+#define BOMB_MINA_FUSE_TICKS  (10 * 60)
 
 enum bomb_tipo : uint8_t
 {
@@ -18,6 +19,7 @@ enum bomb_tipo : uint8_t
     BOMB_BOMB,
     BOMB_FIREBALL,
     BOMB_ARROW,
+    BOMB_MINA,
 };
 
 
@@ -50,8 +52,10 @@ private:
     int  bounces = 0;
     int  age = 0;
     int  ttl = 0;
+    int  mina_fuse_ticks = 0;
     int  explosion_ticks = 0;
     bool exploded = false;
+    bool mina_stopped = false;
     void explode();
     void update_explosion();
 

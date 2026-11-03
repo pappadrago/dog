@@ -17,6 +17,11 @@ BN_CODE_IWRAM void bomb::update()
         update_explosion();
         return;
     }
+    if (tipoProjec == BOMB_MINA && --mina_fuse_ticks <= 0)
+    {
+        explode();
+        return;
+    }
     if (ttl > 0) {
         ttl--;
         if (ttl == 0) {
@@ -27,10 +32,24 @@ BN_CODE_IWRAM void bomb::update()
     age++;
 
     // --- Gravità + contatto col suolo ---
-    if (!ignoreGravity) {
+    if (!ignoreGravity && !mina_stopped) {
         apply_gravity();
 
-        if (onGround && tipoProjec == BOMB_BOMB)
+        if (tipoProjec == BOMB_MINA && atterrato_ora)
+        {
+            if (velocita_atterraggio <= bn::fixed(1))
+            {
+                mina_stopped = true;
+                chr_vx = chr_vy = ZERO;
+            }
+            else
+            {
+                chr_vy = -velocita_atterraggio.multiplication(bn::fixed(0.5));
+                chr_vx = chr_vx.multiplication(bn::fixed(0.75));
+                bounces++;
+            }
+        }
+        else if (onGround && tipoProjec == BOMB_BOMB)
         {
             if (bounces >= max_bounces)
             {
@@ -63,7 +82,7 @@ BN_CODE_IWRAM void bomb::update()
     }
 
 
-    bool hit = check_collision_16(*sprite);
+    bool hit = tipoProjec != BOMB_MINA && check_collision_16(*sprite);
     if (hit)
     {
         g_dog->chr_vx = (g_dog->chr_x < chr_x) ? SMALL_VX_L : SMALL_VX_R;
