@@ -16,4 +16,8 @@ platform_map::platform_map(const bn::regular_bg_item& originale) :
 
     for (int i = 0; i < n; i++)
         cells[i] = (&primo)[i];
+
+    for (int y = 0; y < 2; y++)
+        for (int x = 0; x < map_item.dimensions().width(); x++)
+            cells[map_item.cell_index(x, y)] = 0;
 }

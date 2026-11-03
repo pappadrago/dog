@@ -143,6 +143,9 @@ void carica_collisione_schema(int schema)
     for (int k = 0; k < celle; k++)
         s_collision_runtime[k] = originale.data[k];
 
+    for (int x = 0; x < originale.columns; x++)
+        s_collision_runtime[x] = 0;
+
     s_schema_caricato = schema;
     s_attiva = originale;
     s_attiva.data = s_collision_runtime;
