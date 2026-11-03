@@ -54,7 +54,7 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _
         if (attributo & enemy_attr::ATTR_MELEE)
         {
             actionMelee = bn::create_sprite_animate_action_forever(
-                *sprite, 8, bn::sprite_items::skeleton.tiles_item(),12, 13, 14, 15, 16, 17);
+                *sprite, 8, bn::sprite_items::skeleton.tiles_item(), 12, 13, 14, 15, 16, 17);
             melee_damage = 20;
         }
 
@@ -95,6 +95,103 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _
         ticks_prossimo_attacco = 120;
     }
 
+    if (tipo == boss_tipo::RUNNER)
+    {
+        max_vx = bn::fixed(1.25);
+        runner_ticks_to_throw = 90;
+    }
+}
+
+void boss::update_runner()
+{
+
+    static constexpr int EVADE_TICKS = 120;
+    static constexpr bn::fixed CORNER_MARGIN = 32;
+    const collision_map_info& map = get_collision_map(g_schema);
+
+    // --- Direzione: opposta a dog; se è quasi sopra di lui mantiene quella attuale (niente jitter) ---
+    if (runner_evade_ticks > 0)
+        runner_evade_ticks--;
+    else
+    {
+        bn::fixed dx = chr_x - g_dog->chr_x;
+        if (bn::abs(dx) > 8)
+            dir = dx > 0 ? DIR_RIGHT : DIR_LEFT;
+
+        // all'angolo (bordo mappa alle spalle): inverte e corre oltre dog per un po'
+        bool angolo = (dir == DIR_RIGHT && chr_x > bn::fixed(map.map_w) - CORNER_MARGIN) ||
+                      (dir == DIR_LEFT && chr_x < CORNER_MARGIN);
+        if (angolo)
+        {
+            dir = -dir;
+            runner_evade_ticks = EVADE_TICKS;
+        }
+    }
+
+    // --- Salta se c'è un ostacolo davanti o un vuoto ---
+    bn::fixed x_avanti = chr_x + bn::fixed(dir).multiplication(box_halfdim + 2);
+    bool ostacolo = muro_lato == dir || is_solid_at(x_avanti, chr_y, g_schema);
+    bool vuoto = !is_solid_at(x_avanti, chr_y + box_dim + 4, g_schema);
+    if (onGround && (ostacolo || vuoto))
+    {
+        chr_vy = ENEMY_BIG_JUMP_VY;
+        onGround = false;
+    }
+
+    // --- Movimento ---
+    chr_accx = onGround ? GROUND_ACCEL : AIR_ACCEL;
+    chr_vx += chr_accx.multiplication(dir);
+    chr_vx = cap(chr_vx, max_vx);
+    chr_x += chr_vx;
+    apply_map();
+    apply_friction();
+    apply_gravity();
+
+    // --- Lancio bombe verso dog (senza cambiare la direzione di fuga) ---
+    if (runner_ticks_to_throw > 0)
+        runner_ticks_to_throw--;
+    if (runner_ticks_to_throw <= 0 && throw_runner_bomb())
+        runner_ticks_to_throw = 90 + g_rng.get_int(90);
+
+    // --- Grafica ---
+    sprite->set_x(chr_x - HALF_SCREEN_W);
+    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_RIGHT);
+    if (onGround && chr_vx != ZERO)
+        actionWalk->update();
+    else
+        actionStand->update();
+
+    if (invulnerability > 0)
+    {
+        invulnerability--;
+        sprite->set_visible(invulnerability % 2);
+    }
+    else
+        sprite->set_visible(true);
+}
+
+bool boss::throw_runner_bomb()
+{
+    bn::fixed dx = g_dog->chr_x - chr_x;
+    if (bn::abs(dx) > SCREEN_W)
+        return false;                       // dog troppo lontano: riprova al prossimo giro
+
+    bomb_def d;
+    d.tipoProjec    = BOMB_MINA ;
+    d.x             = chr_x + bn::fixed(8 * dir);
+    d.y             = chr_y;
+    d.vx            = SMALL_VX_R * dir;
+    d.vy            = ZERO;
+    d.ignoreGravity = false;
+    d.ignoreWalls   = false;
+    d.max_bounces   = 0;
+    d.angle         = ZERO;   // 0 = niente rotazione, il flip segue il segno di vx
+
+    if (!spawn_bomb(d))
+        return false;
+    bn::sound_items::fire_lighting.play();
+    return true;
 }
 
 void boss::update()
@@ -146,6 +243,9 @@ void boss::update()
         break;
     case boss_tipo::FLYER:
         update_flyer();
+        break;
+    case boss_tipo::RUNNER:
+        update_runner();
         break;
     default:
         break;

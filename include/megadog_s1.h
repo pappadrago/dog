@@ -52,10 +52,10 @@ namespace megadog_s1 {
     // { ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_DOPPIO_SALTO | POWERUP_WALL_JUMP | POWERUP_DASH | POWERUP_AIR_DASH | POWERUP_GROUND_POUND, 200, 300 },
     // { ITEM_TIPO_POWERUP, POWERUP_SALTO | POWERUP_CORSA, 650, 300 },
      { ITEM_TIPO_POWERUP, POWERUP_CORSA, 64, 32 },
-    // { ITEM_TIPO_ENERGIA, 0,             200, 300 },
-    // { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
-    { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_1,             1536 - 32 - 8 - 16, 100 },
-     { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_2,             93 << 4, 29 << 4 },
+     // { ITEM_TIPO_ENERGIA, 0,             200, 300 },
+     // { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
+     { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_1,             1536 - 32 - 8 - 16, 100 },
+      { ITEM_TIPO_INTERRUTTORE,  ID_PIATTAFORMA_S1_2,             93 << 4, 29 << 4 },
     };
     constexpr int schema1_items_count = sizeof(schema1_items) / sizeof(schema1_items[0]);
 
@@ -114,22 +114,22 @@ namespace megadog_s1 {
 
 
 
-//     struct snake_def
-// {
-//     int16_t  centro_x, centro_y;
-//     int16_t  semiasse_x, semiasse_y;
-//     uint8_t  percorso;          // snake_percorso
-//     uint8_t  velocita_x10;      // px/frame x10 (12 = 1.2 px/frame), costante lungo tutto il percorso
-//     bool     oraria;
-//     int16_t  fase_iniziale;     // gradi 0..359: punto di partenza della testa sul percorso
-//     uint16_t fireball_period;   // frame tra due fireball
-//     int16_t  life;              // <= START_LIFE, altrimenti la healthbar non si riempie
-//     uint16_t delay;             // frame prima della prima fireball
-// };
+    //     struct snake_def
+    // {
+    //     int16_t  centro_x, centro_y;
+    //     int16_t  semiasse_x, semiasse_y;
+    //     uint8_t  percorso;          // snake_percorso
+    //     uint8_t  velocita_x10;      // px/frame x10 (12 = 1.2 px/frame), costante lungo tutto il percorso
+    //     bool     oraria;
+    //     int16_t  fase_iniziale;     // gradi 0..359: punto di partenza della testa sul percorso
+    //     uint16_t fireball_period;   // frame tra due fireball
+    //     int16_t  life;              // <= START_LIFE, altrimenti la healthbar non si riempie
+    //     uint16_t delay;             // frame prima della prima fireball
+    // };
 
     const snake_def schema1_snakes[] = {
-        { 300, 200, 100, 50, snake_percorso::SNAKE_OTTO, 12, false, 0, 120, 100, 240},
-        { 300, 200, 50, 50, snake_percorso::SNAKE_RETTANGOLO, 12, true, 0, 120, 100, 240},
+        { 300, 200, 100, 50, snake_percorso::SNAKE_OTTO, 12, false, 0, 120, 100, 240 },
+        { 300, 200, 50, 50, snake_percorso::SNAKE_RETTANGOLO, 12, true, 0, 120, 100, 240 },
     };
     constexpr int schema1_snakes_count = sizeof(schema1_snakes) / sizeof(schema1_snakes[0]);
 
@@ -179,11 +179,11 @@ namespace megadog_s1 {
 
 #include "scala.h"
 
-constexpr scala_def schema1_scale[] = {
-    // tile_x, y1, y2, tipo
-    { 1, 4, 13, SCALA_CON_PIANO },
-};
-constexpr int schema1_scale_count = sizeof(schema1_scale) / sizeof(schema1_scale[0]);
+    constexpr scala_def schema1_scale[] = {
+        // tile_x, y1, y2, tipo
+        { 1, 4, 13, SCALA_CON_PIANO },
+    };
+    constexpr int schema1_scale_count = sizeof(schema1_scale) / sizeof(schema1_scale[0]);
 
     constexpr schema_def make_schema_A()
     {
@@ -201,7 +201,7 @@ constexpr int schema1_scale_count = sizeof(schema1_scale) / sizeof(schema1_scale
             bn::regular_bg_items::megadog_s1fg,
             &collision_map_s1_info,
             schema1_scale, schema1_scale_count,
-            schema1_snakes, schema1_snakes_count
+ nullptr, 0,// schema1_snakes, schema1_snakes_count
         };
     }
 }

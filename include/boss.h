@@ -13,7 +13,8 @@ enum class boss_tipo : uint8_t
     BALLER,
     FLYER,
     SUMMONER,
-    SKELETON
+    SKELETON,
+    RUNNER
 };
 
 class boss : public live_obj
@@ -89,4 +90,10 @@ private:
     void update_summoner();
     bool throw_flyer_bomb();
     bool throw_flyer_fireball();
+
+    int runner_ticks_to_throw = 90;
+    int runner_evade_ticks = 0;     // > 0: sta sorpassando dog perché messo all'angolo
+
+    void update_runner();
+    bool throw_runner_bomb();
 };

@@ -330,7 +330,7 @@ int main()
 
             //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
             //g_boss.emplace(360, 400, 10, boss_tipo::FLYER);
-
+g_boss.emplace(400, 100, 10, boss_tipo::RUNNER);
             // Un frame di gioco (senza bn::core::update)
             auto game_step = [&]()
                 {
