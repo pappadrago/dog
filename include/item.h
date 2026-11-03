@@ -43,7 +43,6 @@ public:
 
     bool is_drop = false;   // item lasciato da un nemico
     bool active = true;    // false = slot libero (solo per i drop)
-    uint16_t  ttl = 0;
     uint16_t animAngle = 0;
     bn::vector<bn::sprite_ptr, 4> numero_sprites;
 

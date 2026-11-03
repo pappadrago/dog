@@ -61,17 +61,15 @@ void item::update()
 }
 
 void item::update_physics() {
-    if (ticks2action > 0) {
-        ticks2action--;
-        if (ticks2action == 0)
-        {
+    if (is_drop && ticks2action == 0) {
+        if (++animAngle >= DROP_LIFETIME) {
             hide_and_finish();
             return;
         }
     }
-    if (is_drop)
-    {
-        if (--ttl <= 0)
+    else if (ticks2action > 0) {
+        ticks2action--;
+        if (ticks2action == 0)
         {
             hide_and_finish();
             return;
@@ -86,7 +84,6 @@ void item::hide_and_finish()
     sprite->remove_affine_mat();
     sprite->set_visible(false);
     active = false;
-    ttl = 0;
 }
 
 void item::update_graphics() {
@@ -98,7 +95,9 @@ void item::update_graphics() {
         return;
     }
 
-    animAngle++;
+    bool drop_lifetime_active = is_drop && ticks2action == 0;
+    if (!drop_lifetime_active)
+        animAngle++;
     bn::fixed dy = 0;
     bn::fixed dx = 0;
     if (tipo != ITEM_TIPO_INTERRUTTORE) {
@@ -108,14 +107,15 @@ void item::update_graphics() {
     sprite->set_x(chr_x + dx - HALF_SCREEN_W);
     sprite->set_y(chr_y + dy - HALF_SCREEN_H);
 
-    if (is_drop)
+    if (drop_lifetime_active)
     {
-        sprite->set_visible(ttl > DROP_BLINK_TIME || ttl % 4 < 2);
+        int remaining_lifetime = DROP_LIFETIME - animAngle;
+        sprite->set_visible(remaining_lifetime > DROP_BLINK_TIME || remaining_lifetime % 4 < 2);
     }
     else {
         sprite->set_visible(ticks2action > 0 ? (ticks2action % 2) : true);
     }
-    if (ticks2action > 0)
+    if (!drop_lifetime_active && ticks2action > 0)
         sprite->set_scale(bn::fixed(2) - bn::fixed(ticks2action).division(30));
 
     // il numero sale piano; lampeggia solo negli ultimi frame, per restare leggibile
@@ -180,14 +180,15 @@ void item::drop_at(bn::fixed x, bn::fixed y)
 {
     is_drop = true;
     active = true;
-    ttl = DROP_LIFETIME;
     chr_x = x;
     chr_y = y;
     chr_vx = ZERO;
     chr_vy = BIG_JUMP_VY;
     ticks2action = 0;
+    animAngle = 0;
     sprite->set_tiles(bn::sprite_items::items.tiles_item(), g_rng.get_int(10));
     sprite->set_position(x - HALF_SCREEN_W, y - HALF_SCREEN_H);
+    sprite->set_scale(1);
     sprite->set_visible(true);
 }
 
