@@ -49,6 +49,7 @@ public:
 
     void update();
     void dog_damage(int amount);
+    void dog_damage_and_jump(int amount, bool left);
     void add_score(int points) { score += points; }
 
 

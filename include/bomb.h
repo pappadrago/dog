@@ -7,11 +7,13 @@
 #include "obj.h"
 
 #define BOMB_MAX_BOUNCES      2    // rimbalzi sulla mappa prima dell'esplosione
-#define BOMB_EXPLOSION_TICKS  27   // durata dell'esplosione (frame)
+#define BOMB_DAGGER_LIFETIME  30
+#define BOMB_PROJECTILE_LIFETIME 120
+#define BOMB_MINA_LIFETIME    360
+#define BOMB_MINA_FUSE_TICKS  30
 #define BOMB_EXPLOSION_FRAME_TICKS  3   // durata dell'esplosione (frame)
 #define BOMB_EXPLOSION_RADIUS 20   // raggio del danno (px)
 #define BOMB_TILE_INDEX       11    // frame di bn::sprite_items::weapons usato per la bomba (da adattare)
-#define BOMB_MINA_FUSE_TICKS  (10 * 60)
 
 enum bomb_tipo : uint8_t
 {
@@ -28,7 +30,7 @@ struct bomb_def
     u_int8_t tipoProjec;
     bn::fixed x, y, vx, vy;
     bool ignoreGravity, ignoreWalls;
-    int max_bounces, ttl;
+    int max_bounces;
     uint8_t tileIndex;
     bn::fixed angle;
 };
@@ -50,12 +52,7 @@ private:
     bool ignoreGravity = false, ignoreWalls = false;
     int  max_bounces;
     int  bounces = 0;
-    int  age = 0;
-    int  ttl = 0;
-    int  mina_fuse_ticks = 0;
-    int  explosion_ticks = 0;
     bool exploded = false;
-    bool mina_stopped = false;
     void explode();
     void update_explosion();
 

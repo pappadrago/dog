@@ -55,7 +55,6 @@ BN_CODE_IWRAM void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t til
     def.ignoreGravity = ignoreGravity;
     def.ignoreWalls = ignoreWalls;
     def.max_bounces = 0;
-    def.ttl = enemy_config::PROJECTILE_LIFETIME;
     def.tileIndex = tileIndex;
     def.angle = angle;
 

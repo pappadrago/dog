@@ -390,7 +390,7 @@ void enemy::melee()
 {
     bn::fixed dx = g_dog->chr_x - chr_x;
 
-    bomb_def def = { BOMB_DAGGER, chr_x + ((dx > 0) ? 12 : -12), chr_y - 8, ZERO, ZERO, true, true, 0, 30, 7, 0 };
+    bomb_def def = { BOMB_DAGGER, chr_x + ((dx > 0) ? 12 : -12), chr_y - 8, ZERO, ZERO, true, true, 0, 7, 0 };
     spawn_bomb(def, dir);
 }
 

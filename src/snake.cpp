@@ -194,15 +194,14 @@ bool snake::spara()
         return false;
 
     bomb_def d;
-    d.tipoProjec    = BOMB_FIREBALL;
+    d.tipoProjec    = BOMB_MINA ;
     d.x             = chr_x + bn::fixed(8 * dir);
     d.y             = chr_y;
     d.vx            = FIREBALL_SPEED * dir;
     d.vy            = ZERO;
-    d.ignoreGravity = true;
-    d.ignoreWalls   = true;
+    d.ignoreGravity = false;
+    d.ignoreWalls   = false;
     d.max_bounces   = 0;
-    d.ttl           = FIREBALL_TTL;
     d.tileIndex     = FIREBALL_TILE;
     d.angle         = ZERO;   // 0 = niente rotazione, il flip segue il segno di vx
 
@@ -222,10 +221,7 @@ void snake::check_dog()
     {
         if (check_collision_16(_segs[k]))
         {
-            g_dog->chr_vx = (g_dog->chr_x < _x[k]) ? SMALL_VX_L : SMALL_VX_R;
-            g_dog->chr_vy = SMALL_JUMP_VY;
-            g_dog->invulnerability = 60;
-            g_dog->dog_damage(contact_damage);
+            g_dog->dog_damage_and_jump(contact_damage, g_dog->chr_x < _x[k]);
             return;
         }
     }

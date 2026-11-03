@@ -17,29 +17,40 @@ BN_CODE_IWRAM void bomb::update()
         update_explosion();
         return;
     }
-    if (tipoProjec == BOMB_MINA && --mina_fuse_ticks <= 0)
-    {
-        explode();
+
+    int lifetime = 0;
+    switch (tipoProjec) {
+    case BOMB_DAGGER:
+        lifetime = BOMB_DAGGER_LIFETIME;
+        break;
+    case BOMB_ARROW:
+    case BOMB_FIREBALL:
+        lifetime = BOMB_PROJECTILE_LIFETIME;
+        break;
+    case BOMB_MINA:
+        lifetime = BOMB_MINA_LIFETIME;
+        break;
+    default:
+        break;
+    }
+
+    if (lifetime > 0 && ticks2action >= lifetime - 1) {
+        if (tipoProjec == BOMB_MINA)
+            explode();
+        else
+            hide_and_finish();
         return;
     }
-    if (ttl > 0) {
-        ttl--;
-        if (ttl == 0) {
-            hide_and_finish();
-            return;
-        }
-    }
-    age++;
+    ticks2action++;
 
     // --- Gravità + contatto col suolo ---
-    if (!ignoreGravity && !mina_stopped) {
+    if (!ignoreGravity) {
         apply_gravity();
 
         if (tipoProjec == BOMB_MINA && atterrato_ora)
         {
             if (velocita_atterraggio <= bn::fixed(1))
             {
-                mina_stopped = true;
                 chr_vx = chr_vy = ZERO;
             }
             else
@@ -82,23 +93,27 @@ BN_CODE_IWRAM void bomb::update()
     }
 
 
-    bool hit = tipoProjec != BOMB_MINA && check_collision_16(*sprite);
+    bool hit = check_collision_16(*sprite);
     if (hit)
     {
-        g_dog->chr_vx = (g_dog->chr_x < chr_x) ? SMALL_VX_L : SMALL_VX_R;
-        g_dog->chr_vy = SMALL_JUMP_VY;
-        g_dog->invulnerability = 60;
-
-        if (tipoProjec == BOMB_BOMB){
+        switch (tipoProjec) {
+        case BOMB_MINA:
+            if (lifetime - ticks2action > BOMB_MINA_FUSE_TICKS) {
+                ticks2action = lifetime - BOMB_MINA_FUSE_TICKS;
+            }
+            break;
+        case BOMB_BOMB:
             explode(); // dopo l'animazione di esplosione, si nasconderà da solo
-            g_dog->dog_damage(15);
-        }
-        else {
-            g_dog->dog_damage(3);
+            g_dog->dog_damage_and_jump(15, g_dog->chr_x < chr_x);
+            break;
+        default:
+            g_dog->dog_damage_and_jump(3, g_dog->chr_x < chr_x);
             if (tipoProjec != BOMB_DAGGER) { // se non è una spada, nascondi
                 hide_and_finish();
             }
+            break;
         }
+
     }
 
 
@@ -107,13 +122,16 @@ BN_CODE_IWRAM void bomb::update()
     sprite->set_y(chr_y - HALF_SCREEN_H);
 
     if (tipoProjec == BOMB_DAGGER) {
-        sprite->set_rotation_angle_safe(-dir * age << 4);
+        sprite->set_rotation_angle_safe(-dir * ticks2action << 4);
     }
 
     // dopo l'ultimo rimbalzo la bomba lampeggia (miccia accesa)
-    if (ttl > 0 && ttl < 30)
-        sprite->set_visible(ttl % 2);
-    else
-        sprite->set_visible(bounces < BOMB_MAX_BOUNCES || (age % 4) < 2);
+    int remaining_lifetime = lifetime - ticks2action;
+    if (remaining_lifetime > 0 && remaining_lifetime < BOMB_MINA_FUSE_TICKS) {
+        int blink_period = (1 + remaining_lifetime / 10) << 1;
+        sprite->set_visible((ticks2action % blink_period) < (blink_period >> 1));
+    }
+    else if (tipoProjec != BOMB_MINA)
+        sprite->set_visible(bounces < BOMB_MAX_BOUNCES || (ticks2action % 4) < 2);
 
 }

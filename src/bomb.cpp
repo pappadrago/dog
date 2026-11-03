@@ -38,14 +38,13 @@ bomb::bomb(const bomb_def& def)
     chr_vy = def.vy;
     max_bounces = def.max_bounces;
     ignoreWalls = def.ignoreWalls;
-    ignoreGravity = tipoProjec == BOMB_MINA ? false : def.ignoreGravity;
-    ttl = tipoProjec == BOMB_MINA ? 0 : def.ttl;
-    if (tipoProjec == BOMB_MINA)
-        mina_fuse_ticks = BOMB_MINA_FUSE_TICKS;
 
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
+    if(tipoProjec == BOMB_MINA)
+        sprite = bn::sprite_items::diecloud.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
+    else
     sprite = bn::sprite_items::weapons.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, def.tileIndex);
 
     if (def.angle != 0)
@@ -86,7 +85,7 @@ namespace bomb_config {
     constexpr bn::fixed GROUND_BOUNCE_DAMPING = bn::fixed(0.75); // energia persa al rimbalzo al suolo
     constexpr bn::fixed WALL_BOUNCE_DAMPING = bn::fixed(0.5);  // energia persa al rimbalzo laterale
     constexpr int         DOG_INVULNERABILITY = 60;             // frame di i-frames dopo un colpo
-    constexpr int         DOG_Damage = 3;              // danno base della bomba
+    constexpr int         DOG_DAMAGE = 3;              // danno base della bomba
     constexpr int         FUSE_BLINK_TICKS = 30;             // soglia "miccia accesa"
 }
 
@@ -102,7 +101,6 @@ void bomb::hide_and_finish()
 void bomb::explode()
 {
     exploded = true;
-    explosion_ticks = BOMB_EXPLOSION_TICKS;
     screen_shake(GROUND_POUND_SHAKE_TICKS, GROUND_POUND_SHAKE_AMP);
     chr_vx = chr_vy = ZERO;
     sprite->set_visible(true);
@@ -112,17 +110,15 @@ void bomb::explode()
 
 void bomb::update_explosion()
 {
-    explosion_ticks--;
+    if (!actionExplode->done()) {
+        actionExplode->update();
+    }
 
-    if (explosion_ticks <= 0)
+    if (actionExplode->done())
     {
         sprite->set_visible(false);
         finished = true;
         return;
-    }
-
-    if (!actionExplode->done()) {
-        actionExplode->update();
     }
 
     // Danno al cane
@@ -134,10 +130,7 @@ void bomb::update_explosion()
         if (bn::abs(dx) < BOMB_EXPLOSION_RADIUS + 8 &&
             bn::abs(dy) < BOMB_EXPLOSION_RADIUS + 13)
         {
-            g_dog->chr_vx = (dx < 0) ? bn::fixed(-2.0) : bn::fixed(2.0);
-            g_dog->chr_vy = MEDIUM_JUMP_VY;
-            g_dog->invulnerability = 60;
-            g_dog->dog_damage(15);
+            g_dog->dog_damage_and_jump(15, dx < 0);
         }
     }
 

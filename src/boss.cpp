@@ -439,7 +439,6 @@ bool boss::throw_baller_fireball()
     def.ignoreGravity = true;
     def.ignoreWalls = true;
     def.max_bounces = 0;
-    def.ttl = enemy_config::PROJECTILE_LIFETIME;
     def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
     def.angle = -angle;
 
@@ -555,7 +554,6 @@ bool boss::throw_flyer_fireball()
     def.ignoreGravity = true;
     def.ignoreWalls = true;
     def.max_bounces = 0;
-    def.ttl = enemy_config::PROJECTILE_LIFETIME;
     def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
     def.angle = -angle;
 

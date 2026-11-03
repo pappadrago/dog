@@ -168,7 +168,6 @@ private:
 };
 
 namespace enemy_config {
-    constexpr int PROJECTILE_LIFETIME = 120;   // frame di vita di proiettili lanciati
     constexpr int ARROW_TILE_INDEX = 9;
     constexpr int GRAVITY_ARROW_TILE_INDEX = 24;
     constexpr int FIREBALL_TILE_INDEX = 23;

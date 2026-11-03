@@ -220,6 +220,13 @@ void dog::dog_damage(int amount)
         }
     }
 }
+void dog::dog_damage_and_jump(int amount, bool left)
+{
+    dog_damage(amount);
+    chr_vx = left ? SMALL_VX_L : SMALL_VX_R;
+    chr_vy = MEDIUM_JUMP_VY;
+    invulnerability = 60;
+}
 
 void dog::applica_powerup(uint16_t attributo)
 {
@@ -530,19 +537,13 @@ void dog::update()
 
                 if (hit)
                 {
-                    bn::fixed new_vx = (chr_x < enem->chr_x) ? bn::fixed(-2.0) : bn::fixed(2.0);
-                    chr_vy = SMALL_JUMP_VY;
-                    invulnerability = 60;
-
                     if (hitByMelee) {
-                        dog_damage(enem->melee_damage);
+                        dog_damage_and_jump(enem->melee_damage, chr_x < enem->chr_x);
                     }
                     else {
                         enem->beHitByDog();
-                        dog_damage(enem->contact_damage);
+                        dog_damage_and_jump(enem->contact_damage, chr_x < enem->chr_x);
                     }
-
-                    chr_vx = new_vx;
                 }
             }
 
@@ -563,11 +564,7 @@ void dog::update()
 
             if (hit)
             {
-                bn::fixed new_vx = (chr_x < g_boss->chr_x) ? SMALL_VX_L : SMALL_VX_R;
-                chr_vy = SMALL_JUMP_VY;
-                invulnerability = 60;
-                dog_damage(hitByMelee ? g_boss->melee_damage : g_boss->contact_damage);
-                chr_vx = new_vx;
+                dog_damage_and_jump(hitByMelee ? g_boss->melee_damage : g_boss->contact_damage, chr_x < g_boss->chr_x);
             }
         }
     }
@@ -626,9 +623,6 @@ void dog::update()
     if (spinta_ticks > 0)
         spinta_ticks--;
 
-
-
-
     if (!polvere_anim->done()) {
         polvere_anim->update();
     }
@@ -646,8 +640,6 @@ void dog::update()
         if (dash_ticks == 0 && !ground_pound_engaged)
             apply_wind();
     }
-
-
 
     if (!su_scala() && (((dash_acquisito && onGround) || (air_dash_acquisito && !onGround)) &&
         dash_ticks == 0 && bn::keypad::r_pressed())) {
