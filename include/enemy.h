@@ -88,16 +88,8 @@ public:
 
     void melee();
 
-    bn::optional<bn::sprite_animate_action<10>> actionMelee;
-
     uint8_t tipo = 0;
     uint16_t attributo = 0;
-
-    bn::fixed sight_range = 110;
-    bn::fixed melee_range = 24;
-    bn::fixed chase_range = 64;
-    uint16_t  jump_period = 90; // frame tra due salti (STATIC_JUMP)
-    uint16_t  attack_period = 120;// frame tra due attacchi
 
     // --- stato ---
     uint8_t   currentAction;      // ACTION_STAND/MOVE/ATTACK/STUN
@@ -115,11 +107,6 @@ public:
     void beHitByCassa(int damage);
 
     void takeDamage(int damage);
-
-    int contact_damage = 1;     // danno per semplice contatto
-    int melee_damage = 0;     // 0 = non è un nemico melee
-    int meleeTicks;
-    bool dog_in_melee_range() const;
 
     int  vita_residua_ticks = -1;   // -1 = nessun limite; >=0 = nemico evocato, sparisce a 0
     bool distrutto = false;         // true quando la magia si esaurisce: va rimosso da g_enemies

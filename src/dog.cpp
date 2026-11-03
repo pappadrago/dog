@@ -526,24 +526,10 @@ void dog::update()
                     }
                 }
 
-                bool hit;
-                bool hitByMelee = false;
-                if (enem->melee_damage && enem->currentAction == ACTION_ATTACK) {
-                    hit = check_collision_melee(*enem);
-                    hitByMelee = true;
-                }
-                else
-                    hit = check_collision_16(*enem);
-
-                if (hit)
+                if (check_collision_16(*enem))
                 {
-                    if (hitByMelee) {
-                        dog_damage_and_jump(enem->melee_damage, chr_x < enem->chr_x);
-                    }
-                    else {
-                        enem->beHitByDog();
-                        dog_damage_and_jump(enem->contact_damage, chr_x < enem->chr_x);
-                    }
+                    enem->beHitByDog();
+                    dog_damage_and_jump(1, chr_x < enem->chr_x);
                 }
             }
 

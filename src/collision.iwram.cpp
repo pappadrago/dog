@@ -27,22 +27,6 @@ bool check_collision(const bn::sprite_ptr& s1, const bn::sprite_ptr& s2)
 
 
 
-bool check_collision_melee(const enemy& _enemy) {
-    bn::fixed dog_x = g_dog->sprite->x();
-    bn::fixed dog_y = g_dog->sprite->y();
-
-    bn::fixed enem_x = _enemy.sprite->x();
-    bn::fixed enem_y = _enemy.sprite->y();
-
-    bn::fixed dog_hw = 12, dog_hh = 6;
-    bn::fixed enem_hw = 18 - (_enemy.meleeTicks);
-    bn::fixed enem_hh = 6;
-
-    bool hit = bn::abs(enem_x - dog_x) < (dog_hw + enem_hw) &&
-        bn::abs(enem_y - dog_y) < (dog_hh + enem_hh);
-
-    return hit;
-}
 bool check_collision_16(const bn::sprite_ptr& sprite) {
     bn::fixed dog_hw = 12, dog_hh = 6;
     bn::fixed ball_hw = 8, ball_hh = 8;

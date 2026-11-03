@@ -14,6 +14,14 @@
 #include "bn_log.h"
 #include <bn_sound_items.h>
 
+namespace {
+    constexpr bn::fixed ENEMY_SIGHT_RANGE = bn::fixed(110);
+    constexpr bn::fixed ENEMY_MELEE_RANGE = bn::fixed(24);
+    constexpr bn::fixed ENEMY_CHASE_RANGE = bn::fixed(64);
+    constexpr uint16_t ENEMY_JUMP_PERIOD = 90;
+    constexpr uint16_t ENEMY_ATTACK_PERIOD = 120;
+}
+
 // genera un nuovo bonus item e lo droppa nel mondo
 static void spawn_drop(bn::fixed x, bn::fixed y)
 {
@@ -177,7 +185,7 @@ void enemy::move_static_jump()
     chr_accx = 0;
     if (dog_in_sight()) face_dog();
     if (jump_cd > 0) jump_cd--;
-    else if (onGround) { chr_vy = bn::fixed(-3.5); jump_cd = jump_period; }
+    else if (onGround) { chr_vy = bn::fixed(-3.5); jump_cd = ENEMY_JUMP_PERIOD; }
 }
 
 void enemy::move_patrol()
@@ -205,7 +213,7 @@ void enemy::move_chase()
 {
     if (!dog_in_sight() || g_dog->invulnerability) { chr_accx = 0; return; }
 
-    if (dist_to_dog() < chase_range) { chr_accx = 0; return; }
+    if (dist_to_dog() < ENEMY_CHASE_RANGE) { chr_accx = 0; return; }
 
     if (jump_cd > 0) {
         jump_cd--;
@@ -230,7 +238,7 @@ void enemy::move_ghost()
 {
     if (!dog_in_sight() || g_dog->invulnerability) { chr_accx = 0; return; }
 
-    if (dist_to_dog() < chase_range) { chr_accx = 0; return; }
+    if (dist_to_dog() < ENEMY_CHASE_RANGE) { chr_accx = 0; return; }
 
     if (jump_cd > 0) {
         jump_cd--;
@@ -258,7 +266,7 @@ void enemy::move_melee()
 {
     if (!dog_in_sight() || g_dog->invulnerability) { chr_accx = 0; return; }
     face_dog();
-    if (dist_to_dog() > melee_range)
+    if (dist_to_dog() > ENEMY_MELEE_RANGE)
         walk_towards(dir, bn::fixed(0.2));
     else
         chr_accx = 0; // in range: si pianta e lascia fare ad update_attack()
@@ -280,7 +288,7 @@ void enemy::update_attack()
     }
 
     // per MOVE_MELEE attacca solo quando è in range
-    if (tipo == MOVE_MELEE && dist2dog > (has(ATTR_BASH) ? chase_range : melee_range)) return;
+    if (tipo == MOVE_MELEE && dist2dog > (has(ATTR_BASH) ? ENEMY_CHASE_RANGE : ENEMY_MELEE_RANGE)) return;
 
     currentAction = ACTION_ATTACK;
     face_dog();
@@ -294,7 +302,7 @@ void enemy::update_attack()
     else {
         fire(pick_projectile());
     }
-    attack_cd = attack_period;
+    attack_cd = ENEMY_ATTACK_PERIOD;
 }
 
 void enemy::takeDamage(int damage) {
@@ -394,11 +402,6 @@ void enemy::melee()
     spawn_bomb(def, dir);
 }
 
-bool enemy::dog_in_melee_range() const
-{
-    return bn::abs(g_dog->chr_x - chr_x) < 48;
-}
-
 void enemy::beHitByShockwave(int _dir)
 {
     chr_vy = ENEMY_MEDIUM_JUMP_VY;                          // saltello
@@ -465,7 +468,7 @@ void enemy::update_death()
 
 
 // Helper
-bool enemy::dog_in_sight() const { return dist_to_dog() <= sight_range; }
+bool enemy::dog_in_sight() const { return dist_to_dog() <= ENEMY_SIGHT_RANGE; }
 bn::fixed enemy::dist_to_dog() const { return bn::abs(g_dog->chr_x - chr_x); }
 bn::fixed enemy::disty_to_dog() const { return bn::abs(g_dog->chr_y - chr_y); }
 void enemy::face_dog() { dir = (g_dog->chr_x > chr_x) ? DIR_RIGHT : DIR_LEFT; }
