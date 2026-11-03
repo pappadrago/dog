@@ -18,18 +18,17 @@ struct lava_zona_def
 class lava_zona
 {
 public:
-    lava_zona_def def;
-    uint8_t frame_corrente = 0;
-    int ticks;
-
     lava_zona(const lava_zona_def& d, platform_map& buffer, bn::regular_bg_map_ptr mappa_bg);
     void update();
 
 private:
+    const lava_zona_def* _def;
     platform_map* _buffer;
     bn::regular_bg_map_ptr _mappa_bg;
+    uint8_t frame_corrente = 0;
+    uint8_t ticks = 0;
+
     void applica(const uint16_t tiles_hw[4]);
-private:
     bool dentro(bn::fixed x, bn::fixed y) const;
     bool dog_dentro() const;
 };

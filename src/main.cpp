@@ -252,8 +252,8 @@ int main()
                     g_snakes->push_back(new_snake);
                 }
             }
- 
- 
+
+
             // Spawn casse
             {
                 int n_casse = 0;
@@ -330,7 +330,7 @@ int main()
 
             //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
             //g_boss.emplace(360, 400, 10, boss_tipo::FLYER);
-g_boss.emplace(400, 100, 10, boss_tipo::COWARD);
+            g_boss.emplace(400, 100, 10, boss_tipo::COWARD);
             // Un frame di gioco (senza bn::core::update)
             auto game_step = [&]()
                 {
@@ -480,9 +480,9 @@ g_boss.emplace(400, 100, 10, boss_tipo::COWARD);
                 if (g_dog->life <= 0)
                     game_over = true;
 
-                //BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
+                BN_LOG("iwram statica: ", bn::memory::used_static_iwram());
                 //BN_LOG("ewram statica: ", bn::memory::used_static_ewram());
-               //  BN_LOG("iwram stack:   ", bn::memory::used_stack_iwram());
+                BN_LOG("iwram stack:   ", bn::memory::used_stack_iwram());
             }
 
             // ------------------------------------------------------------

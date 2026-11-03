@@ -7,7 +7,7 @@
 #include "bn_log.h"
 
 lava_zona::lava_zona(const lava_zona_def& d, platform_map& buffer, bn::regular_bg_map_ptr mappa_bg) :
-    def(d), _buffer(&buffer), _mappa_bg(mappa_bg)
+    _def(&d), _buffer(&buffer), _mappa_bg(mappa_bg)
 {
     ticks = d.velocita;
     applica(d.frame_hw[0]);
@@ -15,6 +15,7 @@ lava_zona::lava_zona(const lava_zona_def& d, platform_map& buffer, bn::regular_b
 
 void lava_zona::applica(const uint16_t tiles_hw[4])
 {
+    const lava_zona_def& def = *_def;
     auto& mi = _buffer->map_item;
 
     for (int ty = def.tile_y1; ty <= def.tile_y2; ty++)
@@ -43,6 +44,7 @@ void lava_zona::applica(const uint16_t tiles_hw[4])
 
 bool lava_zona::dentro(bn::fixed x, bn::fixed y) const
 {
+    const lava_zona_def& def = *_def;
     bn::fixed x1 = bn::fixed(def.tile_x1 * 16);
     bn::fixed y1 = bn::fixed(def.tile_y1 * 16);
     bn::fixed x2 = bn::fixed(def.tile_x2 * 16 + 16);
@@ -58,6 +60,8 @@ bool lava_zona::dog_dentro() const
 
 void lava_zona::update()
 {
+    const lava_zona_def& def = *_def;
+
     if (ticks > 0)
         ticks--;
     else
