@@ -95,7 +95,7 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _
         ticks_prossimo_attacco = 120;
     }
 
-    if (tipo == boss_tipo::RUNNER)
+    if (tipo == boss_tipo::COWARD)
     {
         max_vx = bn::fixed(1.25);
         runner_ticks_to_throw = 90;
@@ -244,7 +244,7 @@ void boss::update()
     case boss_tipo::FLYER:
         update_flyer();
         break;
-    case boss_tipo::RUNNER:
+    case boss_tipo::COWARD:
         update_runner();
         break;
     default:

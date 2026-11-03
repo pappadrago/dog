@@ -14,7 +14,7 @@ enum class boss_tipo : uint8_t
     FLYER,
     SUMMONER,
     SKELETON,
-    RUNNER
+    COWARD
 };
 
 class boss : public live_obj
