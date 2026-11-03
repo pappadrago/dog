@@ -507,10 +507,10 @@ g_boss.emplace(400, 100, 10, boss_tipo::COWARD);
 
             // eventuale bau in volo
             g_bau->ticks = 0;
-            g_bau->sprite->set_visible(false);
+            g_bau->sprite.set_visible(false);
 
             g_bau_carico->ticks = 0;
-            g_bau_carico->sprite->set_visible(false);
+            g_bau_carico->sprite.set_visible(false);
 
             if (game_over)
                 break;   // bg0, bg1, foreground... vengono distrutti qui

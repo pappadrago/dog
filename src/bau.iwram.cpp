@@ -15,18 +15,17 @@
 
 BN_CODE_IWRAM void bau::update()
 {
-    if (ticks2Anim > 0) {
-        ticks2Anim--;
-        if (ticks2Anim == 0)
-            sprite->set_visible(false);
-        else
-            sprite->set_visible(ticks2Anim % 2);
+    if (ticks < 0) {
+        ticks++;
+        sprite.set_visible(ticks != 0 && (-ticks) % 2);
         return;
     }
 
     if (ticks == 0)
         return;
 
+    bn::fixed power = bn::fixed(charge_ticks).division(BAU_CHARGE_MAX);
+    bn::fixed hit_half = bn::fixed(8) + power.multiplication(bn::fixed(6));
     if (chr_vx != 0)
     {
         chr_x += chr_vx;
@@ -37,14 +36,13 @@ BN_CODE_IWRAM void bau::update()
     {
         if (enem->invulnerability > 0 || enem->is_dead()) continue;
 
-        bool hit = bn::abs(enem->sprite->x() - sprite->x()) < reach &&
-            bn::abs(enem->sprite->y() - sprite->y()) < reach;
+        bool hit = bn::abs(enem->sprite->x() - sprite.x()) < reach &&
+            bn::abs(enem->sprite->y() - sprite.y()) < reach;
         if (hit)
         {
             enem->beHitByBark(enem->chr_x < g_dog->chr_x ? DIR_LEFT : DIR_RIGHT, power);
             if (power < bn::fixed(1)) {
-                ticks = 0;
-                ticks2Anim = 20;
+                ticks = -20;
             }
             break;
         }
@@ -57,7 +55,7 @@ BN_CODE_IWRAM void bau::update()
         if (segment_index >= 0)
         {
             s->be_hit_by_bark(power, segment_index);
-            s->invulnerability = ticks + 1;
+            s->invulnerability = (ticks > 0 ? ticks : 0) + 1;
         }
     }
 
@@ -70,8 +68,7 @@ BN_CODE_IWRAM void bau::update()
         {
             int damage = (BAU_DAMAGE + power.multiplication(BAU_DAMAGE)).integer();
             g_boss->subisci_colpo(damage);
-            ticks = 0;
-            ticks2Anim = 20;
+            ticks = -20;
         }
     }
 
@@ -87,8 +84,7 @@ BN_CODE_IWRAM void bau::update()
             {
                 switch_item->commuta_sblocco();
                 g_dog->show_str("yeah");
-                ticks = 0;
-                ticks2Anim = 20;
+                ticks = -20;
                 break;
             }
         }
@@ -103,10 +99,9 @@ BN_CODE_IWRAM void bau::update()
             if (hit)
             {
                 oggetto->colpito_da_bau(chr_vx < 0 ? DIR_LEFT : DIR_RIGHT, power);   // via in direzione del bau
-                oggetto->ticks_immune_bau = ticks + 1;   // un solo colpo per bau, come i nemici
+                oggetto->ticks_immune_bau = (ticks > 0 ? ticks : 0) + 1;   // un solo colpo per bau
 
-                ticks = 0;
-                ticks2Anim = 20;
+                ticks = -20;
             }
         };
 
@@ -122,10 +117,10 @@ BN_CODE_IWRAM void bau::update()
     if (ticks > 0) {
         ticks--;
         if (ticks == 0) {
-            ticks2Anim = 1;
+            ticks = -1;
         }
     }
-    sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite.set_x(chr_x - HALF_SCREEN_W);
+    sprite.set_y(chr_y - HALF_SCREEN_H);
 
 }

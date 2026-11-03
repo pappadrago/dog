@@ -1,9 +1,7 @@
 #pragma once
 
-#include "bn_optional.h"
 #include "bn_sprite_ptr.h"
 #include "bn_fixed.h"
-#include "obj.h"
 #include "game_constants.h"
 
 #define BAU_SPEED_R bn::fixed(2.0)
@@ -17,14 +15,14 @@
 #define BAU_CHARGE_MAX 60   // frame di pressione per la carica massima (1 s)
 #define BAU_CHARGE_MIN_RILASCIO 20   // sotto questa carica il rilascio non spara: un tap lancia solo il primo bau
 
-class bau : public obj
+class bau
 {
 public:
 
-    bn::fixed power = 0;      // 0..1, calcolata allo sparo
-    bn::fixed hit_half = 8;   // mezza hitbox, cresce con la carica
-
-    int ticks = 0, ticks2Anim = 0;
+    bn::sprite_ptr sprite;
+    bn::fixed chr_x = 0, chr_y = 0, chr_vx = 0;
+    uint8_t charge_ticks = 0;   // 0..BAU_CHARGE_MAX
+    int8_t ticks = 0;     // positivo = bau in volo; negativo = animazione d'impatto
 
 
     bau();
