@@ -21,10 +21,10 @@ bomb::bomb(const bomb_def& def)
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
-    if (tipoProjec == BOMB_MINA || tipoProjec == BOMB_BOMB)
+    if (tipoProjec == BOMB_MINA || tipoProjec == BOMB_BOMB || tipoProjec == BOMB_FULMINE)
         sprite = bn::sprite_items::diecloud.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
     else
-    sprite = bn::sprite_items::weapons.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, def.tileIndex);
+        sprite = bn::sprite_items::weapons.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, def.tileIndex);
 
     if (def.angle != 0)
         sprite->set_rotation_angle_safe(def.angle);

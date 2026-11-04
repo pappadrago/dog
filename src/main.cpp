@@ -16,6 +16,7 @@
 #include "bn_log.h"
 #include "powerup_fx.h"
 #include "wind_fx.h"
+#include "lampo.h"
 
 #include "bn_color.h"
 #include "bn_regular_bg_ptr.h"
@@ -191,6 +192,8 @@ int main()
             bn::regular_bg_ptr bg1 = create_schema_bg1(g_schema);
             bg0.set_priority(3);
             bg1.set_priority(3);
+
+lampo_init(bg0, bg1);
 
             bn::regular_bg_ptr foregroundfg = create_schema_foreground(g_schema);
 
@@ -423,6 +426,7 @@ int main()
                     g_bau->update();
                     g_bau_carico->update();
 
+                    lampo_update();
 
                     if (g_boss.has_value())
                     {
@@ -527,6 +531,7 @@ int main()
         // perché gli sprite ne tengono un riferimento
         // ordine inverso rispetto alla creazione; la camera per ultima
         // perché gli sprite ne tengono un riferimento
+        lampo_reset();
         reset_all(g_boss,
             g_healthbar,
             g_trampolini,          // spostato: prima della camera

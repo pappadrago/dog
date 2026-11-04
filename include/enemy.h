@@ -43,7 +43,8 @@ enum enemy_attr : int16_t
     ATTR_BASH = 1 << 11,
     ATTR_GRAVITY_ARROW = 1 << 12,
     ATTR_MINA = 1 << 13,
-    ATTR_PROJ_MASK = ATTR_ARROW |ATTR_GRAVITY_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL | ATTR_MINA,
+    ATTR_LIGHTNING = 1 << 14,
+    ATTR_PROJ_MASK = ATTR_ARROW |ATTR_GRAVITY_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL | ATTR_MINA | ATTR_LIGHTNING,   // maschera per proiettili
     // bit 15 = segno di int16_t: usa solo bit 0..14
 };
 
@@ -87,7 +88,7 @@ public:
     void throw_mina();
     void throw_gravity_arrow();
     void throw_fireball();
-
+    void throw_fulmine();
     void melee();
 
     uint8_t tipo = 0;

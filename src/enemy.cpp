@@ -3,6 +3,7 @@
 #include "bomb.h"
 #include "bau.h"
 #include "dog.h"
+#include "lampo.h"
 #include "item.h"
 #include "schemi.h"
 #include "healthbar.h"
@@ -401,6 +402,27 @@ void enemy::throw_fireball()
         /*ignoreGravity=*/true, /*ignoreWalls=*/true,
         enemy_config::FIREBALL_SPEED);
 }
+void enemy::throw_fulmine()
+{
+
+    bomb_def def;
+    def.tipoProjec = BOMB_FULMINE;
+    def.x = g_dog->chr_x;
+    def.y = g_dog->chr_y -100;
+    def.vx = 0;
+    def.vy = bn::fixed(0.0);
+
+    def.ignoreGravity =false;
+    def.ignoreWalls = false;
+    def.max_bounces = 0;
+    def.tileIndex = 11;
+    def.angle = 0;
+
+    spawn_bomb(def);
+
+    lampo_start();
+
+}
 
 void enemy::melee()
 {
@@ -512,6 +534,7 @@ int16_t enemy::pick_projectile() const
     if (has(ATTR_SHELL))    avail[n++] = ATTR_SHELL;
     if (has(ATTR_FIREBALL)) avail[n++] = ATTR_FIREBALL;
     if (has(ATTR_GRAVITY_ARROW)) avail[n++] = ATTR_GRAVITY_ARROW;
+    if (has(ATTR_LIGHTNING)) avail[n++] = ATTR_LIGHTNING;
     return n ? avail[g_rng.get_int(n)] : 0;
 }
 
@@ -532,6 +555,9 @@ void enemy::fire(int16_t type)
         return;
     case ATTR_FIREBALL:
         throw_fireball();
+        return;
+    case ATTR_LIGHTNING:
+        throw_fulmine();
         return;
     default:
         break;

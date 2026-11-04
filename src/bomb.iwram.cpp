@@ -60,7 +60,7 @@ BN_CODE_IWRAM void bomb::update()
                 bounces++;
             }
         }
-        else if (onGround && tipoProjec == BOMB_BOMB)
+        else if (onGround && (tipoProjec == BOMB_BOMB || tipoProjec == BOMB_FULMINE))
         {
             if (bounces >= max_bounces)
             {
@@ -103,6 +103,7 @@ BN_CODE_IWRAM void bomb::update()
             }
             break;
         case BOMB_BOMB:
+        case BOMB_FULMINE:
             explode(); // dopo l'animazione di esplosione, si nasconderà da solo
             g_dog->dog_damage_and_jump(15, g_dog->chr_x < chr_x);
             break;
@@ -113,12 +114,17 @@ BN_CODE_IWRAM void bomb::update()
             }
             break;
         }
-
     }
 
 
     // --- Sprite ---
-    sprite->set_x(chr_x - HALF_SCREEN_W);
+
+    bn::fixed dx = 0;
+    if (tipoProjec == BOMB_FULMINE) {
+        dx = bn::degrees_lut_cos_safe(ticks2action << 5).multiplication(6.0);
+    }
+
+    sprite->set_x(chr_x + dx - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
 
     if (tipoProjec == BOMB_DAGGER) {
