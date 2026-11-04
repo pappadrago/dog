@@ -40,8 +40,8 @@ BN_CODE_IWRAM void live_obj::apply_gravity()
     testata_ora = false;
     chr_vy += GRAVITY;
     onGround = false;
-    if (chr_vy > MAX_FALL)
-        chr_vy = MAX_FALL;
+    if (chr_vy > max_fall)
+        chr_vy = max_fall;
     chr_y += chr_vy;
 
     if (chr_y > map.map_h + 64) {

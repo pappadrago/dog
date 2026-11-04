@@ -7,6 +7,7 @@
 #include "bn_fixed.h"
 #include "bn_vector.h"
 #include "game_constants.h"
+#include "constanti_fisica.h"
 
 
 static constexpr bn::fixed AIR_ACCEL = bn::fixed(0.06);
@@ -48,6 +49,7 @@ public:
     int ticks2action = 0, invulnerability = 0;
     int life = START_LIFE;
     bn::fixed max_vx = bn::fixed(1.0);
+    bn::fixed max_fall = MAX_FALL;
 
     bool atterrato_ora = false;           // true solo nel frame esatto in cui tocca terra
     bn::fixed velocita_atterraggio = ZERO;   // chr_vy un istante prima di essere azzerata

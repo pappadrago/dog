@@ -448,7 +448,7 @@ void dog::update()
     if (ground_pound_acquisito && salto_in_corso && salto_pieno && !onGround && chr_vy > 0 && bn::keypad::down_held())
     {
         ground_pound_engaged = true;
-        chr_vy = MAX_FALL;
+        chr_vy = max_fall;
     }
 
     bn::fixed runningExtraSpeed = (run_acquisito && bn::keypad::l_held()) ? RUN_EXTRA_SPEED : ZERO;
