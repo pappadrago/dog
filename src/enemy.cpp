@@ -422,6 +422,8 @@ void enemy::throw_fulmine()
 
     lampo_start();
 
+    chr_vy = ENEMY_SMALL_JUMP_VY;                          // saltello
+
 }
 
 void enemy::melee()

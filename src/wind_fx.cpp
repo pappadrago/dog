@@ -56,7 +56,7 @@ void wind_fx::update()
 
     int frame = aw < MEDIUM_WIND ? 0 : (aw < STRONG_WIND ? 1 : 2);
     bool change_frame = (frame != _frame);
-    _frame = frame;
+    _frame = (_frame+1) % 18;
 
     // 1) logica: tutte e 8 le particelle avanzano ogni frame
     for(particle& p : _particles)
@@ -81,7 +81,7 @@ void wind_fx::update()
         bn::fixed wobble = bn::degrees_lut_sin_safe(
             bn::fixed((p.phase + _ticks * 4) % 360)).multiplication(2);
 
-        s.set_position(p.x, p.y + wobble);
+        s.set_position(p.x, p.y /*+ wobble*/);
         s.set_horizontal_flip(w < 0);
         if(change_frame)
             s.set_tiles(bn::sprite_items::windgust.tiles_item(), frame);
