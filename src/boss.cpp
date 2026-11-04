@@ -464,8 +464,10 @@ bool boss::throw_bomber_bomb()
         dir = dx > ZERO ? DIR_RIGHT : DIR_LEFT;
     bn::fixed vx = cap(dx.division(70), bn::fixed(2.5));
 
-    return spawn_bomb(chr_x + bn::fixed(8).multiplication(dir),
-        chr_y - 4, vx, bn::fixed(-4.0)) != nullptr;
+    bomb_def def = { BOMB_BOMB, chr_x + bn::fixed(8).multiplication(dir),
+        chr_y - 4, vx, bn::fixed(-4.0), false, false,
+        BOMB_MAX_BOUNCES, BOMB_TILE_INDEX, ZERO };
+    return spawn_bomb(def) != nullptr;
 }
 
 void boss::update_baller()
@@ -636,7 +638,9 @@ bool boss::throw_flyer_bomb()
     bn::fixed dx = g_dog->chr_x - chr_x;
     bn::fixed vx = cap(dx.division(90), bn::fixed(2.5));
 
-    return spawn_bomb(chr_x, chr_y + 8, vx, ZERO) != nullptr;
+    bomb_def def = { BOMB_BOMB, chr_x, chr_y + 8, vx, ZERO, false, false,
+        BOMB_MAX_BOUNCES, BOMB_TILE_INDEX, ZERO };
+    return spawn_bomb(def) != nullptr;
 }
 
 bool boss::throw_flyer_fireball()

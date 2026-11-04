@@ -350,8 +350,10 @@ void enemy::throw_bomb()
     dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
     bn::fixed vx = cap(dx.division(70), bn::fixed(2.5));
 
-    spawn_bomb(chr_x + bn::fixed(8).multiplication(dir),
-        chr_y - 4, vx, bn::fixed(-4.0));
+    bomb_def def = { BOMB_BOMB, chr_x + bn::fixed(8).multiplication(dir),
+        chr_y - 4, vx, bn::fixed(-4.0), false, false,
+        BOMB_MAX_BOUNCES, BOMB_TILE_INDEX, ZERO };
+    spawn_bomb(def);
 }
 
 void enemy::throw_shell()
@@ -366,9 +368,10 @@ void enemy::throw_shell()
     bn::fixed vx = dx.division(SHELL_FLIGHT_TIME);
     bn::fixed vy = -bn::fixed(0.5).multiplication(GRAVITY).multiplication(SHELL_FLIGHT_TIME);
 
-    spawn_bomb(chr_x, chr_y - 4, vx, vy, /*max_bounces=*/0);
+    bomb_def def = { BOMB_BOMB, chr_x, chr_y - 4, vx, vy, false, false,
+        0, BOMB_TILE_INDEX, ZERO };
+    spawn_bomb(def);
 }
-
 
 void enemy::throw_gravity_arrow()
 {
@@ -384,6 +387,13 @@ void enemy::throw_arrow()
         enemy_config::ARROW_SPEED);
 }
 
+void enemy::throw_mina()
+{
+    throw_aimed_projectile(BOMB_MINA, enemy_config::MINA_TILE_INDEX,
+        /*ignoreGravity=*/false, /*ignoreWalls=*/false,
+        enemy_config::ARROW_SPEED);
+}
+
 void enemy::throw_fireball()
 {
     bn::sound_items::fire_lighting.play();
@@ -391,8 +401,6 @@ void enemy::throw_fireball()
         /*ignoreGravity=*/true, /*ignoreWalls=*/true,
         enemy_config::FIREBALL_SPEED);
 }
-
-
 
 void enemy::melee()
 {

@@ -7,28 +7,6 @@
 #include "collision.h"
 #include <bn_sound_items.h>
 
-bomb::bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int _max_bounces) :
-    max_bounces(_max_bounces)
-{
-    chr_x = x;
-    chr_y = y;
-    chr_vx = vx;
-    chr_vy = vy;
-
-    box_dim = bn::fixed(8);
-    box_halfdim = bn::fixed(4);
-
-    sprite = bn::sprite_items::diecloud.create_sprite(x - HALF_SCREEN_W, y - HALF_SCREEN_H, 0);
-    sprite->set_bg_priority(1);
-    sprite->set_camera(g_camera);
-
-    int B = 9;
-    actionExplode = bn::create_sprite_animate_action_once(
-        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
-
-    tipoProjec = BOMB_BOMB;
-}
-
 bomb::bomb(const bomb_def& def)
 {
     tipoProjec = def.tipoProjec;
@@ -37,36 +15,27 @@ bomb::bomb(const bomb_def& def)
     chr_vx = def.vx;
     chr_vy = def.vy;
     max_bounces = def.max_bounces;
+    ignoreGravity = def.ignoreGravity;
     ignoreWalls = def.ignoreWalls;
 
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
-    if(tipoProjec == BOMB_MINA)
+    if (tipoProjec == BOMB_MINA || tipoProjec == BOMB_BOMB)
         sprite = bn::sprite_items::diecloud.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
     else
     sprite = bn::sprite_items::weapons.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, def.tileIndex);
 
     if (def.angle != 0)
         sprite->set_rotation_angle_safe(def.angle);
-    else
+    else if (tipoProjec != BOMB_BOMB)
         sprite->set_horizontal_flip(chr_vx < 0);
-    sprite->set_bg_priority(0);
+    sprite->set_bg_priority(tipoProjec == BOMB_BOMB ? 1 : 0);
     sprite->set_camera(g_camera);
 
     int B = 9;
     actionExplode = bn::create_sprite_animate_action_once(
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
-}
-
-bomb* spawn_bomb(bn::fixed x, bn::fixed y, bn::fixed vx, bn::fixed vy, int max_bounces)
-{
-    if (!g_bombs || g_bombs->full())
-        return nullptr;
-
-    bomb* projectile = new bomb(x, y, vx, vy, max_bounces);
-    g_bombs->push_back(projectile);
-    return projectile;
 }
 
 bomb* spawn_bomb(const bomb_def& def, int direction)

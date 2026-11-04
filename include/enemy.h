@@ -42,7 +42,8 @@ enum enemy_attr : int16_t
     ATTR_PATROL = 1 << 10,
     ATTR_BASH = 1 << 11,
     ATTR_GRAVITY_ARROW = 1 << 12,
-    ATTR_PROJ_MASK = ATTR_ARROW |ATTR_GRAVITY_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL
+    ATTR_MINA = 1 << 13,
+    ATTR_PROJ_MASK = ATTR_ARROW |ATTR_GRAVITY_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL | ATTR_MINA,
     // bit 15 = segno di int16_t: usa solo bit 0..14
 };
 
@@ -83,6 +84,7 @@ public:
     void throw_bomb();
     void throw_shell();   // variante mortaio: arco alto, esplode al primo impatto
     void throw_arrow();
+    void throw_mina();
     void throw_gravity_arrow();
     void throw_fireball();
 
@@ -158,6 +160,7 @@ namespace enemy_config {
     constexpr int ARROW_TILE_INDEX = 9;
     constexpr int GRAVITY_ARROW_TILE_INDEX = 24;
     constexpr int FIREBALL_TILE_INDEX = 23;
+    constexpr int MINA_TILE_INDEX = 25;
     constexpr bn::fixed ARROW_SPEED = bn::fixed(2.0);
     constexpr bn::fixed FIREBALL_SPEED = bn::fixed(1.5);
     // Offset verticale di spawn rispetto al nemico (centro del sprite).
