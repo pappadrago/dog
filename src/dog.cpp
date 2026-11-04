@@ -605,9 +605,9 @@ void dog::update()
             if (polvere_anim->done())
                 start_polvere_anim(chr_x - HALF_SCREEN_W + dir * 8, chr_y + 4 - HALF_SCREEN_H, false, false, 0);
         }
-        else if(runningExtraSpeed){
+        else if(onGround && runningExtraSpeed>0 && chr_vx != 0){
             if (polvere_anim->done())
-                start_polvere_anim(chr_x - HALF_SCREEN_W - dir * 8, chr_y + 4 - HALF_SCREEN_H, false, false, 0);
+                start_polvere_anim(chr_x - HALF_SCREEN_W - (dir << 3), chr_y + 4 - HALF_SCREEN_H, false, false, 0);
         }
     }
     if (spinta_ticks > 0)
