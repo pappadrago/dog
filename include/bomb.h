@@ -54,9 +54,6 @@ private:
     void explode();
     void update_explosion();
 
-    void update_physics();
-    void update_graphics();
-    void check_dog_hit();
     void hide_and_finish();
 };
 
