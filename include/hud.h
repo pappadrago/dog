@@ -29,14 +29,13 @@ void update_text_clear();
 void update_text_tick();
 
 // ---------------------------------------------------------------------------
-// HUD di gioco: energia (in alto a sinistra, stile Gunstar Heroes) e punteggio
-// (in alto a destra). Il chiamante passa ogni frame i valori reali; l'HUD
+// HUD di gioco: energia in alto a sinistra. Il chiamante passa ogni frame il valore reale; l'HUD
 // li rincorre con un contatore che scorre e rigenera gli sprite solo quando
 // la cifra visualizzata cambia.
 // ---------------------------------------------------------------------------
 
 // Da chiamare ogni frame dopo la logica di gioco.
-//   life  = energia residua (0..max), score = punteggio (0..999999)
+//   life = energia residua (0..max)
 // Alla prima chiamata i contatori partono direttamente dal valore passato.
 // Quando l'energia cala il numero lampeggia; sotto HUD_LOW_LIFE lampeggia piano.
 void hud_update();
