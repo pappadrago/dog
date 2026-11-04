@@ -131,6 +131,14 @@ BN_CODE_IWRAM void bomb::update()
         sprite->set_rotation_angle_safe(-dir * ticks2action << 4);
     }
 
+    if (tipoProjec == BOMB_FULMINE) {
+        if (!actionFulmine->done()) {
+            actionFulmine->update();
+        }
+        else actionFulmine->reset();
+    }
+
+
     // dopo l'ultimo rimbalzo la bomba lampeggia (miccia accesa)
     int remaining_lifetime = lifetime - ticks2action;
     if (remaining_lifetime > 0 && remaining_lifetime < BOMB_MINA_FUSE_TICKS) {

@@ -36,6 +36,13 @@ bomb::bomb(const bomb_def& def)
     int B = 9;
     actionExplode = bn::create_sprite_animate_action_once(
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
+
+    B = 18;
+    actionFulmine = bn::create_sprite_animate_action_once(
+        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 1);
+    B = 36;
+    actionThunder = bn::create_sprite_animate_action_once(
+        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6);
 }
 
 bomb* spawn_bomb(const bomb_def& def, int direction)
@@ -74,20 +81,39 @@ void bomb::explode()
     chr_vx = chr_vy = ZERO;
     sprite->set_visible(true);
     actionExplode->reset();
+    actionThunder->reset();
+    actionFulmine->reset();
     bn::sound_items::bomb.play();
 }
 
 void bomb::update_explosion()
 {
-    if (!actionExplode->done()) {
-        actionExplode->update();
-    }
-
-    if (actionExplode->done())
+    if (tipoProjec == BOMB_FULMINE)
     {
-        sprite->set_visible(false);
-        finished = true;
-        return;
+        if (!actionThunder->done()) {
+            actionThunder->update();
+        }
+
+        if (actionThunder->done())
+        {
+            sprite->set_visible(false);
+            finished = true;
+            return;
+        }
+
+    }
+    else {
+        if (!actionExplode->done()) {
+            actionExplode->update();
+        }
+
+        if (actionExplode->done())
+        {
+            sprite->set_visible(false);
+            finished = true;
+            return;
+        }
+
     }
 
     // Danno al cane

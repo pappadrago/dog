@@ -45,6 +45,8 @@ public:
     explicit bomb(const bomb_def& def);
 
     bn::optional<bn::sprite_animate_action<9>> actionExplode;
+    bn::optional<bn::sprite_animate_action<16>> actionThunder;
+    bn::optional<bn::sprite_animate_action<16>> actionFulmine;
     void update();
 
 private:
