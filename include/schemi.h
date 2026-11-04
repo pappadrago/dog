@@ -10,6 +10,7 @@
 #include "enemy.h"
 #include "snake.h"
 #include "item.h"
+#include "spike.h"
 #include "scala.h"
 #include "cassa.h"
 #include "trampolino.h"
@@ -56,6 +57,7 @@ const snake_def* get_schema_snakes(int schema, int& count);
 const trampolino_def* get_schema_trampolini(int schema, int& count);
 const cassa_def* get_schema_casse(int schema, int& count);
 const scala_def* get_schema_scale(int schema, int& count);
+const spike_def* get_schema_spikes(int schema, int& count);
 
 struct wind_def { bn::fixed base, amp; };
 const wind_def& get_schema_wind(int schema);
@@ -76,5 +78,6 @@ struct schema_def
     const collision_map_info* map_info;
     const scala_def* scale; int scale_count;
     const snake_def* snakes; int snakes_count;
+    const spike_def* spikes; int spikes_count;
 };
 

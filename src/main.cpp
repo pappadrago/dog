@@ -32,6 +32,7 @@
 #include "hud.h"
 #include "bau.h"
 #include "enemy.h"
+#include "spike.h"
 #include "snake.h"
 #include "item.h"
 #include "door.h"
@@ -173,6 +174,7 @@ int main()
         g_piattaforme_mobili.emplace();
         g_healthbar.emplace();
         g_trampolini.emplace();
+        g_spikes.emplace();
         g_scale.emplace();
         g_wind_fx.emplace();
         g_schema = 1;
@@ -193,7 +195,7 @@ int main()
             bg0.set_priority(3);
             bg1.set_priority(3);
 
-lampo_init(bg0, bg1);
+            lampo_init(bg0, bg1);
 
             bn::regular_bg_ptr foregroundfg = create_schema_foreground(g_schema);
 
@@ -274,6 +276,12 @@ lampo_init(bg0, bg1);
                 int n = 0;
                 const scala_def* sdefs = get_schema_scale(g_schema, n);
                 for (int i = 0; i < n; i++) g_scale->push_back(new scala(sdefs[i]));
+            }
+            // spawn spikes
+            {
+                int n = 0;
+                const spike_def* sdefs = get_schema_spikes(g_schema, n);
+                for (int i = 0; i < n; i++) g_spikes->push_back(new spike(sdefs[i]));
             }
             // Spawn oggetti
             {
@@ -366,6 +374,8 @@ lampo_init(bg0, bg1);
                     for (enemy* e : *g_enemies)
                         e->update();
                     for (snake* s : *g_snakes)
+                        s->update();
+                    for (spike* s : *g_spikes)
                         s->update();
                     g_healthbar->update();
 
@@ -507,7 +517,8 @@ lampo_init(bg0, bg1);
                 *g_casse,
                 *g_piattaforme,
                 *g_piattaforme_mobili,
-                *g_lava);
+                *g_lava,
+                *g_spikes);
 
             // eventuale bau in volo
             g_bau->ticks = 0;
@@ -531,7 +542,7 @@ lampo_init(bg0, bg1);
         // perché gli sprite ne tengono un riferimento
         // ordine inverso rispetto alla creazione; la camera per ultima
         // perché gli sprite ne tengono un riferimento
-        lampo_reset();
+
         reset_all(g_boss,
             g_healthbar,
             g_trampolini,          // spostato: prima della camera
@@ -540,6 +551,7 @@ lampo_init(bg0, bg1);
             g_dog,
             g_timer,
             g_lava,
+            g_spikes,
             g_piattaforme,
             g_items,
             g_snakes,

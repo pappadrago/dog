@@ -53,7 +53,11 @@ const scala_def* get_schema_scale(int schema, int& count) {
     count = s.scale_count;
     return s.scale;
 }
-
+const spike_def* get_schema_spikes(int schema, int& count) {
+    const schema_def& s = S(schema);
+    count = s.spikes_count;
+    return s.spikes;
+}
 const enemy_def* get_schema_enemies(int schema, int& count)
 {
     const schema_def& s = S(schema);

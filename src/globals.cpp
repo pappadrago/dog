@@ -11,6 +11,7 @@
 #include "dog.h"
 #include "boss.h"
 #include "scala.h"
+#include "spike.h"
 #include "piattaforma.h"
 #include "game_timer.h"
 
@@ -156,6 +157,7 @@ bn::optional<bn::vector<scala*, MAX_SCALE>> g_scale;
 
 bn::optional<bn::vector<snake*, MAX_SNAKES>> g_snakes;
 
+bn::optional<bn::vector<spike*, MAX_SPIKES>> g_spikes;
 
 #include "wind_fx.h"
 #include "schemi.h"

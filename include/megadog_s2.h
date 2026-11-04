@@ -176,6 +176,7 @@ namespace megadog_s2 {
             &collision_map_s1_info,
             nullptr, 0, // scale
             nullptr, 0, // snakes
+            nullptr, 0,// schema1_spikes, schema1_spikes_count
         };
     }
 }

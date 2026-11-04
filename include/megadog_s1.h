@@ -188,6 +188,16 @@ namespace megadog_s1 {
     };
     constexpr int schema1_scale_count = sizeof(schema1_scale) / sizeof(schema1_scale[0]);
 
+#include "spike.h"
+
+constexpr spike_def schema1_spikes[] = {
+    // x, y,  attesa, avviso, scatto, estesa, ritiro, sfasamento, danno
+    { 13, 8,   90,     30,      4,     45,     40,       0,       10 },
+    { 14, 8,   90,     30,      4,     45,     40,      30,       10 },  // sfasato di mezzo secondo
+    { 15, 8,   90,     30,      4,     45,     40,      60,       10 },
+};
+constexpr int schema1_spikes_count = sizeof(schema1_spikes) / sizeof(schema1_spikes[0]);
+
     constexpr schema_def make_schema_A()
     {
         return {
@@ -205,6 +215,7 @@ namespace megadog_s1 {
             &collision_map_s1_info,
             schema1_scale, schema1_scale_count,
  nullptr, 0,// schema1_snakes, schema1_snakes_count
+            schema1_spikes, schema1_spikes_count
         };
     }
 }

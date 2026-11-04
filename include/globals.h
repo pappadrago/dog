@@ -118,3 +118,8 @@ extern bn::optional<wind_fx> g_wind_fx;
 class snake;
 #define MAX_SNAKES 2
 extern bn::optional<bn::vector<snake*, MAX_SNAKES>> g_snakes;
+
+
+  class spike;
+  #define MAX_SPIKES 16
+  extern bn::optional<bn::vector<spike*, MAX_SPIKES>> g_spikes;
