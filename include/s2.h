@@ -40,8 +40,8 @@ constexpr item_def schema2_items[] = {
     { ITEM_TIPO_CHIAVE,  3,            1100, 400 },
     { ITEM_TIPO_POWERUP, POWERUP_SALTO|POWERUP_CORSA, 500, 300 },
     { ITEM_TIPO_POWERUP, POWERUP_SALTO|POWERUP_CORSA, 900, 250 },
-    { ITEM_TIPO_ENERGIA, 0,             200, 300 },
-    { ITEM_TIPO_ENERGIA, 0,            1300, 300 },
+    { ITEM_TIPO_ENERGIA, 30,            200, 300 },
+    { ITEM_TIPO_ENERGIA, 30,           1300, 300 },
 
 
 };

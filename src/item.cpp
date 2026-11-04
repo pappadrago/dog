@@ -159,9 +159,9 @@ void item::raccogli()
         break;
 
     case ITEM_TIPO_ENERGIA:
-        g_dog->life += 30; // valore da bilanciare
+        g_dog->life += attributo;
         g_dog->life = capzero(g_dog->life, MAX_LIFE);
-        show_nr("+" + bn::to_string<3>(30));
+        show_nr("+" + bn::to_string<3>(attributo));
         bn::sound_items::heart_collect.play();
         break;
 
