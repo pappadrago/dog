@@ -223,6 +223,13 @@ int main()
             for (int i = 0; i < n_doors; ++i)
                 doors.push_back(new door(doorDef[i]));
 
+            int n_oggetti_percorso = 0;
+            const oggetto_percorso_def* oggetti_percorso_def =
+                get_schema_oggetti_percorso(g_schema, n_oggetti_percorso);
+            bn::vector<oggetto_percorso*, 8> oggetti_percorso;
+            for (int i = 0; i < n_oggetti_percorso; ++i)
+                oggetti_percorso.push_back(new oggetto_percorso(oggetti_percorso_def[i]));
+
 
             bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
 
@@ -358,6 +365,8 @@ int main()
                     wind_update();
                     g_wind_fx->update();
                     g_dog->update();
+                    for (oggetto_percorso* oggetto : oggetti_percorso)
+                        oggetto->update();
                     for (int i = g_bombs->size() - 1; i >= 0; --i)
                     {
                         bomb* projectile = (*g_bombs)[i];
@@ -519,6 +528,7 @@ int main()
                 *g_items,
                 *g_snakes,
                 doors,
+                oggetti_percorso,
                 *g_trampolini,
                 *g_casse,
                 *g_piattaforme,

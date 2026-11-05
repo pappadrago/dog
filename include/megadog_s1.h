@@ -8,6 +8,7 @@
 #include "piattaforma_mobile.h"
 #include "schemi.h"
 #include "trampolino.h"
+#include "oggetto_percorso.h"
 #include "bn_regular_bg_items_megadog_s1.h"
 #include "bn_regular_bg_items_bg_s1.h"
 #include "bn_regular_bg_items_megadog_s1fg.h"
@@ -226,7 +227,8 @@ namespace megadog_s1 {
             &collision_map_s1_info,
             schema1_scale, schema1_scale_count,
             nullptr, 0,// schema1_snakes, schema1_snakes_count
-            schema1_spikes, schema1_spikes_count
+            schema1_spikes, schema1_spikes_count,
+            nullptr, 0 // oggetti_percorso
         };
     }
 }

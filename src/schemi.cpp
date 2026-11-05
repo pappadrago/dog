@@ -58,6 +58,12 @@ const spike_def* get_schema_spikes(int schema, int& count) {
     count = s.spikes_count;
     return s.spikes;
 }
+const oggetto_percorso_def* get_schema_oggetti_percorso(int schema, int& count)
+{
+    const schema_def& s = S(schema);
+    count = s.oggetti_percorso_count;
+    return s.oggetti_percorso;
+}
 const enemy_def* get_schema_enemies(int schema, int& count)
 {
     const schema_def& s = S(schema);
