@@ -8,6 +8,7 @@
 #include "bn_optional.h"
 #include "bn_sprite_ptr.h"
 #include "bn_sprite_palette_ptr.h"
+#include "bn_keypad.h"
 // nuovo asset (vedi sotto)
 #include "bn_sprite_items_enemies.h"
 #include "bn_sprite_items_enemies2.h"
@@ -18,6 +19,8 @@
 #include "bn_sprite_items_diecloud.h"
 #include "bn_sprite_items_healthbar.h"
 #include "bn_sprite_items_zombie.h"
+#include "bn_sprite_items_windgust.h"
+#include "bn_sprite_items_snake.h"
 #include "item.h"
 #include <bn_log.h>
 
@@ -32,11 +35,8 @@ namespace
     constexpr bn::fixed MAX_DARK = bn::fixed(0.75);   // 1.0 = nero totale
 }
 
-void powerup_freeze(bn::sprite_text_generator& text_generator)
-{
-    // Palette da scurire. NON ci sono: fox1632 (dog) e powerup_fx.
-    // create_palette_optional riusa le palette già in VRAM.
-    bn::vector<bn::sprite_palette_ptr, 10> palettes;
+static bn::vector<bn::sprite_palette_ptr, 16> getPalettes() {
+    bn::vector<bn::sprite_palette_ptr, 16> palettes;
     auto add = [&](auto&& opt)
         {
             if (opt.has_value())
@@ -49,9 +49,19 @@ void powerup_freeze(bn::sprite_text_generator& text_generator)
     add(bn::sprite_items::doors.palette_item().create_palette_optional());
     add(bn::sprite_items::diecloud.palette_item().create_palette_optional());
     add(bn::sprite_items::healthbar.palette_item().create_palette_optional());
+    add(bn::sprite_items::windgust.palette_item().create_palette_optional());
+    add(bn::sprite_items::snake.palette_item().create_palette_optional());
     if (g_boss.has_value())
         add(bn::sprite_items::zombie.palette_item().create_palette_optional());
 
+    return palettes;
+}
+
+void powerup_freeze(bn::sprite_text_generator& text_generator)
+{
+    // Palette da scurire. NON ci sono: fox1632 (dog) e powerup_fx.
+    // create_palette_optional riusa le palette già in VRAM.
+    bn::vector<bn::sprite_palette_ptr, 16> palettes = getPalettes();
     // Il cane deve restare ben visibile (niente lampeggio da invulnerabilità/carica)
     g_dog->sprite->set_visible(true);
 
@@ -95,4 +105,32 @@ void powerup_freeze(bn::sprite_text_generator& text_generator)
     bn::bg_palettes::set_fade_intensity(0);
     for (bn::sprite_palette_ptr& p : palettes)
         p.set_fade_intensity(0);
+}
+
+void pause_game(bn::sprite_text_generator& text_generator)
+{
+
+
+    bn::vector<bn::sprite_palette_ptr, 16> palettes = getPalettes();
+    bn::fixed intensity = bn::fixed(0.55);   // 1.0 = nero totale
+    bn::bg_palettes::set_fade(bn::colors::black, intensity);   // tutti gli sfondi
+    for (bn::sprite_palette_ptr& p : palettes)
+        p.set_fade(bn::colors::black, intensity);
+
+    bn::vector<bn::sprite_ptr, 16> txt;
+    text_generator.set_center_alignment();
+    text_generator.generate(0, -20, "IN PAUSA", txt);
+    text_generator.set_left_alignment();
+
+    while (bn::keypad::start_held())
+        bn::core::update();
+
+    while (!bn::keypad::start_pressed())
+        bn::core::update();
+
+    bn::bg_palettes::set_fade_intensity(0);
+    for (bn::sprite_palette_ptr& p : palettes)
+        p.set_fade_intensity(0);
+
+    txt.clear();
 }

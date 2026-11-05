@@ -158,6 +158,7 @@ int main()
 
     while (true) {
         dog_selection_screen(text_generator);
+        bool start_released = !bn::keypad::start_held();
         // Costruzione oggetti di gioco in ordine di dipendenza
         g_camera.emplace(bn::camera_ptr::create(0, 0));
         g_bau.emplace();
@@ -483,6 +484,11 @@ int main()
 
             while (!used_door && !game_over)
             {
+                if (!start_released && !bn::keypad::start_held())
+                    start_released = true;
+                else if (start_released && bn::keypad::start_pressed())
+                    pause_game(text_generator);
+
                 game_step();
                 if (g_powerup_pending)
                 {

@@ -190,17 +190,23 @@ namespace megadog_s1 {
 
 #include "spike.h"
 
-constexpr spike_def schema1_spikes[] = {
-    // x,  y, altezza,       verso_basso, attesa, avviso, scatto, estesa, ritiro, sfas, danno
-    { 13, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,     0,   10 },  // dal pavimento, bassa
-    { 14, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,    60,   10 },  // dal pavimento, bassa
-    { 89, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    30,   15 },  // dal soffitto, alta
-    { 90, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    90,   15 },  // dal soffitto, alta
-    { 89, 31, SPIKE_ALTA_16, false,        120,     40,      4,     60,     60,    30,   15 },  // dal pavimento, bassa
-    { 90, 31, SPIKE_ALTA_16, false,        120,     40,      4,     60,     60,    90,   15 },  // dal pavimento, bassa
-};
+    constexpr spike_def schema1_spikes[] = {
+        // x,  y, altezza,       verso_basso, attesa, avviso, scatto, estesa, ritiro, sfas, danno
+        { 13, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,     0,   10 },  // dal pavimento, bassa
+        { 14, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,    60,   10 },  // dal pavimento, bassa
+        { 89, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    30,   15 },  // dal soffitto, alta
+        { 90, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    90,   15 },  // dal soffitto, alta
+        { 89, 31, SPIKE_ALTA_16, false,        120,     40,      4,     60,     60,    30,   15 },  // dal pavimento, bassa
+        { 90, 31, SPIKE_ALTA_16, false,        120,     40,      4,     60,     60,    90,   15 },  // dal pavimento, bassa
 
-constexpr int schema1_spikes_count = sizeof(schema1_spikes) / sizeof(schema1_spikes[0]);
+        { 69, 31, SPIKE_ALTA_32, false,        120,     40,      4,     60,     60,    30,   15 },  // dal pavimento, bassa
+        { 70, 31, SPIKE_ALTA_32, false,        120,     40,      4,     60,     60,    90,   15 },  // dal pavimento, bassa
+
+        { 49, 31, SPIKE_ALTA_32, false,        120,     40,      4,     60,     60,    30,   15 },  // dal pavimento, bassa
+        { 50, 31, SPIKE_ALTA_32, false,        120,     40,      4,     60,     60,    90,   15 },  // dal pavimento, bassa
+    };
+
+    constexpr int schema1_spikes_count = sizeof(schema1_spikes) / sizeof(schema1_spikes[0]);
 
     constexpr schema_def make_schema_A()
     {
