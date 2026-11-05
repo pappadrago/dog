@@ -193,9 +193,11 @@ namespace megadog_s1 {
 constexpr spike_def schema1_spikes[] = {
     // x,  y, altezza,       verso_basso, attesa, avviso, scatto, estesa, ritiro, sfas, danno
     { 13, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,     0,   10 },  // dal pavimento, bassa
-    { 14, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,    60,   10 },  // dal soffitto, bassa
-    { 89, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    30,   15 },  // dal pavimento, alta
+    { 14, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,    60,   10 },  // dal pavimento, bassa
+    { 89, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    30,   15 },  // dal soffitto, alta
     { 90, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    90,   15 },  // dal soffitto, alta
+    { 89, 31, SPIKE_ALTA_16, false,        120,     40,      4,     60,     60,    30,   15 },  // dal pavimento, bassa
+    { 90, 31, SPIKE_ALTA_16, false,        120,     40,      4,     60,     60,    90,   15 },  // dal pavimento, bassa
 };
 
 constexpr int schema1_spikes_count = sizeof(schema1_spikes) / sizeof(schema1_spikes[0]);
@@ -216,7 +218,7 @@ constexpr int schema1_spikes_count = sizeof(schema1_spikes) / sizeof(schema1_spi
             bn::regular_bg_items::megadog_s1fg,
             &collision_map_s1_info,
             schema1_scale, schema1_scale_count,
- nullptr, 0,// schema1_snakes, schema1_snakes_count
+            nullptr, 0,// schema1_snakes, schema1_snakes_count
             schema1_spikes, schema1_spikes_count
         };
     }
