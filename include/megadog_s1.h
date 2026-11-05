@@ -185,6 +185,7 @@ namespace megadog_s1 {
     constexpr scala_def schema1_scale[] = {
         // tile_x, y1, y2, tipo
         { 1, 4, 13, SCALA_CON_PIANO },
+        { 86, 15, 30, SCALA_CON_PIANO },
     };
     constexpr int schema1_scale_count = sizeof(schema1_scale) / sizeof(schema1_scale[0]);
 
