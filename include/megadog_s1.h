@@ -191,11 +191,13 @@ namespace megadog_s1 {
 #include "spike.h"
 
 constexpr spike_def schema1_spikes[] = {
-    // x, y,  attesa, avviso, scatto, estesa, ritiro, sfasamento, danno
-    { 13, 8,   90,     30,      4,     45,     40,       0,       10 },
-    { 14, 8,   90,     30,      4,     45,     40,      30,       10 },  // sfasato di mezzo secondo
-    { 15, 8,   90,     30,      4,     45,     40,      60,       10 },
+    // x,  y, altezza,       verso_basso, attesa, avviso, scatto, estesa, ritiro, sfas, danno
+    { 13, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,     0,   10 },  // dal pavimento, bassa
+    { 14, 8, SPIKE_ALTA_16, false,        90,     30,      4,     45,     40,    60,   10 },  // dal soffitto, bassa
+    { 89, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    30,   15 },  // dal pavimento, alta
+    { 90, 27, SPIKE_ALTA_32, true,        120,     40,      4,     60,     60,    90,   15 },  // dal soffitto, alta
 };
+
 constexpr int schema1_spikes_count = sizeof(schema1_spikes) / sizeof(schema1_spikes[0]);
 
     constexpr schema_def make_schema_A()

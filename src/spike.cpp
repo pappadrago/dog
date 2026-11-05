@@ -3,17 +3,26 @@
 #include "dog.h"
 #include "constanti_fisica.h"
 #include "bn_math.h"
-#include "bn_sprite_items_weapons.h"   // nuovo asset: 16x16, spuntone rivolto verso l'alto
+#include "bn_sprite_items_weapons.h"
+#include "bn_sprite_items_doors.h"
 
-static int durata(int v) { return v > 0 ? v : 1; }   // evita divisioni per zero
+static int durata(int v) { return v > 0 ? v : 1; }
 
 spike::spike(const spike_def& d) : def(d)
 {
-    sprite = bn::sprite_items::weapons.create_sprite(0, 0, 10);
-    sprite->set_camera(g_camera);
-    sprite->set_bg_priority(3);   // dietro al foreground (2): il pavimento lo nasconde
+    if (def.altezza != SPIKE_ALTA_32)
+        def.altezza = SPIKE_ALTA_16;   // valori non validi -> 16
 
-    // fast-forward: applica lo sfasamento senza grafica né danni
+    _segno = def.verso_basso ? 1 : -1;
+    _base = def.verso_basso ? (def.tile_y + 1) * 16 : def.tile_y * 16;
+
+    sprite = (def.altezza == SPIKE_ALTA_32)
+        ? bn::sprite_items::doors.create_sprite(0, 0, 6)
+        : bn::sprite_items::weapons.create_sprite(0, 0, 10);
+    sprite->set_camera(g_camera);
+    sprite->set_bg_priority(3);                    // dietro al foreground: il solido lo nasconde
+    sprite->set_vertical_flip(def.verso_basso);    // stessa grafica, capovolta
+
     for (int i = 0; i < def.sfasamento; ++i)
         avanza();
     aggiorna_sprite();
@@ -22,6 +31,8 @@ spike::spike(const spike_def& d) : def(d)
 void spike::avanza()
 {
     _ticks++;
+    const int H = def.altezza;
+
     switch (_stato)
     {
     case ATTESA:
@@ -37,20 +48,20 @@ void spike::avanza()
     case SCATTO:
     {
         int t = durata(def.ticks_scatto);
-        _ext = SPIKE_EXT_AVVISO + ((SPIKE_MAX_EXT - SPIKE_EXT_AVVISO) * _ticks) / t;
-        if (_ticks >= t) { _ext = SPIKE_MAX_EXT; cambia(ESTESA); }
+        _ext = SPIKE_EXT_AVVISO + ((H - SPIKE_EXT_AVVISO) * _ticks) / t;
+        if (_ticks >= t) { _ext = H; cambia(ESTESA); }
         break;
     }
 
     case ESTESA:
-        _ext = SPIKE_MAX_EXT;
+        _ext = H;
         if (_ticks >= def.ticks_estesa) cambia(RITIRO);
         break;
 
     case RITIRO:
     {
         int t = durata(def.ticks_ritiro);
-        _ext = SPIKE_MAX_EXT - (SPIKE_MAX_EXT * _ticks) / t;
+        _ext = H - (H * _ticks) / t;
         if (_ticks >= t) { _ext = 0; cambia(ATTESA); }
         break;
     }
@@ -59,13 +70,11 @@ void spike::avanza()
 
 void spike::aggiorna_sprite()
 {
-    // Estensione 0 = sprite interamente dentro la tile del pavimento
     int cx = def.tile_x * 16 + 8;
-    int cy = def.tile_y * 16 + 8 - _ext;
+    int cy = _base + _segno * (_ext - def.altezza / 2);
 
-    // Vibrazione solo nella fase di avviso: alterna ±1px ogni 2 frame
     if (_stato == AVVISO)
-        cx += ((_ticks >> 1) & 1) ? 1 : -1;
+        cx += ((_ticks >> 1) & 1) ? 1 : -1;   // vibrazione orizzontale
 
     sprite->set_x(cx - HALF_SCREEN_W);
     sprite->set_y(cy - HALF_SCREEN_H);
@@ -77,19 +86,22 @@ void spike::controlla_cane()
     if (_ext < SPIKE_EXT_PERICOLO || g_dog->invulnerability > 0) return;
 
     int cx = def.tile_x * 16 + 8;
-    int top = def.tile_y * 16 - _ext;       // punta
-    int base = def.tile_y * 16;             // bordo superiore del pavimento
 
-    // hitbox cane: x ±box_halfdim, y ±box_dim (centrata su chr_y)
+    // zona occupata dallo spuntone sopra il solido: [y1, y2]
+    int punta = _base + _segno * _ext;
+    int y1 = punta < _base ? punta : _base;
+    int y2 = punta < _base ? _base : punta;
+
     bn::fixed dog_top = g_dog->chr_y - g_dog->box_dim;
     bn::fixed dog_bot = g_dog->chr_y + g_dog->box_dim;
 
-    bool hit = bn::abs(g_dog->chr_x - cx) < (5 + g_dog->box_halfdim) &&   // spuntone largo ~10px
-               dog_bot > top && dog_top < base;
+    bool hit = bn::abs(g_dog->chr_x - cx) < (5 + g_dog->box_halfdim) &&
+               dog_bot > y1 && dog_top < y2;
 
     if (hit)
     {
-        g_dog->chr_vy = MEDIUM_JUMP_VY;
+        // verso l'alto: rimbalzo in su; verso il basso: spinto via dal soffitto
+        g_dog->chr_vy = def.verso_basso ? bn::fixed(1.5) : MEDIUM_JUMP_VY;
         g_dog->chr_vx = (g_dog->chr_x < cx) ? SMALL_VX_L : SMALL_VX_R;
         g_dog->invulnerability = 60;
         g_dog->dog_damage(def.danno);
