@@ -3,7 +3,7 @@
 #include "dog.h"
 #include "bn_math.h"
 #include "bn_sprite_animate_actions.h"
-#include "bn_sprite_items_enemies.h"
+#include "bn_sprite_items_weapons.h"
 #include "bn_sprite_items_zombie.h"
 
 namespace
@@ -50,10 +50,10 @@ oggetto_percorso::oggetto_percorso(const oggetto_percorso_def& def) : _def(def)
     }
     else
     {
-        sprite = bn::sprite_items::enemies.create_sprite(
+        sprite = bn::sprite_items::weapons.create_sprite(
             chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
         _animazione = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::enemies.tiles_item(), 0, 1, 2, 1);
+            *sprite, 6, bn::sprite_items::weapons.tiles_item(), 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47);
         box_dim = bn::fixed(8);
         box_halfdim = bn::fixed(8);
     }

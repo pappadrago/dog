@@ -210,6 +210,13 @@ namespace megadog_s1 {
 
     constexpr int schema1_spikes_count = sizeof(schema1_spikes) / sizeof(schema1_spikes[0]);
 
+    constexpr oggetto_percorso_def schema1_oggetti_percorso[] = {
+        // centro_x, centro_y, semiasse_x, semiasse_y, forma, velocita_x10, oraria, fase_iniziale, sprite_size, danno
+        { 35<<4, 8+(9<<4), 32, 16, PERCORSO_RETTANGOLO, 15, true, 0, PERCORSO_SPRITE_16, 10 },
+    };
+    constexpr int schema1_oggetti_percorso_count =
+        sizeof(schema1_oggetti_percorso) / sizeof(schema1_oggetti_percorso[0]);
+
     constexpr schema_def make_schema_A()
     {
         return {
@@ -228,7 +235,7 @@ namespace megadog_s1 {
             schema1_scale, schema1_scale_count,
             nullptr, 0,// schema1_snakes, schema1_snakes_count
             schema1_spikes, schema1_spikes_count,
-            nullptr, 0 // oggetti_percorso
+            schema1_oggetti_percorso, schema1_oggetti_percorso_count
         };
     }
 }
