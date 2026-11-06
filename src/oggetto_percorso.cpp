@@ -5,6 +5,7 @@
 #include "bn_sprite_animate_actions.h"
 #include "bn_sprite_items_weapons.h"
 #include "bn_sprite_items_zombie.h"
+#include "bn_math.h"
 
 namespace
 {
@@ -92,14 +93,14 @@ void oggetto_percorso::punto(bn::fixed fase)
         bn::fixed s = fase.multiplication(_perimetro).division(360);
         bn::fixed w = a * 2;
         bn::fixed h = b * 2;
-        if (s < w)        { chr_x = cx - a + s;     chr_y = cy - b; }
+        if (s < w) { chr_x = cx - a + s;     chr_y = cy - b; }
         else {
             s -= w;
-            if (s < h)    { chr_x = cx + a;         chr_y = cy - b + s; }
+            if (s < h) { chr_x = cx + a;         chr_y = cy - b + s; }
             else {
                 s -= h;
-                if (s < w){ chr_x = cx + a - s;     chr_y = cy + b; }
-                else      { chr_x = cx - a;         chr_y = cy + b - (s - w); }
+                if (s < w) { chr_x = cx + a - s;     chr_y = cy + b; }
+                else { chr_x = cx - a;         chr_y = cy + b - (s - w); }
             }
         }
         break;
@@ -117,6 +118,10 @@ void oggetto_percorso::punto(bn::fixed fase)
 
 void oggetto_percorso::update()
 {
+
+    if ( bn::abs(g_dog->chr_x - chr_x) > SCREEN_W)
+        return; // cane troppo lontano, non aggiorno 
+
     punto(fase_corrente());
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);

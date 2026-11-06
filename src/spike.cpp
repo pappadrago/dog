@@ -114,7 +114,7 @@ void spike::controlla_cane()
     bn::fixed dog_bot = g_dog->chr_y + g_dog->box_dim;
 
     bool hit = bn::abs(g_dog->chr_x - cx) < (5 + g_dog->box_halfdim) &&
-               dog_bot > y1 && dog_top < y2;
+        dog_bot > y1 && dog_top < y2;
 
     if (hit)
     {
@@ -128,6 +128,8 @@ void spike::controlla_cane()
 
 void spike::update()
 {
+    if (bn::abs(g_dog->chr_x - def.tile_x * 16) > SCREEN_W)
+        return; // cane troppo lontano, non aggiorno 
     imposta_fase();
     aggiorna_sprite();
     controlla_cane();
