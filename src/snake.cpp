@@ -4,6 +4,7 @@
 #include "dog.h"
 #include "collision.h"
 #include "healthbar.h"
+#include "obj.h"
 #include "bn_math.h"
 #include "bn_sound_items.h"
 #include "bn_sprite_items_enemies2.h"
@@ -204,6 +205,9 @@ void snake::aggiorna_sprite()
 // Fireball SENZA aim: dritta in orizzontale, nel verso in cui guarda la testa
 bool snake::spara()
 {
+    if (is_solid_at(chr_x, chr_y, g_schema))
+        return false;
+
     if (bn::abs(g_dog->chr_x - chr_x) > SCREEN_W)   // fuori schermo: non sprecare uno slot
         return false;
 
