@@ -6,13 +6,13 @@
 #include "healthbar.h"
 #include "bn_math.h"
 #include "bn_sound_items.h"
-#include "bn_sprite_items_snake.h"
+#include "bn_sprite_items_enemies2.h"
 
 // Tile dello spritesheet "snake" (16x16): adatta agli indici reali
-static constexpr int TILE_TESTA   = 0;
-static constexpr int TILE_CORPO_A = 1;
-static constexpr int TILE_CORPO_B = 2;
-static constexpr int TILE_CODA    = 3;
+static constexpr int TILE_TESTA   = 12;
+static constexpr int TILE_CORPO_A = 13;
+static constexpr int TILE_CORPO_B = 14;
+static constexpr int TILE_CODA    = 15;
 
 // Stessi valori di enemy_config (enemy.cpp) per le fireball dei nemici
 static constexpr int       FIREBALL_TILE  = 23;
@@ -26,6 +26,22 @@ static bn::fixed wrap360(bn::fixed a)
     while (a >= 360) a -= 360;
     while (a < 0)    a += 360;
     return a;
+}
+
+static void orient_segment(bn::sprite_ptr& sprite, bn::fixed dx, bn::fixed dy)
+{
+    int dx_scaled = (dx * 16).integer();
+    int dy_scaled = (dy * 16).integer();
+    if (!dx_scaled && !dy_scaled)
+        return;
+
+    bool flip = dx_scaled < 0;
+    int angle_y = flip ? dy_scaled : -dy_scaled;
+    int angle_x = flip ? -dx_scaled : dx_scaled;
+    bn::fixed angle = bn::degrees_atan2(angle_y, angle_x);
+
+    sprite.set_horizontal_flip(flip);
+    sprite.set_rotation_angle_safe(angle);
 }
 
 // Lunghezza approssimata del percorso: serve a tradurre px in gradi di fase
@@ -64,7 +80,7 @@ snake::snake(const snake_def& d) : def(d)
                  : (k == SNAKE_SEGMENTS - 1) ? TILE_CODA
                  : ((k & 1) ? TILE_CORPO_A : TILE_CORPO_B);
 
-        bn::sprite_ptr s = bn::sprite_items::snake.create_sprite(
+        bn::sprite_ptr s = bn::sprite_items::enemies2.create_sprite(
             _x[k] - HALF_SCREEN_W, _y[k] - HALF_SCREEN_H, tile);
         s.set_camera(g_camera);
         s.set_bg_priority(1);
@@ -171,17 +187,15 @@ void snake::aggiorna_sprite()
                  : k == _segment_count - 1 ? TILE_CODA
                  : (((_anim >> 3) + k) & 1) ? TILE_CORPO_A : TILE_CORPO_B;
         if (k == 0 || k == _segment_count - 1 || anima_corpo)
-            s.set_tiles(bn::sprite_items::snake.tiles_item(), tile);
+            s.set_tiles(bn::sprite_items::enemies2.tiles_item(), tile);
     }
 
     bn::fixed head_dx = _x[0] - _x[1];
     bn::fixed head_dy = _y[0] - _y[1];
     bn::fixed tail_dx = _x[_segment_count - 2] - _x[_segment_count - 1];
     bn::fixed tail_dy = _y[_segment_count - 2] - _y[_segment_count - 1];
-    _segs[0].set_rotation_angle_safe(
-        bn::degrees_atan2(head_dy.integer(), head_dx.integer()));
-    _segs[_segment_count - 1].set_rotation_angle_safe(
-        bn::degrees_atan2(tail_dy.integer(), tail_dx.integer()));
+    orient_segment(_segs[0], head_dx, head_dy);
+    orient_segment(_segs[_segment_count - 1], tail_dx, tail_dy);
 
     for (int k = _segment_count; k < SNAKE_SEGMENTS; ++k)
         _segs[k].set_visible(false);

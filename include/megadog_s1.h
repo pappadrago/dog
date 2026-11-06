@@ -233,7 +233,7 @@ namespace megadog_s1 {
             bn::regular_bg_items::megadog_s1fg,
             &collision_map_s1_info,
             schema1_scale, schema1_scale_count,
-            nullptr, 0,// schema1_snakes, schema1_snakes_count
+            schema1_snakes, schema1_snakes_count,
             schema1_spikes, schema1_spikes_count,
             schema1_oggetti_percorso, schema1_oggetti_percorso_count
         };

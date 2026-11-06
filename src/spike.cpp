@@ -101,7 +101,9 @@ void spike::aggiorna_sprite()
 
 void spike::controlla_cane()
 {
-    if (_ext < SPIKE_EXT_PERICOLO || g_dog->invulnerability > 0) return;
+    //if (_ext < SPIKE_EXT_PERICOLO || g_dog->invulnerability > 0) return;
+    if(!(_stato == SCATTO || _stato == ESTESA)) 
+        return;
 
     int cx = def.tile_x * 16 + 8;
 
