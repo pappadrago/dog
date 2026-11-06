@@ -23,48 +23,66 @@ spike::spike(const spike_def& d) : def(d)
     sprite->set_bg_priority(3);                    // dietro al foreground: il solido lo nasconde
     sprite->set_vertical_flip(def.verso_basso);    // stessa grafica, capovolta
 
-    for (int i = 0; i < def.sfasamento; ++i)
-        avanza();
+    imposta_fase();
     aggiorna_sprite();
 }
 
-void spike::avanza()
+void spike::imposta_fase()
 {
-    _ticks++;
     const int H = def.altezza;
+    const int durate[] = {
+        durata(def.ticks_attesa),
+        durata(def.ticks_avviso),
+        durata(def.ticks_scatto),
+        durata(def.ticks_estesa),
+        durata(def.ticks_ritiro)
+    };
+    const stato stati[] = { ATTESA, AVVISO, SCATTO, ESTESA, RITIRO };
+    uint32_t ciclo = 0;
+    for (int d : durate)
+        ciclo += d;
 
-    switch (_stato)
+    uint32_t fase = uint32_t((uint64_t(g_ostacoli_ticks) + def.sfasamento) % ciclo);
+    uint32_t inizio = 0;
+
+    for (int i = 0; i < 5; ++i)
     {
-    case ATTESA:
-        _ext = 0;
-        if (_ticks >= def.ticks_attesa) cambia(AVVISO);
-        break;
-
-    case AVVISO:
-        _ext = SPIKE_EXT_AVVISO;
-        if (_ticks >= def.ticks_avviso) cambia(SCATTO);
-        break;
-
-    case SCATTO:
-    {
-        int t = durata(def.ticks_scatto);
-        _ext = SPIKE_EXT_AVVISO + ((H - SPIKE_EXT_AVVISO) * _ticks) / t;
-        if (_ticks >= t) { _ext = H; cambia(ESTESA); }
-        break;
-    }
-
-    case ESTESA:
-        _ext = H;
-        if (_ticks >= def.ticks_estesa) cambia(RITIRO);
-        break;
-
-    case RITIRO:
-    {
-        int t = durata(def.ticks_ritiro);
-        _ext = H - (H * _ticks) / t;
-        if (_ticks >= t) { _ext = 0; cambia(ATTESA); }
-        break;
-    }
+        if (fase < inizio + uint32_t(durate[i]))
+        {
+            _stato = stati[i];
+            _ticks = int(fase - inizio);
+            if (_ticks == 0)
+            {
+                _ext = i == 0 ? 0 : (i == 1 ? 0 : (i == 2 ? SPIKE_EXT_AVVISO : H));
+            }
+            else
+            {
+                switch (i)
+                {
+                case 0:
+                    _ext = 0;
+                    break;
+                case 1:
+                    _ext = SPIKE_EXT_AVVISO;
+                    break;
+                case 2:
+                    _ext = SPIKE_EXT_AVVISO +
+                        ((H - SPIKE_EXT_AVVISO) * _ticks) / durate[i];
+                    break;
+                case 3:
+                    _ext = H;
+                    break;
+                case 4:
+                    _ext = H - (H * _ticks) / durate[i];
+                    break;
+                default:
+                    _ext = 0;
+                    break;
+                }
+            }
+            return;
+        }
+        inizio += uint32_t(durate[i]);
     }
 }
 
@@ -110,7 +128,7 @@ void spike::controlla_cane()
 
 void spike::update()
 {
-    avanza();
+    imposta_fase();
     aggiorna_sprite();
     controlla_cane();
 }

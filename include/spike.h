@@ -40,8 +40,7 @@ private:
     int _segno = -1;   // -1 = verso l'alto, +1 = verso il basso
     bn::optional<bn::sprite_ptr> sprite;
 
-    void avanza();
-    void cambia(stato s) { _stato = s; _ticks = 0; }
+    void imposta_fase();
     void aggiorna_sprite();
     void controlla_cane();
 };

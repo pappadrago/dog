@@ -38,11 +38,11 @@ private:
     oggetto_percorso_def _def;
     bn::optional<bn::sprite_animate_action<4>> _animazione;
     bn::fixed _perimetro;
-    bn::fixed _fase;
     bn::fixed _delta;
     int _segno = 1;
 
     bn::fixed wrap360(bn::fixed fase) const;
+    bn::fixed fase_corrente() const;
     void punto(bn::fixed fase);
     void controlla_cane();
 };

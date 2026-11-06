@@ -20,6 +20,7 @@
 #include "boss.h"
 #include "dog.h"
 #include "constanti_fisica.h"
+#include <cstdint>
 
 // Forward declaration di tutte le classi di gioco:
 // i .cpp che ne hanno bisogno includeranno i rispettivi header.
@@ -73,6 +74,7 @@ int capzero(int val, int max);
 
 
 extern int g_schema;
+extern uint32_t g_ostacoli_ticks;
 
 extern int g_shake_ticks;
 extern int g_shake_durata;

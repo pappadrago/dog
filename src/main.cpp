@@ -179,6 +179,7 @@ int main()
         g_scale.emplace();
         g_wind_fx.emplace();
         g_schema = 1;
+        g_ostacoli_ticks = 0;
         // g_schema = 2; g_dog->run_acquisito = true;
 
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
@@ -353,6 +354,7 @@ int main()
             // Un frame di gioco (senza bn::core::update)
             auto game_step = [&]()
                 {
+                    ++g_ostacoli_ticks;
                     for (piattaforma* p : *g_piattaforme)
                         p->update();
 

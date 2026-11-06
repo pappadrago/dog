@@ -35,6 +35,7 @@ bn::optional<bn::vector<lava_zona*, MAX_LAVA>> g_lava;
 bn::optional<bn::vector<piattaforma_mobile*, MAX_PIATTAFORME_MOBILI>> g_piattaforme_mobili;
 
 int g_schema = 1;
+uint32_t g_ostacoli_ticks = 0;
 
 bn::fixed cap(bn::fixed val, bn::fixed max) {
     if (val > max) val = max;
