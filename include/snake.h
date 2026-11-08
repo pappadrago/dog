@@ -4,6 +4,7 @@
 #include "bn_vector.h"
 #include "bn_array.h"
 #include "bn_sprite_ptr.h"
+#include "bn_sprite_animate_actions.h"
 #include "bn_fixed.h"
 #include "obj.h"
 #include <cstdint>
@@ -56,6 +57,8 @@ private:
     bn::array<bn::fixed, SNAKE_SEGMENTS> _x;
     bn::array<bn::fixed, SNAKE_SEGMENTS> _y;
     bn::array<int, SNAKE_SEGMENTS> _segment_life;
+    bn::array<bn::optional<bn::sprite_ptr>, SNAKE_SEGMENTS> _death_sprites;
+    bn::array<bn::optional<bn::sprite_animate_action<9>>, SNAKE_SEGMENTS> _death_animations;
     int _segment_count = SNAKE_SEGMENTS;
     bool _dying = false;
 
@@ -77,4 +80,5 @@ private:
     bool spara();
     void check_dog();
     void update_death();
+    void update_segment_death_animations();
 };

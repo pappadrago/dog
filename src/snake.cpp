@@ -8,6 +8,7 @@
 #include "bn_math.h"
 #include "bn_sound_items.h"
 #include "bn_sprite_items_enemies2.h"
+#include "bn_sprite_items_diecloud.h"
 
 // Tile dello spritesheet "snake" (16x16): adatta agli indici reali
 static constexpr int TILE_TESTA   = 12;
@@ -21,6 +22,8 @@ static constexpr int       FIREBALL_TTL   = 120;
 static constexpr bn::fixed FIREBALL_SPEED = bn::fixed(1.5);
 
 static constexpr bn::fixed SOGLIA_DIR     = bn::fixed(0.05);
+static constexpr int       SEGMENT_DEATH_FRAME_TICKS = 3;
+static constexpr int       SEGMENT_DEATH_FIRST_TILE = 9;
 
 static bn::fixed wrap360(bn::fixed a)
 {
@@ -136,6 +139,8 @@ void snake::calcola_posizioni()
 
 void snake::update()
 {
+    update_segment_death_animations();
+
     if (is_dead())
     {
         update_death();
@@ -298,6 +303,23 @@ void snake::take_damage(int damage, int segment_index)
         }
         else
         {
+            int effect_index = _segment_count - 1;
+            bn::sprite_ptr effect = bn::sprite_items::diecloud.create_sprite(
+                _x[segment_index] - HALF_SCREEN_W, _y[segment_index] - HALF_SCREEN_H,
+                SEGMENT_DEATH_FIRST_TILE);
+            effect.set_camera(g_camera);
+            effect.set_bg_priority(1);
+            effect.set_z_order(0);
+            _death_sprites[effect_index] = bn::move(effect);
+            _death_animations[effect_index] = bn::create_sprite_animate_action_once(
+                *_death_sprites[effect_index], SEGMENT_DEATH_FRAME_TICKS,
+                bn::sprite_items::diecloud.tiles_item(),
+                SEGMENT_DEATH_FIRST_TILE + 0, SEGMENT_DEATH_FIRST_TILE + 1,
+                SEGMENT_DEATH_FIRST_TILE + 2, SEGMENT_DEATH_FIRST_TILE + 3,
+                SEGMENT_DEATH_FIRST_TILE + 4, SEGMENT_DEATH_FIRST_TILE + 5,
+                SEGMENT_DEATH_FIRST_TILE + 6, SEGMENT_DEATH_FIRST_TILE + 7,
+                SEGMENT_DEATH_FIRST_TILE + 8);
+
             for (int k = segment_index; k < _segment_count - 1; ++k)
                 _segment_life[k] = _segment_life[k + 1];
 
@@ -314,6 +336,25 @@ void snake::be_hit_by_bark(bn::fixed power, int segment_index)
     invulnerability = 30;   // bau::update() lo sovrascrive con la durata del bau per evitare colpi multipli
 }
 
+void snake::update_segment_death_animations()
+{
+    for (int k = 0; k < SNAKE_SEGMENTS; ++k)
+    {
+        if (!_death_animations[k])
+            continue;
+
+        bn::sprite_animate_action<9>& animation = *_death_animations[k];
+        if (animation.done())
+        {
+            _death_sprites[k]->set_visible(false);
+            _death_animations[k].reset();
+            _death_sprites[k].reset();
+        }
+        else
+            animation.update();
+    }
+}
+
 // Morte: i segmenti spariscono uno alla volta dalla coda verso la testa
 void snake::update_death()
 {
@@ -326,6 +367,10 @@ void snake::update_death()
 
     if (_death_ticks == 0)
     {
-        distrutto = true;
+        bool animations_pending = false;
+        for (const auto& animation : _death_animations)
+            animations_pending = animations_pending || bool(animation);
+
+        distrutto = !animations_pending;
     }
 }

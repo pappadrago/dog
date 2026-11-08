@@ -181,3 +181,16 @@ const wind_def& get_schema_wind(int schema)
     if(i < 0 || i >= NUM_SCHEMI) i = 0;
     return s_wind[i];
 }
+
+const ground_friction_def* get_ground_friction_override(int schema, int tile_x, int tile_y)
+{
+    const schema_def& s = S(schema);
+    for (int i = 0; i < s.ground_frictions_count; i++)
+    {
+        const ground_friction_def& friction = s.ground_frictions[i];
+        if (tile_x >= friction.tile_x1 && tile_x <= friction.tile_x2 &&
+            tile_y >= friction.tile_y1 && tile_y <= friction.tile_y2)
+            return &friction;
+    }
+    return nullptr;
+}

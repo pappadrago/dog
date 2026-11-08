@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "bn_fixed.h"
 #include "bn_regular_bg_ptr.h"
 #include "bn_regular_bg_item.h"
 #include "piattaforma.h"
@@ -64,6 +65,14 @@ const oggetto_percorso_def* get_schema_oggetti_percorso(int schema, int& count);
 struct wind_def { bn::fixed base, amp; };
 const wind_def& get_schema_wind(int schema);
 
+struct ground_friction_def
+{
+    int16_t tile_x1, tile_y1, tile_x2, tile_y2;
+    bn::fixed friction;
+};
+
+const ground_friction_def* get_ground_friction_override(int schema, int tile_x, int tile_y);
+
 struct schema_def
 {
     const cassa_def* casse; int casse_count;
@@ -82,4 +91,5 @@ struct schema_def
     const snake_def* snakes; int snakes_count;
     const spike_def* spikes; int spikes_count;
     const oggetto_percorso_def* oggetti_percorso; int oggetti_percorso_count;
+    const ground_friction_def* ground_frictions; int ground_frictions_count;
 };

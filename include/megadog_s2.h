@@ -179,6 +179,7 @@ namespace megadog_s2 {
             nullptr, 0, // snakes
             nullptr, 0,// schema1_spikes, schema1_spikes_count
             nullptr, 0, // oggetti_percorso
+            nullptr, 0, // ground friction overrides
         };
     }
 }

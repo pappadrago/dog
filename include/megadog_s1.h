@@ -217,6 +217,11 @@ namespace megadog_s1 {
     constexpr int schema1_oggetti_percorso_count =
         sizeof(schema1_oggetti_percorso) / sizeof(schema1_oggetti_percorso[0]);
 
+
+constexpr ground_friction_def schema1_ground_frictions[] = {
+    { 33, 9, 36, 10, bn::fixed(0.01) }, // tile x 10-14, riga 12
+};
+
     constexpr schema_def make_schema_A()
     {
         return {
@@ -235,7 +240,8 @@ namespace megadog_s1 {
             schema1_scale, schema1_scale_count,
             schema1_snakes, schema1_snakes_count,
             schema1_spikes, schema1_spikes_count,
-            schema1_oggetti_percorso, schema1_oggetti_percorso_count
+            schema1_oggetti_percorso, schema1_oggetti_percorso_count,
+            schema1_ground_frictions, sizeof(schema1_ground_frictions) / sizeof(schema1_ground_frictions[0])
         };
     }
 }

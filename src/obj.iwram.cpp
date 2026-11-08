@@ -19,12 +19,21 @@
 
 BN_CODE_IWRAM void live_obj::apply_friction()
 {
+    bn::fixed ground_friction = GROUND_FRICTION;
+    if (onGround)
+    {
+        int tile_x = chr_x.integer() >> 4;
+        int tile_y = (chr_y + box_dim - 1).integer() >> 4;
+        if (const ground_friction_def* friction = get_ground_friction_override(g_schema, tile_x, tile_y))
+            ground_friction = friction->friction;
+    }
+
     if (chr_vx > ZERO) {
-        chr_vx -= onGround ? GROUND_FRICTION : AIR_FRICTION;
+        chr_vx -= onGround ? ground_friction : AIR_FRICTION;
         if (chr_vx < ZERO) chr_vx = ZERO;
     }
     else if (chr_vx < ZERO) {
-        chr_vx += onGround ? GROUND_FRICTION : AIR_FRICTION;
+        chr_vx += onGround ? ground_friction : AIR_FRICTION;
         if (chr_vx > ZERO) chr_vx = ZERO;
     }
     if (bn::abs(chr_vx) < bn::fixed(0.01)) {

@@ -21,16 +21,16 @@
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1457.1666666666665,
-                "y": 349.66666666666663
+                "x": 592.1666666666666,
+                "y": 261
             }
         },
         "megadog_s2.tmx": {
             "scale": 4,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 502.125,
-                "y": 270.75
+                "x": 768,
+                "y": 256
             }
         },
         "megadog_s3.tmx": {
