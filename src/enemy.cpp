@@ -408,11 +408,11 @@ void enemy::throw_fulmine()
     bomb_def def;
     def.tipoProjec = BOMB_FULMINE;
     def.x = g_dog->chr_x;
-    def.y = g_dog->chr_y -100;
+    def.y = g_dog->chr_y - 100;
     def.vx = 0;
     def.vy = bn::fixed(0.0);
 
-    def.ignoreGravity =false;
+    def.ignoreGravity = false;
     def.ignoreWalls = false;
     def.max_bounces = 0;
     def.tileIndex = 11;
@@ -458,8 +458,8 @@ void enemy::die(int _dir)
 
     sprite->set_visible(true);
 
-    // if (g_rng.get_int(100) < ENEMY_DROP_CHANCE)
-    spawn_drop(chr_x, chr_y - 8);
+    if (g_rng.get_int(100) < ENEMY_DROP_CHANCE)
+        spawn_drop(chr_x, chr_y - 8);
 }
 
 void enemy::update_death()
