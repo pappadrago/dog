@@ -72,17 +72,51 @@ void powerup_freeze(bn::sprite_text_generator& text_generator)
     fx.set_bg_priority(0);
     fx.set_z_order(-16);
 
-    bn::vector<bn::sprite_ptr, 16> txt;
-    text_generator.set_center_alignment();
+    bn::vector<bn::sprite_ptr, 32> txt;
+    bn::vector<const char*, 9> descriptions;
+    struct powerup_description
+    {
+        uint16_t flag;
+        const char* text;
+    };
+    constexpr powerup_description powerup_descriptions[] = {
+        { POWERUP_CORSA, "CORSA: TIENI PREMUTO L" },
+        { POWERUP_SALTO, "SALTO: SALTA PIU' ALTO" },
+        { POWERUP_BAU, "BAU: COLPI PIU' FORTI" },
+        { POWERUP_RESISTENZA, "RESISTENZA: +30 VITA" },
+        { POWERUP_DOPPIO_SALTO, "DOPPIO SALTO: PREMI B" },
+        { POWERUP_WALL_JUMP, "SALTO A MURO: PREMI B" },
+        { POWERUP_DASH, "DASH: PREMI R A TERRA" },
+        { POWERUP_AIR_DASH, "AIR DASH: PREMI R IN ARIA" },
+        { POWERUP_GROUND_POUND, "GROUND POUND: GIU' IN ARIA" },
+    };
+    for (const powerup_description& description : powerup_descriptions)
+    {
+        if (g_powerup_pending & description.flag)
+            descriptions.push_back(description.text);
+    }
+    if (descriptions.empty())
+        descriptions.push_back("POWER UP!");
 
-    if (g_powerup_pending & POWERUP_CORSA)
-        text_generator.generate(0, -56, "CORRI PREMENDO IL TASTO L", txt);
-    else
-        text_generator.generate(0, -56, "POWER UP!", txt);
+    text_generator.set_center_alignment();
+    int description_frames = TOTAL_FRAMES / descriptions.size();
+    int shown_description = -1;
     text_generator.set_left_alignment();
 
     for (int f = 0; f < TOTAL_FRAMES; ++f)
     {
+        int description_index = f / description_frames;
+        if (description_index >= descriptions.size())
+            description_index = descriptions.size() - 1;
+        if (description_index != shown_description)
+        {
+            txt.clear();
+            text_generator.set_center_alignment();
+            text_generator.generate(0, -56, descriptions[description_index], txt);
+            text_generator.set_left_alignment();
+            shown_description = description_index;
+        }
+
         bn::fixed intensity = MAX_DARK;
         if (f < FADE_IN)
             intensity = MAX_DARK * f / FADE_IN;

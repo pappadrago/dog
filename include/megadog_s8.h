@@ -64,7 +64,7 @@ namespace megadog_s8 {
     constexpr int enemies_count = sizeof(enemies) / sizeof(enemies[0]);
     constexpr door_def doors[] = {
         { 56, 384, 7, 1, 71 },  // entrata (col 3)
-        { 3000, 368, 1, 0, 81 },  // uscita finale (da sostituire con fine gioco) (col 187)
+        { 3000, 368, 9, 0, 81 },  // uscita (col 187)
     };
     constexpr int doors_count = sizeof(doors) / sizeof(doors[0]);
     constexpr scala_def scale[] = {

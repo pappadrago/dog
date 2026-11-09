@@ -1,7 +1,20 @@
 #include "schemi.h"
 #include "megadog_s1.h"
 #include "megadog_s2.h"
-#include "megadog_s3_s10.h"
+#include "megadog_s3.h"
+#include "megadog_s4.h"
+#include "megadog_s5.h"
+#include "megadog_s6.h"
+#include "megadog_s7.h"
+#include "megadog_s8.h"
+#include "megadog_s9.h"
+#include "megadog_s10.h"
+#include "megadog_s11.h"
+#include "megadog_s12.h"
+#include "megadog_s13.h"
+#include "megadog_s14.h"
+#include "megadog_s15.h"
+#include "megadog_s16.h"
 
 static constexpr int MAX_COLLISION_CELLE = 192 * 32;   // in tile di gioco (16px), non hardware
 static uint8_t s_collision_runtime[MAX_COLLISION_CELLE];
@@ -26,14 +39,21 @@ void imposta_collisione_rect(int x1, int y1, int x2, int y2, uint8_t value)
 constexpr schema_def schemi[] = {
     megadog_s1::make_schema_A(),
     megadog_s2::make_schema_A(),
-    megadog_s3_s10::make_schema_3(),
-    megadog_s3_s10::make_schema_4(),
-    megadog_s3_s10::make_schema_5(),
-    megadog_s3_s10::make_schema_6(),
-    megadog_s3_s10::make_schema_7(),
-    megadog_s3_s10::make_schema_8(),
-    megadog_s3_s10::make_schema_9(),
-    megadog_s3_s10::make_schema_10(),
+    megadog_s3::make_schema_A(),
+    megadog_s4::make_schema_A(),
+    megadog_s5::make_schema_A(),
+    megadog_s6::make_schema_A(),
+    megadog_s7::make_schema_A(),
+    megadog_s8::make_schema_A(),
+    megadog_s8::make_schema_A(),
+    megadog_s9::make_schema_A(),
+    megadog_s10::make_schema_A(),
+    megadog_s11::make_schema_A(),
+    megadog_s12::make_schema_A(),
+    megadog_s13::make_schema_A(),
+    megadog_s14::make_schema_A(),
+    megadog_s15::make_schema_A(),
+    megadog_s16::make_schema_A(),
 };
 constexpr int NUM_SCHEMI = sizeof(schemi) / sizeof(schemi[0]);
 
@@ -180,22 +200,20 @@ const collision_map_info& get_collision_map(int schema)
 
 static constexpr wind_def s_wind[NUM_SCHEMI] =
 {
-    { bn::fixed(0.3), bn::fixed(0.2) },   // s2
-    { bn::fixed(0),   bn::fixed(0)   },   // s1: niente vento
-    { bn::fixed(0),   bn::fixed(0)   },
-    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0),   bn::fixed(0) },
+    { bn::fixed(0),   bn::fixed(0) },
     { bn::fixed(0.2), bn::fixed(0.1) },
-    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0),   bn::fixed(0) },
     { bn::fixed(0.2), bn::fixed(0.1) },
-    { bn::fixed(0),   bn::fixed(0)   },
-    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0),   bn::fixed(0) },
+    { bn::fixed(0),   bn::fixed(0) },
     { bn::fixed(0.3), bn::fixed(0.2) },
 };
 
 const wind_def& get_schema_wind(int schema)
 {
     int i = schema - 1;
-    if(i < 0 || i >= NUM_SCHEMI) i = 0;
+    if (i < 0 || i >= NUM_SCHEMI) i = 0;
     return s_wind[i];
 }
 
