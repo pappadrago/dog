@@ -1,6 +1,7 @@
 #include "schemi.h"
 #include "megadog_s1.h"
 #include "megadog_s2.h"
+#include "megadog_s3_s10.h"
 
 static constexpr int MAX_COLLISION_CELLE = 192 * 32;   // in tile di gioco (16px), non hardware
 static uint8_t s_collision_runtime[MAX_COLLISION_CELLE];
@@ -25,6 +26,14 @@ void imposta_collisione_rect(int x1, int y1, int x2, int y2, uint8_t value)
 constexpr schema_def schemi[] = {
     megadog_s1::make_schema_A(),
     megadog_s2::make_schema_A(),
+    megadog_s3_s10::make_schema_3(),
+    megadog_s3_s10::make_schema_4(),
+    megadog_s3_s10::make_schema_5(),
+    megadog_s3_s10::make_schema_6(),
+    megadog_s3_s10::make_schema_7(),
+    megadog_s3_s10::make_schema_8(),
+    megadog_s3_s10::make_schema_9(),
+    megadog_s3_s10::make_schema_10(),
 };
 constexpr int NUM_SCHEMI = sizeof(schemi) / sizeof(schemi[0]);
 
@@ -173,6 +182,14 @@ static constexpr wind_def s_wind[NUM_SCHEMI] =
 {
     { bn::fixed(0.3), bn::fixed(0.2) },   // s2
     { bn::fixed(0),   bn::fixed(0)   },   // s1: niente vento
+    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0.2), bn::fixed(0.1) },
+    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0.2), bn::fixed(0.1) },
+    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0),   bn::fixed(0)   },
+    { bn::fixed(0.3), bn::fixed(0.2) },
 };
 
 const wind_def& get_schema_wind(int schema)

@@ -350,7 +350,20 @@ int main()
 
             //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
             //g_boss.emplace(360, 400, 10, boss_tipo::FLYER);
-            g_boss.emplace(400, 100, 10, boss_tipo::COWARD);
+            if(g_schema <= 2)
+            {
+                g_boss.emplace(400, 100, 10, boss_tipo::COWARD);
+            }
+            else if(g_boss.has_value())
+            {
+                if(g_healthbar->obj_target == &*g_boss)
+                {
+                    g_healthbar->obj_target = nullptr;
+                    g_healthbar->ticks = 0;
+                    g_healthbar->sprite->set_visible(false);
+                }
+                g_boss.reset();
+            }
             // Un frame di gioco (senza bn::core::update)
             auto game_step = [&]()
                 {
