@@ -7,6 +7,7 @@
 #include "bn_sprite_palettes.h"
 #include "bn_colors.h"
 #include "bn_sprite_text_generator.h"
+#include "bn_format.h"
 #include "bn_regular_bg_ptr.h"
 #include "bn_regular_bg_map_ptr.h"
 #include "bn_regular_bg_map_cell_info.h"
@@ -365,6 +366,7 @@ int main()
             }
 
             update_text_clear();
+            g_dog->show_str(bn::format<32>("vediamo lo schema {}", g_schema));
 
             update_camera(bg0, bg1, foreground, foregroundfg);
 
