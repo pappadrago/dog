@@ -73,6 +73,7 @@ namespace megadog_s1 {
         { 73, 14, 26, SCALA_CON_PIANO },
         { 109, 14, 26, SCALA_CON_PIANO },
         { 119, 8, 13, SCALA_CON_PIANO },
+        { 129, 8, 13, SCALA_CON_PIANO },
     };
     constexpr int scale_count = sizeof(scale) / sizeof(scale[0]);
     // snakes: nessuno

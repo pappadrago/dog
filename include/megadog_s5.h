@@ -61,10 +61,12 @@ namespace megadog_s5 {
     constexpr door_def doors[] = {
         { 56, 336, 4, 1, 41 },  // entrata (col 3)
         { 3000, 336, 6, 0, 51 },  // uscita (col 187)
+
     };
     constexpr int doors_count = sizeof(doors) / sizeof(doors[0]);
     constexpr scala_def scale[] = {
         { 20, 22, 30, SCALA_CON_PIANO },
+        { 108, 8, 21, SCALA_CON_PIANO },
     };
     constexpr int scale_count = sizeof(scale) / sizeof(scale[0]);
     constexpr snake_def snakes[] = {

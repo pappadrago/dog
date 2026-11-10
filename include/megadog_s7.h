@@ -139,11 +139,17 @@ namespace megadog_s7 {
 
     constexpr collision_map_info collision_map_info_s7 = { collision_map, collision_map_columns, collision_map_rows, collision_map_columns * 16, collision_map_rows * 16 };
 
+        constexpr trampolino_def trampolini[] = {
+        { 56<<4, 12<<4 },
+    };
+    constexpr int trampolini_count = sizeof(trampolini) / sizeof(trampolini[0]);
+ 
+
     constexpr schema_def make_schema_A()
     {
         return {
             nullptr, 0,
-            nullptr, 0,
+            trampolini, trampolini_count,
             nullptr, 0,
             items, items_count,
             nullptr, 0,

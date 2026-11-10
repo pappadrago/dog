@@ -71,6 +71,7 @@ namespace megadog_s4 {
     constexpr scala_def scale[] = {
         { 18, 21, 29, SCALA_CON_PIANO },
         { 56, 21, 29, SCALA_CON_PIANO },
+        { 126, 12, 20, SCALA_CON_PIANO },
     };
     constexpr int scale_count = sizeof(scale) / sizeof(scale[0]);
     // snakes: nessuno
