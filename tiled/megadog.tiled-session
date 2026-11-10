@@ -1,5 +1,5 @@
 {
-    "activeFile": "megadog_s3_template.tmx",
+    "activeFile": "megadog_s1.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -9,8 +9,12 @@
             "scaleInDock": 1
         },
         "/home/kids/gba/assets/farmer story bg.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 2,
             "scaleInEditor": 3
+        },
+        "/home/kids/gba/prendilo/assets/farmer story bg.tsx": {
+            "scaleInDock": 1
         },
         "Megadog_s1.tmx": {
             "scale": 2,
@@ -20,20 +24,28 @@
                 "y": 96.5
             }
         },
+        "backup/megadog_s1.tmx": {
+            "scale": 0.6048828125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 768.7439457539556,
+                "y": 256.24798191798516
+            }
+        },
         "megadog_s1.tmx": {
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 325,
-                "y": 434
+                "x": 361,
+                "y": 314
             }
         },
         "megadog_s10.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 212,
-                "y": 62
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s10_template.tmx": {
@@ -51,64 +63,64 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 198.5,
-                "y": 76.5
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s12.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 306.5,
-                "y": 137
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s13.tmx": {
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 212.99999999999997,
-                "y": 63.33333333333334
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s14.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 175,
-                "y": 67
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s15.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 421.33333333333337,
-                "y": 110
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s16.tmx": {
-            "scale": 0.39892578125,
+            "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536.6266829865358,
-                "y": 255.686658506732
+                "x": 20,
+                "y": 65.66666666666667
             }
         },
         "megadog_s2.tmx": {
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 381,
-                "y": -220
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s3.tmx": {
             "scale": 0.7601236979166667,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 259.1683439681384,
-                "y": 256.53719326795425
+                "x": 1536.5920089075414,
+                "y": 256.5371932679542
             }
         },
         "megadog_s3_template.tmx": {
@@ -126,8 +138,8 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 183,
-                "y": -20
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s4_template.tmx": {
@@ -145,8 +157,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 346,
-                "y": 102.66666666666669
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s5_template.tmx": {
@@ -164,8 +176,8 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 105.5,
-                "y": 96
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s6_template.tmx": {
@@ -183,8 +195,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 384.66666666666663,
-                "y": -12.666666666666629
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s7_template.tmx": {
@@ -202,8 +214,8 @@
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 503,
-                "y": 372
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s8_template.tmx": {
@@ -221,8 +233,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 139.33333333333331,
-                "y": 90
+                "x": 1536,
+                "y": 256
             }
         },
         "megadog_s9_template.tmx": {
@@ -245,32 +257,35 @@
     "map.tileWidth": 16,
     "map.width": 96,
     "openFiles": [
-        "/home/kids/gba/assets/farmer story bg.tsx",
-        "megadog_s1.tmx",
         "megadog_s2.tmx",
-        "megadog_s3_template.tmx",
-        "megadog_s4_template.tmx",
-        "megadog_s5_template.tmx",
-        "megadog_s9_template.tmx",
-        "megadog_s6_template.tmx",
-        "megadog_s8_template.tmx",
-        "megadog_s7_template.tmx",
-        "megadog_s10_template.tmx",
-        "megadog_s3.tmx"
+        "megadog_s1.tmx",
+        "megadog_s3.tmx",
+        "megadog_s4.tmx",
+        "megadog_s5.tmx",
+        "megadog_s6.tmx",
+        "megadog_s7.tmx",
+        "megadog_s8.tmx",
+        "megadog_s9.tmx",
+        "megadog_s10.tmx",
+        "megadog_s11.tmx",
+        "megadog_s12.tmx",
+        "megadog_s13.tmx",
+        "megadog_s14.tmx",
+        "megadog_s15.tmx"
     ],
     "project": "megadog.tiled-project",
     "recentFiles": [
-        "megadog_s1.tmx",
-        "megadog_s16.tmx",
+        "megadog_s2.tmx",
         "megadog_s15.tmx",
         "megadog_s14.tmx",
         "megadog_s13.tmx",
+        "megadog_s12.tmx",
         "megadog_s11.tmx",
         "megadog_s10.tmx",
         "megadog_s9.tmx",
-        "megadog_s12.tmx",
-        "/home/kids/gba/assets/farmer story bg.tsx",
         "megadog_s8.tmx",
-        "megadog_s7.tmx"
+        "megadog_s7.tmx",
+        "megadog_s6.tmx",
+        "megadog_s5.tmx"
     ]
 }

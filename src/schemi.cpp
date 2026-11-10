@@ -45,7 +45,6 @@ constexpr schema_def schemi[] = {
     megadog_s6::make_schema_A(),
     megadog_s7::make_schema_A(),
     megadog_s8::make_schema_A(),
-    megadog_s8::make_schema_A(),
     megadog_s9::make_schema_A(),
     megadog_s10::make_schema_A(),
     megadog_s11::make_schema_A(),
@@ -197,23 +196,31 @@ const collision_map_info& get_collision_map(int schema)
     return *S(schema).map_info;
 }
 
-
+// vento per schema (indice = schema - 1)
 static constexpr wind_def s_wind[NUM_SCHEMI] =
 {
-    { bn::fixed(0),   bn::fixed(0) },
-    { bn::fixed(0),   bn::fixed(0) },
-    { bn::fixed(0.2), bn::fixed(0.1) },
-    { bn::fixed(0),   bn::fixed(0) },
-    { bn::fixed(0.2), bn::fixed(0.1) },
-    { bn::fixed(0),   bn::fixed(0) },
-    { bn::fixed(0),   bn::fixed(0) },
-    { bn::fixed(0.3), bn::fixed(0.2) },
+    { bn::fixed(0), bn::fixed(0) },   // schema 1
+    { bn::fixed(0), bn::fixed(0) },   // schema 2
+    { bn::fixed(0), bn::fixed(0) },   // schema 3
+    { bn::fixed(0), bn::fixed(0) },   // schema 4
+    { bn::fixed(0.2), bn::fixed(0.15) },   // schema 5
+    { bn::fixed(0), bn::fixed(0) },   // schema 6
+    { bn::fixed(0.3), bn::fixed(0.25) },   // schema 7
+    { bn::fixed(0), bn::fixed(0) },   // schema 8
+    { bn::fixed(0), bn::fixed(0) },   // schema 9
+    { bn::fixed(0), bn::fixed(0) },   // schema 10
+    { bn::fixed(0), bn::fixed(0) },   // schema 11
+    { bn::fixed(0), bn::fixed(0) },   // schema 12
+    { bn::fixed(0.35), bn::fixed(0.3) },   // schema 13
+    { bn::fixed(0), bn::fixed(0) },   // schema 14
+    { bn::fixed(0), bn::fixed(0) },   // schema 15
+    { bn::fixed(0), bn::fixed(0) },   // schema 16
 };
 
 const wind_def& get_schema_wind(int schema)
 {
     int i = schema - 1;
-    if (i < 0 || i >= NUM_SCHEMI) i = 0;
+    if(i < 0 || i >= NUM_SCHEMI) i = 0;
     return s_wind[i];
 }
 
