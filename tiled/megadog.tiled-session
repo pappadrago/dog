@@ -1,5 +1,5 @@
 {
-    "activeFile": "megadog_s1.tmx",
+    "activeFile": "megadog_s2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -108,11 +108,11 @@
             }
         },
         "megadog_s2.tmx": {
-            "scale": 1,
+            "scale": 4,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 127.25,
+                "y": 31
             }
         },
         "megadog_s3.tmx": {
@@ -275,7 +275,6 @@
     ],
     "project": "megadog.tiled-project",
     "recentFiles": [
-        "megadog_s2.tmx",
         "megadog_s15.tmx",
         "megadog_s14.tmx",
         "megadog_s13.tmx",
@@ -286,6 +285,7 @@
         "megadog_s8.tmx",
         "megadog_s7.tmx",
         "megadog_s6.tmx",
-        "megadog_s5.tmx"
+        "megadog_s5.tmx",
+        "megadog_s4.tmx"
     ]
 }
