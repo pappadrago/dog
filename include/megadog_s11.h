@@ -25,11 +25,11 @@ namespace megadog_s11 {
     // casse: nessuno
     // trampolini: nessuno
     constexpr lava_zona_def lava[] = {
-        { 26, 26, 33, 26, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 46, 26, 54, 26, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 72, 26, 84, 26, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 124, 26, 130, 26, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 150, 26, 157, 26, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
+        { 26, 26, 33, 26, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 46, 26, 54, 26, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 72, 26, 84, 26, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 124, 26, 130, 26, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 150, 26, 157, 26, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
     };
     constexpr int lava_count = sizeof(lava) / sizeof(lava[0]);
     constexpr item_def items[] = {

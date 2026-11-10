@@ -25,11 +25,11 @@ namespace megadog_s14 {
     // casse: nessuno
     // trampolini: nessuno
     constexpr lava_zona_def lava[] = {
-        { 52, 28, 56, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 44, 18, 47, 18, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 46, 9, 52, 9, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 130, 28, 134, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 166, 18, 172, 18, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
+        { 52, 28, 56, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 44, 18, 47, 18, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 46, 9, 52, 9, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 130, 28, 134, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 166, 18, 172, 18, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
     };
     constexpr int lava_count = sizeof(lava) / sizeof(lava[0]);
     constexpr item_def items[] = {
@@ -46,8 +46,8 @@ namespace megadog_s14 {
     };
     constexpr int items_count = sizeof(items) / sizeof(items[0]);
     constexpr piattaforma_def piattaforme[] = {
-        { 100, 2, 100, 8, { 6,7,15,16 }, { 4, 5, 13, 14 }, 1, 141 },
-        { 150, 21, 150, 27, { 6,7,15,16 }, { 4, 5, 13, 14 }, 1, 142 },
+        { 100, 2, 100, 8, { PT_SOLID_TILE_TL,PT_SOLID_TILE_TR,PT_SOLID_TILE_BL,PT_SOLID_TILE_BR }, { PT_EMPTY_TILE_TL, PT_EMPTY_TILE_TR, PT_EMPTY_TILE_BL, PT_EMPTY_TILE_BR }, 1, 141 },
+        { 150, 21, 150, 27, { PT_SOLID_TILE_TL,PT_SOLID_TILE_TR,PT_SOLID_TILE_BL,PT_SOLID_TILE_BR }, { PT_EMPTY_TILE_TL, PT_EMPTY_TILE_TR, PT_EMPTY_TILE_BL, PT_EMPTY_TILE_BR }, 1, 142 },
     };
     constexpr int piattaforme_count = sizeof(piattaforme) / sizeof(piattaforme[0]);
     constexpr piattaforma_mobile_def piattaforme_mobili[] = {

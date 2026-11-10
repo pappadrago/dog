@@ -102,7 +102,7 @@ template<typename T, int N>
 constexpr int array_count(const T(&)[N]) { return N; }
 extern uint16_t g_powerup_pending;   // 0 = nessuna animazione; altrimenti l'attributo del power up raccolto
 
-#define MUSIC_ON 0
+#define MUSIC_ON 1
 
 #include "bn_regular_bg_ptr.h"
 

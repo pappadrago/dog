@@ -28,10 +28,10 @@ namespace megadog_s9 {
     constexpr int casse_count = sizeof(casse) / sizeof(casse[0]);
     // trampolini: nessuno
     constexpr lava_zona_def lava[] = {
-        { 31, 22, 36, 22, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 62, 28, 66, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 104, 10, 110, 10, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 162, 18, 167, 18, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
+        { 31, 22, 36, 22, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 62, 28, 66, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 104, 10, 110, 10, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 162, 18, 167, 18, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
     };
     constexpr int lava_count = sizeof(lava) / sizeof(lava[0]);
     constexpr item_def items[] = {
@@ -44,7 +44,7 @@ namespace megadog_s9 {
     };
     constexpr int items_count = sizeof(items) / sizeof(items[0]);
     constexpr piattaforma_def piattaforme[] = {
-        { 104, 10, 110, 10, { 6,7,15,16 }, { 4, 5, 13, 14 }, 0, 95 },
+        { 104, 10, 110, 10, { PT_SOLID_TILE_TL,PT_SOLID_TILE_TR,PT_SOLID_TILE_BL,PT_SOLID_TILE_BR }, { PT_EMPTY_TILE_TL, PT_EMPTY_TILE_TR, PT_EMPTY_TILE_BL, PT_EMPTY_TILE_BR }, 0, 95 },
     };
     constexpr int piattaforme_count = sizeof(piattaforme) / sizeof(piattaforme[0]);
     constexpr piattaforma_mobile_def piattaforme_mobili[] = {

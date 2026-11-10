@@ -28,10 +28,10 @@ namespace megadog_s3 {
     };
     constexpr int trampolini_count = sizeof(trampolini) / sizeof(trampolini[0]);
     constexpr lava_zona_def lava[] = {
-        { 28, 28, 31, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 44, 18, 46, 18, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 66, 18, 76, 18, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 160, 28, 166, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
+        { 28, 28, 31, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 44, 18, 46, 18, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 66, 18, 76, 18, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 160, 28, 166, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
     };
     constexpr int lava_count = sizeof(lava) / sizeof(lava[0]);
     constexpr item_def items[] = {
@@ -44,7 +44,7 @@ namespace megadog_s3 {
     };
     constexpr int items_count = sizeof(items) / sizeof(items[0]);
     constexpr piattaforma_def piattaforme[] = {
-        { 150, 21, 150, 27, { 6,7,15,16 }, { 4, 5, 13, 14 }, 1, 35 },
+        { 150, 21, 150, 27, { PT_SOLID_TILE_TL,PT_SOLID_TILE_TR,PT_SOLID_TILE_BL,PT_SOLID_TILE_BR }, { PT_EMPTY_TILE_TL, PT_EMPTY_TILE_TR, PT_EMPTY_TILE_BL, PT_EMPTY_TILE_BR }, 1, 35 },
     };
     constexpr int piattaforme_count = sizeof(piattaforme) / sizeof(piattaforme[0]);
     constexpr piattaforma_mobile_def piattaforme_mobili[] = {

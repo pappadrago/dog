@@ -5,6 +5,7 @@
 #include <cstdint>
 
 #define LAVA_TILE 13
+constexpr uint16_t LAVA_TILE_BOTTOM = 12;
 
 struct lava_zona_def
 {

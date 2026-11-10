@@ -25,9 +25,9 @@ namespace megadog_s6 {
     // casse: nessuno
     // trampolini: nessuno
     constexpr lava_zona_def lava[] = {
-        { 46, 28, 53, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 110, 28, 121, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
-        { 150, 28, 157, 28, { {1,2,12,12},{2,3,12,12} }, 2, 12, 15 },
+        { 46, 28, 53, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 110, 28, 121, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
+        { 150, 28, 157, 28, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
     };
     constexpr int lava_count = sizeof(lava) / sizeof(lava[0]);
     constexpr item_def items[] = {

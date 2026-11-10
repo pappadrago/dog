@@ -4,6 +4,16 @@
 #include "platform_map.h"
 #include <cstdint>
 
+constexpr uint16_t PT_SOLID_TILE_TL = 6;
+constexpr uint16_t PT_SOLID_TILE_TR = 7;
+constexpr uint16_t PT_SOLID_TILE_BL = 15;
+constexpr uint16_t PT_SOLID_TILE_BR = 16;
+
+constexpr uint16_t PT_EMPTY_TILE_TL = 4;
+constexpr uint16_t PT_EMPTY_TILE_TR = 5;
+constexpr uint16_t PT_EMPTY_TILE_BL = 13;
+constexpr uint16_t PT_EMPTY_TILE_BR = 14;
+
 struct piattaforma_def
 {
     int16_t  tile_x1, tile_y1, tile_x2, tile_y2;

@@ -184,13 +184,35 @@ int main()
 
         int arrival_door = -1;   // -1 = prima partita: il cane resta dove nasce
         bool game_over = false;
-        if (MUSIC_ON == 1)
-            bn::music_items::brimble_superfrog_world_1.play(0.25);
+
         while (!game_over)
         {
             // ------------------------------------------------------------
             // Caricamento dello schema corrente
             // ------------------------------------------------------------
+
+            if (MUSIC_ON == 1) {
+                int n = g_schema % 5;
+                switch (n)
+                {
+                case 0:
+                    bn::music_items::brimble_superfrog_world_1.play(0.25);
+                    break;
+                case 1:
+                    bn::music_items::brimble_superfrog_world_3.play(0.25);
+                    break;
+                case 2:
+                    bn::music_items::brimble_superfrog_world_5.play(0.25);
+                    break;
+                case 3:
+                    bn::music_items::brimble_superfrog_world_6.play(0.25);
+                    break;
+                default:
+                    bn::music_items::superfrog_projectf.play(0.25);
+                    break;
+                }
+            }
+
             // Sfondi dello schema: parallasse (bg0, bg1), livello tile e primo piano
             bn::regular_bg_ptr bg0 = create_schema_bg0(g_schema);
             bn::regular_bg_ptr bg1 = create_schema_bg1(g_schema);
@@ -350,13 +372,13 @@ int main()
 
             //        g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
             //g_boss.emplace(360, 400, 10, boss_tipo::FLYER);
-            if(g_schema <= 2)
+            if (g_schema <= 2)
             {
                 g_boss.emplace(400, 100, 10, boss_tipo::COWARD);
             }
-            else if(g_boss.has_value())
+            else if (g_boss.has_value())
             {
-                if(g_healthbar->obj_target == &*g_boss)
+                if (g_healthbar->obj_target == &*g_boss)
                 {
                     g_healthbar->obj_target = nullptr;
                     g_healthbar->ticks = 0;
@@ -546,6 +568,7 @@ int main()
                 oggetti_percorso,
                 *g_trampolini,
                 *g_casse,
+                *g_scale,
                 *g_piattaforme,
                 *g_piattaforme_mobili,
                 *g_lava,
