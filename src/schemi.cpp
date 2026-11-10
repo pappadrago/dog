@@ -1,4 +1,6 @@
 #include "schemi.h"
+#include "globals.h"
+#include "boss.h"
 #include "megadog_s1.h"
 #include "megadog_s2.h"
 #include "megadog_s3.h"
@@ -235,4 +237,30 @@ const ground_friction_def* get_ground_friction_override(int schema, int tile_x, 
             return &friction;
     }
     return nullptr;
+}
+
+// Genera il boss dello schema indicato (coordinate in px mondo; il boss cade fino a terra).
+// Gli schemi senza boss lasciano g_boss vuoto. Da chiamare dopo aver caricato lo schema,
+// al posto del vecchio g_boss.emplace(...) in main.cpp.
+void spawn_boss_schema(int schema)
+{
+    g_boss.reset();
+
+    switch (schema)
+    {
+    case 4:    // Ghiaccio: terrazza bassa prima dell'uscita
+        g_boss.emplace(172 * 16, 17 * 16, 10, boss_tipo::COWARD);
+        break;
+    case 8:    // Castello: sala in basso a destra
+        g_boss.emplace(165 * 16, 22 * 16, 12, boss_tipo::BOMBER);
+        break;
+    case 12:   // Vulcano: ultima terrazza
+        g_boss.emplace(166 * 16, 14 * 16, 14, boss_tipo::SUMMONER);
+        break;
+    case 16:   // Torre finale: arena nel piano alto
+        g_boss.emplace(165 * 16, 4 * 16, 16, boss_tipo::FLYER);
+        break;
+    default:
+        break;
+    }
 }

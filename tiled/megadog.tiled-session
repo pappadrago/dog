@@ -111,8 +111,8 @@
             "scale": 4,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 127.25,
-                "y": 31
+                "x": 1548,
+                "y": 256
             }
         },
         "megadog_s3.tmx": {
@@ -275,6 +275,7 @@
     ],
     "project": "megadog.tiled-project",
     "recentFiles": [
+        "/home/kids/gba/assets/farmer story bg.tsx",
         "megadog_s15.tmx",
         "megadog_s14.tmx",
         "megadog_s13.tmx",
@@ -285,7 +286,6 @@
         "megadog_s8.tmx",
         "megadog_s7.tmx",
         "megadog_s6.tmx",
-        "megadog_s5.tmx",
-        "megadog_s4.tmx"
+        "megadog_s5.tmx"
     ]
 }
