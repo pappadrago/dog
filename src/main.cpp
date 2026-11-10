@@ -8,7 +8,6 @@
 #include "bn_colors.h"
 #include "bn_sprite_text_generator.h"
 #include "bn_regular_bg_ptr.h"
-#include "bn_regular_bg_items_s1.h"
 #include "bn_regular_bg_map_ptr.h"
 #include "bn_regular_bg_map_cell_info.h"
 #include "bn_memory.h"
@@ -192,7 +191,7 @@ int main()
             // ------------------------------------------------------------
 
             if (MUSIC_ON == 1) {
-                int n = g_schema % 5;
+                int n = g_schema % 6;
                 switch (n)
                 {
                 case 0:
@@ -207,6 +206,10 @@ int main()
                 case 3:
                     bn::music_items::brimble_superfrog_world_6.play(0.25);
                     break;
+                case 4:
+                    bn::music_items::turrican_ii.play(0.25);
+                    break;
+                case 5:
                 default:
                     bn::music_items::superfrog_projectf.play(0.25);
                     break;
