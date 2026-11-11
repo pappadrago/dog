@@ -36,8 +36,8 @@
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2629,
-                "y": 314
+                "x": -102,
+                "y": 209
             }
         },
         "megadog_s10.tmx": {
@@ -112,15 +112,15 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1548,
-                "y": 256
+                "y": 286
             }
         },
         "megadog_s3.tmx": {
             "scale": 0.7601236979166667,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536.5920089075414,
-                "y": 256.5371932679542
+                "x": 1536.5920089075412,
+                "y": 256.53719326795425
             }
         },
         "megadog_s3_template.tmx": {
@@ -275,17 +275,17 @@
     ],
     "project": "megadog.tiled-project",
     "recentFiles": [
-        "/home/kids/gba/assets/farmer story bg.tsx",
-        "megadog_s15.tmx",
-        "megadog_s14.tmx",
-        "megadog_s13.tmx",
-        "megadog_s12.tmx",
-        "megadog_s11.tmx",
-        "megadog_s10.tmx",
-        "megadog_s9.tmx",
-        "megadog_s8.tmx",
-        "megadog_s7.tmx",
+        "megadog_s16.tmx",
+        "megadog_s1.tmx",
+        "megadog_s2.tmx",
+        "megadog_s3.tmx",
+        "megadog_s4.tmx",
+        "megadog_s5.tmx",
         "megadog_s6.tmx",
-        "megadog_s5.tmx"
+        "megadog_s7.tmx",
+        "megadog_s8.tmx",
+        "megadog_s9.tmx",
+        "megadog_s10.tmx",
+        "megadog_s11.tmx"
     ]
 }
