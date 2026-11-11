@@ -27,7 +27,7 @@ namespace megadog_s1 {
     };
     constexpr int casse_count = sizeof(casse) / sizeof(casse[0]);
     constexpr trampolino_def trampolini[] = {
-        { 134<<4, 12<<4 },
+        { 992, 216 },  // col 62: deviazione facoltativa
     };
     constexpr int trampolini_count = sizeof(trampolini) / sizeof(trampolini[0]);
     constexpr lava_zona_def lava[] = {
