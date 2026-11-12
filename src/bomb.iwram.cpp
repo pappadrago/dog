@@ -93,7 +93,7 @@ BN_CODE_IWRAM void bomb::update()
     }
 
 
-    bool hit = check_collision_16(*sprite);
+    bool hit = check_collision_16(*this);
     if (hit)
     {
         switch (tipoProjec) {

@@ -489,7 +489,7 @@ void dog::update()
     {
         if (!_item->active) continue;
 
-        bool hit = check_collision_16(*_item->sprite);
+        bool hit = check_collision_16(*_item);
 
         if (_item->tipo == ITEM_TIPO_INTERRUTTORE)
         {

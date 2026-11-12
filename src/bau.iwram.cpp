@@ -36,8 +36,8 @@ BN_CODE_IWRAM void bau::update()
     {
         if (enem->invulnerability > 0 || enem->is_dead()) continue;
 
-bool hit = bn::abs(enem->chr_x - chr_x) < reach &&
-           bn::abs(enem->chr_y - chr_y) < reach;
+        bool hit = bn::abs(enem->chr_x - chr_x) < reach &&
+            bn::abs(enem->chr_y - chr_y) < reach;
         if (hit)
         {
             enem->beHitByBark(enem->chr_x < g_dog->chr_x ? DIR_LEFT : DIR_RIGHT, power);

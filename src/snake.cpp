@@ -240,9 +240,12 @@ void snake::check_dog()
     if (g_dog->invulnerability > 0)
         return;
 
+    obj segment;
     for (int k = 0; k < SNAKE_SEGMENTS; ++k)
     {
-        if (check_collision_16(_segs[k]))
+        segment.chr_x = _x[k];
+        segment.chr_y = _y[k];
+        if (check_collision_16(segment))
         {
             g_dog->dog_damage_and_jump(contact_damage, g_dog->chr_x < _x[k]);
             return;
