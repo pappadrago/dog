@@ -38,6 +38,6 @@ void bau::do_spawn(int charge)
     ticks = 30;
 
     sprite.set_scale(bn::fixed(1) + power.multiplication(bn::fixed(0.75)));
-
+sprite.set_position(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H);
     sprite.set_visible(true);
 }
