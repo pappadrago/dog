@@ -58,6 +58,7 @@ namespace megadog_s2 {
         { enemy_tipo::MOVE_PATROL, enemy_attr::ATTR_NONE, 2376, 288, 80 },  // col 148
         { enemy_tipo::MOVE_STATIC, enemy_attr::ATTR_ARROW, 2824, 288, 80 },  // col 176
         { enemy_tipo::MOVE_PATROL, enemy_attr::ATTR_NONE, 2904, 288, 80 },  // col 181
+        { enemy_tipo::MOVE_PATROL, enemy_attr::ATTR_NONE, 1912, 296, 80 },  // platformize: nemico aggiunto
     };
     constexpr int enemies_count = sizeof(enemies) / sizeof(enemies[0]);
     constexpr door_def doors[] = {

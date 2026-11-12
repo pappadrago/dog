@@ -1,5 +1,5 @@
 {
-    "activeFile": "megadog_s2.tmx",
+    "activeFile": "megadog_s5.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -33,7 +33,7 @@
             }
         },
         "megadog_s1.tmx": {
-            "scale": 1,
+            "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1536,
@@ -111,7 +111,7 @@
             "scale": 4,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1548,
+                "x": 1536,
                 "y": 256
             }
         },
@@ -154,11 +154,11 @@
             "scaleInDock": 1
         },
         "megadog_s5.tmx": {
-            "scale": 1.5,
+            "scale": 0.125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 3376,
+                "y": -280
             }
         },
         "megadog_s5_template.tmx": {
@@ -275,17 +275,17 @@
     ],
     "project": "megadog.tiled-project",
     "recentFiles": [
-        "megadog_s16.tmx",
-        "megadog_s1.tmx",
         "megadog_s2.tmx",
+        "megadog_s1.tmx",
         "megadog_s3.tmx",
         "megadog_s4.tmx",
-        "megadog_s5.tmx",
-        "megadog_s6.tmx",
-        "megadog_s7.tmx",
-        "megadog_s8.tmx",
-        "megadog_s9.tmx",
+        "megadog_s15.tmx",
+        "megadog_s14.tmx",
+        "megadog_s13.tmx",
+        "megadog_s12.tmx",
+        "megadog_s11.tmx",
         "megadog_s10.tmx",
-        "megadog_s11.tmx"
+        "megadog_s9.tmx",
+        "megadog_s8.tmx"
     ]
 }
