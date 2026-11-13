@@ -28,6 +28,7 @@
 #include "bn_regular_bg_items_megadog.h"
 
 #include "globals.h"
+#include "save_data.h"
 #include "game_constants.h"
 #include "hud.h"
 #include "bau.h"
@@ -146,7 +147,8 @@ void show_intro_screen()
 int main()
 {
     bn::core::init();
-    if (MUSIC_ON == 1)
+    g_music_on = carica_salvataggio().musica_attiva;
+    if (g_music_on)
         bn::music_items::superfrog_title.play(0.25);
     show_intro_screen();
 
@@ -191,7 +193,7 @@ int main()
             // Caricamento dello schema corrente
             // ------------------------------------------------------------
 
-            if (MUSIC_ON == 1) {
+            if (g_music_on) {
                 int n = g_schema % 6;
                 switch (n)
                 {

@@ -4,17 +4,27 @@
 
 save_data carica_salvataggio()
 {
-    save_data dati;
-    bn::sram::read(dati);
+    save_data_v1 dati_v1{};
+    bn::sram::read(dati_v1);
 
-    if (dati.magic != SAVE_MAGIC)   // prima esecuzione, o salvataggio di un formato precedente
+    if (dati_v1.magic == SAVE_MAGIC)
     {
-        dati.magic = SAVE_MAGIC;
-        for (int i = 0; i < NUM_MONDI; i++)
-            dati.mondo_sconfitto[i] = false;
-        bn::sram::write(dati);
+        save_data dati{};
+        bn::sram::read(dati);
+        return dati;
     }
 
+    save_data dati{};
+    dati.magic = SAVE_MAGIC;
+    dati.musica_attiva = true;
+
+    if (dati_v1.magic == SAVE_MAGIC_V1)
+    {
+        for (int i = 0; i < NUM_MONDI; i++)
+            dati.mondo_sconfitto[i] = dati_v1.mondo_sconfitto[i];
+    }
+
+    bn::sram::write(dati);
     return dati;
 }
 
@@ -23,6 +33,13 @@ void segna_mondo_sconfitto(int mondo)
     save_data dati = carica_salvataggio();
     if (mondo >= 0 && mondo < NUM_MONDI)
         dati.mondo_sconfitto[mondo] = true;
+    bn::sram::write(dati);
+}
+
+void salva_musica(bool attiva)
+{
+    save_data dati = carica_salvataggio();
+    dati.musica_attiva = attiva;
     bn::sram::write(dati);
 }
 

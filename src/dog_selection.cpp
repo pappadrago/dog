@@ -9,7 +9,9 @@
 #include "bn_regular_bg_ptr.h"
 #include "bn_regular_bg_items_cover.h"
 #include "bn_regular_bg_items_bg_s1.h"
+#include "bn_music.h"
 #include "globals.h"
+#include "save_data.h"
 
 namespace
 {
@@ -66,6 +68,14 @@ void dog_selection_screen(bn::sprite_text_generator& text_generator)
     bn::vector<bn::sprite_ptr, 32> txt_sprites;
     text_generator.set_center_alignment();
     text_generator.generate(0, 0, "premi START per iniziare", txt_sprites);
+    bn::vector<bn::sprite_ptr, 32> music_txt_sprites;
+    auto aggiorna_testo_musica = [&]()
+        {
+            music_txt_sprites.clear();
+            text_generator.generate(0, 16, g_music_on ? "musica: ON (SELECT)" : "musica: OFF (SELECT)",
+                music_txt_sprites);
+        };
+    aggiorna_testo_musica();
 
     bn::regular_bg_ptr bg0 = bn::regular_bg_items::bg_s1.create_bg(0);
     bn::regular_bg_ptr bg1 = bn::regular_bg_items::bg_s1.create_bg(1);
@@ -140,6 +150,17 @@ void dog_selection_screen(bn::sprite_text_generator& text_generator)
 
         if (bn::keypad::start_pressed())
             return;
+
+        if (bn::keypad::select_pressed())
+        {
+            g_music_on = !g_music_on;
+            salva_musica(g_music_on);
+            if (g_music_on)
+                bn::music_items::superfrog_title.play(0.25);
+            else
+                bn::music::stop();
+            aggiorna_testo_musica();
+        }
 
         int n = g_rng.get_int();
         n++;

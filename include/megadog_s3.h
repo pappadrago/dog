@@ -40,10 +40,10 @@ namespace megadog_s3 {
     constexpr int lava_count = sizeof(lava) / sizeof(lava[0]);
     constexpr item_def items[] = {
         { ITEM_TIPO_ENERGIA, 30, 264, 372 },  // spostato: C cassa
-        { ITEM_TIPO_POWERUP, POWERUP_DOPPIO_SALTO, 2488, 356 },  // spostato: B trampolino
+        { ITEM_TIPO_POWERUP, POWERUP_DOPPIO_SALTO, 34<<4, 12<<4 },  // spostato: B trampolino
         { ITEM_TIPO_ENERGIA, 30, 1736, 276 },  // col 108
         { ITEM_TIPO_INTERRUTTORE, 35, 2024, 132 },  // col 126
-        { ITEM_TIPO_CHIAVE, 31, 2120, 132 },  // col 132
+        { ITEM_TIPO_CHIAVE, 31, 2120, 132 },  // col 132 
         { ITEM_TIPO_ENERGIA, 30, 1768, 436 },  // col 110
     };
     constexpr int items_count = sizeof(items) / sizeof(items[0]);

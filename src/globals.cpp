@@ -17,6 +17,7 @@
 
 
 uint16_t g_powerup_pending = 0;
+bool g_music_on = true;
 
 bn::random g_rng;
 bn::optional<bn::camera_ptr> g_camera;
