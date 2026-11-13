@@ -36,16 +36,16 @@
             "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 2540,
+                "y": 1068
             }
         },
         "megadog_s10.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1661.5,
+                "y": 357.5
             }
         },
         "megadog_s10_template.tmx": {
@@ -63,40 +63,40 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1661.5,
+                "y": 357.5
             }
         },
         "megadog_s12.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1661.5,
+                "y": 357.5
             }
         },
         "megadog_s13.tmx": {
             "scale": 3,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1619.6666666666665,
+                "y": 323.66666666666663
             }
         },
         "megadog_s14.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1661.5,
+                "y": 357.5
             }
         },
         "megadog_s15.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1703.3333333333333,
+                "y": 391.33333333333326
             }
         },
         "megadog_s16.tmx": {
@@ -111,16 +111,16 @@
             "scale": 4,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1610.75,
+                "y": 306.75
             }
         },
         "megadog_s3.tmx": {
             "scale": 0.7601236979166667,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536.5920089075414,
-                "y": 256.5371932679542
+                "x": 1866.8014217806517,
+                "y": 523.5989893366451
             }
         },
         "megadog_s3_template.tmx": {
@@ -138,8 +138,8 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1661.5,
+                "y": 357.5
             }
         },
         "megadog_s4_template.tmx": {
@@ -176,8 +176,8 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1661.5,
+                "y": 357.5
             }
         },
         "megadog_s6_template.tmx": {
@@ -195,8 +195,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1703.3333333333333,
+                "y": 391.33333333333326
             }
         },
         "megadog_s7_template.tmx": {
@@ -214,8 +214,8 @@
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1787,
+                "y": 459
             }
         },
         "megadog_s8_template.tmx": {
@@ -233,8 +233,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1536,
-                "y": 256
+                "x": 1703.3333333333333,
+                "y": 391.33333333333326
             }
         },
         "megadog_s9_template.tmx": {
