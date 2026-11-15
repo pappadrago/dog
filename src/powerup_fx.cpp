@@ -10,6 +10,10 @@
 #include "bn_optional.h"
 #include "bn_sprite_ptr.h"
 #include "bn_sprite_palette_ptr.h"
+#include "bn_sprite_palette_item.h"
+#include "bn_sprite_tiles_ptr.h"
+#include "bn_sprite_shape_size.h"
+#include "bn_bpp_mode.h"
 #include "bn_keypad.h"
 // nuovo asset (vedi sotto)
 #include "bn_sprite_items_enemies.h"
@@ -156,36 +160,11 @@ void pause_game(bn::sprite_text_generator& text_generator)
     text_generator.generate(0, -20, "IN PAUSA", txt);
     text_generator.set_left_alignment();
 
-    constexpr int MAP_COLUMNS = 28;
-    constexpr int MAP_ROWS = 6;
-    char map[MAP_ROWS][MAP_COLUMNS];
-    for (int y = 0; y < MAP_ROWS; y++)
-        for (int x = 0; x < MAP_COLUMNS; x++)
-            map[y][x] = ' ';
-
+    constexpr int MAP_WIDTH = 192;
+    constexpr int MAP_HEIGHT = 32;
+    constexpr int SPRITE_WIDTH = 64;
+    constexpr int TILES_PER_SPRITE = 32;
     const collision_map_info& collision = get_collision_map(g_schema);
-    for (int y = 0; y < MAP_ROWS; y++)
-    {
-        int tile_y_start = y * collision.rows / MAP_ROWS;
-        int tile_y_end = (y + 1) * collision.rows / MAP_ROWS;
-        for (int x = 0; x < MAP_COLUMNS; x++)
-        {
-            int tile_x_start = x * collision.columns / MAP_COLUMNS;
-            int tile_x_end = (x + 1) * collision.columns / MAP_COLUMNS;
-            for (int tile_y = tile_y_start; tile_y < tile_y_end; tile_y++)
-            {
-                for (int tile_x = tile_x_start; tile_x < tile_x_end; tile_x++)
-                {
-                    int cell = tile_y * collision.columns + tile_x;
-                    bool solid = collision.data[cell] != 0;
-                    bool surface = tile_y == 0 || collision.data[cell - collision.columns] == 0;
-                    if (solid && surface)
-                        map[y][x] = '#';
-                }
-            }
-        }
-    }
-
     auto map_coordinate = [](int coordinate, int map_size, int cell_count)
     {
         int cell = coordinate * cell_count / map_size;
@@ -196,30 +175,83 @@ void pause_game(bn::sprite_text_generator& text_generator)
         return cell;
     };
 
-    int dog_x = map_coordinate(int(g_dog->chr_x), collision.map_w, MAP_COLUMNS);
-    int dog_y = map_coordinate(int(g_dog->chr_y), collision.map_h, MAP_ROWS);
-    map[dog_y][dog_x] = 'D';
+    int dog_x = map_coordinate(int(g_dog->chr_x), collision.map_w, MAP_WIDTH);
+    int dog_y = map_coordinate(int(g_dog->chr_y), collision.map_h, MAP_HEIGHT);
 
     int door_count = 0;
     const door_def* doors = get_schema_doors(g_schema, door_count);
+    int exit_x = -1;
+    int exit_y = -1;
     if (door_count > 0)
     {
         const door_def& exit = doors[door_count - 1];
-        int exit_x = map_coordinate(exit.x, collision.map_w, MAP_COLUMNS);
-        int exit_y = map_coordinate(exit.y, collision.map_h, MAP_ROWS);
-        map[exit_y][exit_x] = 'E';
+        exit_x = map_coordinate(exit.x, collision.map_w, MAP_WIDTH);
+        exit_y = map_coordinate(exit.y, collision.map_h, MAP_HEIGHT);
     }
 
-    bn::vector<bn::sprite_ptr, 128> minimap_sprites;
-    text_generator.set_center_alignment();
-    for (int y = 0; y < MAP_ROWS; y++)
+    constexpr bn::color minimap_colors[16] = {
+        bn::colors::black,
+        bn::color(0x2108),
+        bn::color(0x6318),
+        bn::colors::green,
+        bn::colors::red,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black,
+        bn::colors::black
+    };
+    const bn::sprite_palette_item minimap_palette_item(
+        bn::span<const bn::color>(minimap_colors), bn::bpp_mode::BPP_4);
+    bn::sprite_palette_ptr minimap_palette = minimap_palette_item.create_palette();
+    bn::vector<bn::sprite_ptr, 3> minimap_sprites;
+
+    for (int chunk = 0; chunk < MAP_WIDTH / SPRITE_WIDTH; chunk++)
     {
-        bn::string<MAP_COLUMNS + 1> line;
-        for (int x = 0; x < MAP_COLUMNS; x++)
-            line.push_back(map[y][x]);
-        text_generator.generate(0, 26 + y * 6, line, minimap_sprites);
+        bn::sprite_tiles_ptr tiles = bn::sprite_tiles_ptr::allocate(TILES_PER_SPRITE, bn::bpp_mode::BPP_4);
+        bn::span<bn::tile> tile_data = tiles.vram().value();
+        for (bn::tile& tile : tile_data)
+            for (uint32_t& row : tile.data)
+                row = 0;
+
+        for (int y = 0; y < MAP_HEIGHT; y++)
+        {
+            for (int local_x = 0; local_x < SPRITE_WIDTH; local_x++)
+            {
+                int x = chunk * SPRITE_WIDTH + local_x;
+                int tile_x = x * collision.columns / MAP_WIDTH;
+                int tile_y = y * collision.rows / MAP_HEIGHT;
+                int color_index = collision.data[tile_y * collision.columns + tile_x] ? 2 : 1;
+                if (x == dog_x && y == dog_y)
+                    color_index = 3;
+                if (x == exit_x && y == exit_y)
+                    color_index = 4;
+
+                int tile_index = (y / 8) * (SPRITE_WIDTH / 8) + local_x / 8;
+                int tile_row = y % 8;
+                int shift = (local_x % 8) * 4;
+                tile_data[tile_index].data[tile_row] |= uint32_t(color_index) << shift;
+            }
+        }
+
+        bn::sprite_ptr minimap = bn::sprite_ptr::create(
+            bn::fixed(-64 + chunk * SPRITE_WIDTH), bn::fixed(48),
+            bn::sprite_shape_size(SPRITE_WIDTH, MAP_HEIGHT),
+            tiles, minimap_palette);
+        minimap.set_bg_priority(0);
+        minimap.set_z_order(-64);
+        minimap_sprites.push_back(bn::move(minimap));
     }
-    text_generator.generate(0, 66, "D DOG   E USCITA", minimap_sprites);
+
+    bn::vector<bn::sprite_ptr, 16> minimap_legend;
+    text_generator.set_center_alignment();
+    text_generator.generate(0, 72, "D DOG   E USCITA", minimap_legend);
     text_generator.set_left_alignment();
 
     while (bn::keypad::start_held())
@@ -233,5 +265,6 @@ void pause_game(bn::sprite_text_generator& text_generator)
         p.set_fade_intensity(0);
 
     txt.clear();
+    minimap_legend.clear();
     minimap_sprites.clear();
 }
