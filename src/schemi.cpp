@@ -222,7 +222,7 @@ static constexpr wind_def s_wind[NUM_SCHEMI] =
 const wind_def& get_schema_wind(int schema)
 {
     int i = schema - 1;
-    if(i < 0 || i >= NUM_SCHEMI) i = 0;
+    if (i < 0 || i >= NUM_SCHEMI) i = 0;
     return s_wind[i];
 }
 
@@ -244,6 +244,8 @@ const ground_friction_def* get_ground_friction_override(int schema, int tile_x, 
 // al posto del vecchio g_boss.emplace(...) in main.cpp.
 void spawn_boss_schema(int schema)
 {
+    // g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
+    // g_boss.emplace(360, 400, 10, boss_tipo::FLYER);
     g_boss.reset();
 
     switch (schema)

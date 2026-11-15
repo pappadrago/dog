@@ -1,10 +1,12 @@
 #include "powerup_fx.h"
 #include "globals.h"
 #include "dog.h"
+#include "schemi.h"
 #include "bn_core.h"
 #include "bn_colors.h"
 #include "bn_bg_palettes.h"
 #include "bn_vector.h"
+#include "bn_string.h"
 #include "bn_optional.h"
 #include "bn_sprite_ptr.h"
 #include "bn_sprite_palette_ptr.h"
@@ -143,8 +145,6 @@ void powerup_freeze(bn::sprite_text_generator& text_generator)
 
 void pause_game(bn::sprite_text_generator& text_generator)
 {
-
-
     bn::vector<bn::sprite_palette_ptr, 16> palettes = getPalettes();
     bn::fixed intensity = bn::fixed(0.55);   // 1.0 = nero totale
     bn::bg_palettes::set_fade(bn::colors::black, intensity);   // tutti gli sfondi
@@ -154,6 +154,72 @@ void pause_game(bn::sprite_text_generator& text_generator)
     bn::vector<bn::sprite_ptr, 16> txt;
     text_generator.set_center_alignment();
     text_generator.generate(0, -20, "IN PAUSA", txt);
+    text_generator.set_left_alignment();
+
+    constexpr int MAP_COLUMNS = 28;
+    constexpr int MAP_ROWS = 6;
+    char map[MAP_ROWS][MAP_COLUMNS];
+    for (int y = 0; y < MAP_ROWS; y++)
+        for (int x = 0; x < MAP_COLUMNS; x++)
+            map[y][x] = ' ';
+
+    const collision_map_info& collision = get_collision_map(g_schema);
+    for (int y = 0; y < MAP_ROWS; y++)
+    {
+        int tile_y_start = y * collision.rows / MAP_ROWS;
+        int tile_y_end = (y + 1) * collision.rows / MAP_ROWS;
+        for (int x = 0; x < MAP_COLUMNS; x++)
+        {
+            int tile_x_start = x * collision.columns / MAP_COLUMNS;
+            int tile_x_end = (x + 1) * collision.columns / MAP_COLUMNS;
+            for (int tile_y = tile_y_start; tile_y < tile_y_end; tile_y++)
+            {
+                for (int tile_x = tile_x_start; tile_x < tile_x_end; tile_x++)
+                {
+                    int cell = tile_y * collision.columns + tile_x;
+                    bool solid = collision.data[cell] != 0;
+                    bool surface = tile_y == 0 || collision.data[cell - collision.columns] == 0;
+                    if (solid && surface)
+                        map[y][x] = '#';
+                }
+            }
+        }
+    }
+
+    auto map_coordinate = [](int coordinate, int map_size, int cell_count)
+    {
+        int cell = coordinate * cell_count / map_size;
+        if (cell < 0)
+            return 0;
+        if (cell >= cell_count)
+            return cell_count - 1;
+        return cell;
+    };
+
+    int dog_x = map_coordinate(int(g_dog->chr_x), collision.map_w, MAP_COLUMNS);
+    int dog_y = map_coordinate(int(g_dog->chr_y), collision.map_h, MAP_ROWS);
+    map[dog_y][dog_x] = 'D';
+
+    int door_count = 0;
+    const door_def* doors = get_schema_doors(g_schema, door_count);
+    if (door_count > 0)
+    {
+        const door_def& exit = doors[door_count - 1];
+        int exit_x = map_coordinate(exit.x, collision.map_w, MAP_COLUMNS);
+        int exit_y = map_coordinate(exit.y, collision.map_h, MAP_ROWS);
+        map[exit_y][exit_x] = 'E';
+    }
+
+    bn::vector<bn::sprite_ptr, 128> minimap_sprites;
+    text_generator.set_center_alignment();
+    for (int y = 0; y < MAP_ROWS; y++)
+    {
+        bn::string<MAP_COLUMNS + 1> line;
+        for (int x = 0; x < MAP_COLUMNS; x++)
+            line.push_back(map[y][x]);
+        text_generator.generate(0, 26 + y * 6, line, minimap_sprites);
+    }
+    text_generator.generate(0, 66, "D DOG   E USCITA", minimap_sprites);
     text_generator.set_left_alignment();
 
     while (bn::keypad::start_held())
@@ -167,4 +233,5 @@ void pause_game(bn::sprite_text_generator& text_generator)
         p.set_fade_intensity(0);
 
     txt.clear();
+    minimap_sprites.clear();
 }

@@ -21,6 +21,7 @@ namespace {
     constexpr bn::fixed ENEMY_CHASE_RANGE = bn::fixed(64);
     constexpr uint16_t ENEMY_JUMP_PERIOD = 90;
     constexpr uint16_t ENEMY_ATTACK_PERIOD = 120;
+    constexpr bn::fixed ENEMY_DEATH_RUN_SPEED = bn::fixed(3);
 }
 
 // genera un nuovo bonus item e lo droppa nel mondo
@@ -307,6 +308,7 @@ void enemy::update_attack()
 }
 
 void enemy::takeDamage(int damage) {
+    if (is_dead()) return;
     life -= damage;
     if (life <= 0) {
         die(-dir);
@@ -448,13 +450,15 @@ void enemy::beHitByShockwave(int _dir)
 
 void enemy::die(int _dir)
 {
+    if (is_dead()) return;
     vita_residua_ticks = 0;
     currentAction = ACTION_DEAD;
     deathTicks = ENEMY_DEATH_FRAMES;
     invulnerability = 0;
+    dir = g_dog->chr_x > chr_x ? DIR_LEFT : (g_dog->chr_x < chr_x ? DIR_RIGHT : -_dir);
     chr_accx = ZERO;
-    chr_vx = ENEMY_SMALL_JUMP_VY.multiplication(_dir);
-    chr_vy = ENEMY_MEDIUM_JUMP_VY;
+    chr_vx = ENEMY_DEATH_RUN_SPEED.multiplication(dir);
+    chr_vy = ZERO;
 
     sprite->set_visible(true);
 
@@ -464,37 +468,22 @@ void enemy::die(int _dir)
 
 void enemy::update_death()
 {
-    // l'enemy continua a seguire la fisica (parabola + rimbalzo sul terreno)
     chr_x += chr_vx;
-    apply_gravity();
-    apply_map();
-    if (onGround)
-        chr_vx = chr_vx.multiplication(bn::fixed(0.9));
+    //apply_map();
+    //apply_gravity();
 
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
+    sprite->set_horizontal_flip(dir == DIR_LEFT);
+    actionWalk->update();
 
     if (deathTicks > 0)
         deathTicks--;
-
-    // rotazione: gira nel verso in cui è stato colpito
-    int elapsed = ENEMY_DEATH_FRAMES - deathTicks;
-    sprite->set_rotation_angle_safe(bn::fixed(elapsed * (chr_vx >= 0 ? -31 : 31)));
-
-    // ultimi frame: si rimpicciolisce e lampeggia
-    if (deathTicks < ENEMY_DEATH_SHRINK)
-    {
-        bn::fixed s = bn::fixed(deathTicks) / ENEMY_DEATH_SHRINK;
-        if (s < bn::fixed(0.1)) s = bn::fixed(0.1);   // scala 0 non è valida
-        sprite->set_scale(s);
-        sprite->set_visible(deathTicks % 2);
-    }
 
     if (deathTicks == 0)
     {
         distrutto = true;
         sprite->set_visible(false);
-        sprite->remove_affine_mat();   // libera l'affine mat (sono solo 32 sulla GBA)
     }
 }
 

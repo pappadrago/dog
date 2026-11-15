@@ -79,7 +79,8 @@ void lava_zona::update()
 
     for (enemy* e : *g_enemies)
     {
-        if (e->distrutto) continue;
+        if (e->distrutto || e->is_dead()) continue;
+
         if (dentro(e->chr_x, e->chr_y + 6))
         {
             e->takeDamage(e->life);

@@ -511,8 +511,6 @@ void dog::update()
         for (enemy* enem : *g_enemies)
         {
             if (enem->invulnerability == 0 && !enem->is_dead()) {
-
-
                 if (ground_pound_engaged && enem->currentAction != ACTION_ATTACK) {
                     bool hit = check_collision_16(*enem);
                     if (hit)
@@ -532,11 +530,7 @@ void dog::update()
                     dog_damage_and_jump(1, chr_x < enem->chr_x);
                 }
             }
-
-
         }
-
-
 
         if (g_boss.has_value() && g_boss->invulnerability == 0)
         {
@@ -561,7 +555,6 @@ void dog::update()
 
     if (atterrato_ora && velocita_atterraggio > VELOCITA_VY_CADUTA_DURA)
     {
-
         actionAtterraggio->reset();
         atterraggio_anim_ticks = ATTERRAGGIO_ANIM_TICKS;
 
@@ -594,7 +587,6 @@ void dog::update()
     {
         stordito_ticks = STORDIMENTO_CADUTA_TICKS;
         start_polvere_anim(chr_x - HALF_SCREEN_W, chr_y + 4 - HALF_SCREEN_H, false, true, 0);
-
     }
 
     if (wall_jump_anim_ticks == 0 && dash_ticks == 0) {
@@ -605,7 +597,7 @@ void dog::update()
             if (polvere_anim->done())
                 start_polvere_anim(chr_x - HALF_SCREEN_W + dir * 8, chr_y + 4 - HALF_SCREEN_H, false, false, 0);
         }
-        else if(onGround && runningExtraSpeed>0 && chr_vx != 0){
+        else if (onGround && runningExtraSpeed > 0 && chr_vx != 0) {
             if (polvere_anim->done())
                 start_polvere_anim(chr_x - HALF_SCREEN_W - (dir << 3), chr_y + 4 - HALF_SCREEN_H, false, false, 0);
         }

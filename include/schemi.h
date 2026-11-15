@@ -93,3 +93,6 @@ struct schema_def
     const oggetto_percorso_def* oggetti_percorso; int oggetti_percorso_count;
     const ground_friction_def* ground_frictions; int ground_frictions_count;
 };
+
+
+void spawn_boss_schema(int schema);
