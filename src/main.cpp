@@ -247,6 +247,9 @@ int main()
 
             int n_doors = 0;
             const door_def* doorDef = get_schema_doors(g_schema, n_doors);
+            item* boss_key_drop = nullptr;
+            bool has_boss_exit = schema_has_boss(g_schema) && n_doors > 0;
+            uint8_t boss_exit_key_id = has_boss_exit ? doorDef[n_doors - 1].id : 0;
 
             bn::vector<door*, MAX_DOORS> doors;
             for (int i = 0; i < n_doors; ++i)
@@ -339,6 +342,13 @@ int main()
                         }
                     }
                     item* new_item = new item(defs[i]);
+                    if (has_boss_exit && defs[i].tipo == ITEM_TIPO_CHIAVE &&
+                        defs[i].attributo == boss_exit_key_id && !boss_key_drop)
+                    {
+                        new_item->active = false;
+                        new_item->sprite->set_visible(false);
+                        boss_key_drop = new_item;
+                    }
                     g_items->push_back(new_item);
                 }
             }
@@ -492,6 +502,11 @@ int main()
                         g_boss->update();
                         if (g_boss->distrutto)
                         {
+                            if (boss_key_drop)
+                            {
+                                boss_key_drop->drop_at(g_boss->chr_x, g_boss->chr_y, true);
+                                boss_key_drop = nullptr;
+                            }
                             if (g_healthbar->obj_target == &*g_boss)
                             {
                                 g_healthbar->obj_target = nullptr;

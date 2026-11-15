@@ -242,6 +242,20 @@ const ground_friction_def* get_ground_friction_override(int schema, int tile_x, 
 // Genera il boss dello schema indicato (coordinate in px mondo; il boss cade fino a terra).
 // Gli schemi senza boss lasciano g_boss vuoto. Da chiamare dopo aver caricato lo schema,
 // al posto del vecchio g_boss.emplace(...) in main.cpp.
+bool schema_has_boss(int schema)
+{
+    switch (schema)
+    {
+    case 4:
+    case 8:
+    case 12:
+    case 16:
+        return true;
+    default:
+        return false;
+    }
+}
+
 void spawn_boss_schema(int schema)
 {
     // g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);

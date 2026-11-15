@@ -95,4 +95,5 @@ struct schema_def
 };
 
 
+bool schema_has_boss(int schema);
 void spawn_boss_schema(int schema);

@@ -32,7 +32,7 @@ static void spawn_drop(bn::fixed x, bn::fixed y)
     // riusa un drop inattivo, altrimenti ne crea uno nuovo se c'è posto
     // nel vettore g_items
     for (item* i : *g_items)
-        if (i->is_drop && !i->active) { it = i; break; }
+        if (i->is_drop && !i->active && i->tipo == ITEM_TIPO_ENERGIA) { it = i; break; }
 
     if (!it)
     {

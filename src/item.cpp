@@ -61,7 +61,7 @@ void item::update()
 }
 
 void item::update_physics() {
-    if (is_drop && ticks2action == 0) {
+    if (is_drop && !drop_permanent && ticks2action == 0) {
         if (++animAngle >= DROP_LIFETIME) {
             hide_and_finish();
             return;
@@ -95,7 +95,7 @@ void item::update_graphics() {
         return;
     }
 
-    bool drop_lifetime_active = is_drop && ticks2action == 0;
+    bool drop_lifetime_active = is_drop && !drop_permanent && ticks2action == 0;
     if (!drop_lifetime_active)
         animAngle++;
     bn::fixed dy = 0;
@@ -176,17 +176,19 @@ void item::raccogli()
 }
 
 
-void item::drop_at(bn::fixed x, bn::fixed y)
+void item::drop_at(bn::fixed x, bn::fixed y, bool permanent)
 {
     is_drop = true;
     active = true;
+    drop_permanent = permanent;
     chr_x = x;
     chr_y = y;
     chr_vx = ZERO;
     chr_vy = BIG_JUMP_VY;
     ticks2action = 0;
     animAngle = 0;
-    sprite->set_tiles(bn::sprite_items::items.tiles_item(), g_rng.get_int(10));
+    int tile = tipo == ITEM_TIPO_CHIAVE ? TILE_CHIAVE : g_rng.get_int(10);
+    sprite->set_tiles(bn::sprite_items::items.tiles_item(), tile);
     sprite->set_position(x - HALF_SCREEN_W, y - HALF_SCREEN_H);
     sprite->set_scale(1);
     sprite->set_visible(true);

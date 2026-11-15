@@ -43,6 +43,7 @@ public:
 
     bool is_drop = false;   // item lasciato da un nemico
     bool active = true;    // false = slot libero (solo per i drop)
+    bool drop_permanent = false;
     uint16_t animAngle = 0;
     bn::vector<bn::sprite_ptr, 4> numero_sprites;
 
@@ -54,7 +55,7 @@ public:
 
     // Applica l'effetto (chiave/powerup/energia) e marca l'item come raccolto.
     void raccogli();
-    void drop_at(bn::fixed x, bn::fixed y);
+    void drop_at(bn::fixed x, bn::fixed y, bool permanent = false);
     bool colpito_da_bau(bn::fixed power);
     uint8_t stato = 0;          // solo SBLOCCO: 0 = spento, 1 = attivo
     bool    dog_sopra = false;  // solo SBLOCCO: dog era in contatto nel frame precedente
