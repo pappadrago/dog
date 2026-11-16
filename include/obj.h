@@ -30,6 +30,7 @@ public:
 
     bn::fixed chr_y = 512 - 200;
     bn::fixed chr_x = 100;
+    bn::fixed chr_y_precedente = ZERO;
     bn::fixed chr_vy = ZERO;
     bn::fixed chr_accx = ZERO;
     bn::fixed chr_vx = ZERO;

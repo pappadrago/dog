@@ -6,6 +6,7 @@
 #include "bn_core.h"
 #include "bn_colors.h"
 #include "bn_bg_palettes.h"
+#include "bn_format.h"
 #include "bn_vector.h"
 #include "bn_string.h"
 #include "bn_optional.h"
@@ -156,9 +157,9 @@ void pause_game(bn::sprite_text_generator& text_generator)
     for (bn::sprite_palette_ptr& p : palettes)
         p.set_fade(bn::colors::black, intensity);
 
-    bn::vector<bn::sprite_ptr, 16> txt;
+    bn::vector<bn::sprite_ptr, 24> txt;
     text_generator.set_center_alignment();
-    text_generator.generate(0, -20, "IN PAUSA", txt);
+    text_generator.generate(0, -20, bn::format<32>("IN PAUSA - SCHEMA {}", g_schema), txt);
     text_generator.set_left_alignment();
 
     constexpr int MAP_WIDTH = 192;

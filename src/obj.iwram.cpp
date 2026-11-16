@@ -45,6 +45,7 @@ BN_CODE_IWRAM void live_obj::apply_gravity()
 {
     const collision_map_info& map = get_collision_map(g_schema);
 
+    chr_y_precedente = chr_y;
     atterrato_ora = false;
     testata_ora = false;
     chr_vy += GRAVITY;

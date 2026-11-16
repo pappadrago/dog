@@ -114,7 +114,11 @@ bool scala::appoggia_in_cima(live_obj& o)
     if (bn::abs(o.chr_x - x_centro()) >= 16) return false;
 
     bn::fixed piedi = o.chr_y + o.box_dim;
-    if (bn::abs(piedi - y_cima()) >= TOLLERANZA_CIMA) return false;
+    bn::fixed piedi_precedenti = o.chr_y_precedente + o.box_dim;
+    if (piedi_precedenti > y_cima() || piedi < y_cima()) return false;
+
+    if (o.atterrato_ora)
+        return piedi == y_cima();
 
     o.chr_y = y_cima() - o.box_dim;
     o.chr_vy = ZERO;
