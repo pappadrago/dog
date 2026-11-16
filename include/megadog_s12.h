@@ -23,7 +23,10 @@
 
 namespace megadog_s12 {
     // casse: nessuno
-    // trampolini: nessuno
+    constexpr trampolino_def trampolini[] = {
+        { 2072, 344 },  // cavita col 121..138, riga 22
+    };
+    constexpr int trampolini_count = sizeof(trampolini) / sizeof(trampolini[0]);
     constexpr lava_zona_def lava[] = {
         { 60, 30, 66, 30, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
         { 72, 10, 80, 10, { {1,2,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM},{2,3,LAVA_TILE_BOTTOM,LAVA_TILE_BOTTOM} }, 2, 12, 15 },
@@ -148,7 +151,7 @@ namespace megadog_s12 {
     {
         return {
             nullptr, 0,
-            nullptr, 0,
+            trampolini, trampolini_count,
             lava, lava_count,
             items, items_count,
             piattaforme, piattaforme_count,

@@ -26,7 +26,7 @@ namespace megadog_s7 {
         { CASSA_SCATOLA, 152, 344, false },  // platformize
     };
     constexpr int casse_count = sizeof(casse) / sizeof(casse[0]);
-    // trampolini: nessuno
+    // I trampolini sono definiti dopo la collision_map.
     // lava: nessuno
     constexpr item_def items[] = {
         { ITEM_TIPO_ENERGIA, 60, 200, 212 },  // spostato (platformize)
@@ -146,6 +146,7 @@ namespace megadog_s7 {
         constexpr trampolino_def trampolini[] = {
         { 56<<4, 12<<4 },
         { 2280, 280 },  // platformize
+        { 2728, 472 },  // cavita col 167..173, riga 30
     };
     constexpr int trampolini_count = sizeof(trampolini) / sizeof(trampolini[0]);
  

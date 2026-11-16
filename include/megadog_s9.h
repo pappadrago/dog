@@ -28,6 +28,7 @@ namespace megadog_s9 {
     constexpr int casse_count = sizeof(casse) / sizeof(casse[0]);
     constexpr trampolino_def trampolini[] = {
         { 360, 344 },  // platformize
+        { 2792, 408 },  // cavita col 171..180, riga 26
     };
     constexpr int trampolini_count = sizeof(trampolini) / sizeof(trampolini[0]);
     constexpr lava_zona_def lava[] = {
