@@ -21,7 +21,8 @@ namespace {
     constexpr bn::fixed ENEMY_CHASE_RANGE = bn::fixed(64);
     constexpr uint16_t ENEMY_JUMP_PERIOD = 90;
     constexpr uint16_t ENEMY_ATTACK_PERIOD = 120;
-    constexpr bn::fixed ENEMY_DEATH_RUN_SPEED = bn::fixed(3);
+    constexpr bn::fixed ENEMY_DEATH_UP_SPEED = bn::fixed(-1);
+    constexpr bn::fixed ENEMY_DEATH_UP_ACCEL = bn::fixed(-0.15);
 }
 
 // genera un nuovo bonus item e lo droppa nel mondo
@@ -457,10 +458,11 @@ void enemy::die(int _dir)
     invulnerability = 0;
     dir = g_dog->chr_x > chr_x ? DIR_LEFT : (g_dog->chr_x < chr_x ? DIR_RIGHT : -_dir);
     chr_accx = ZERO;
-    chr_vx = ENEMY_DEATH_RUN_SPEED.multiplication(dir);
-    chr_vy = ZERO;
+    chr_vx = ZERO;
+    chr_vy = ENEMY_DEATH_UP_SPEED;
 
     sprite->set_visible(true);
+    sprite->set_scale(1);
 
     if (g_rng.get_int(100) < ENEMY_DROP_CHANCE)
         spawn_drop(chr_x, chr_y - 8);
@@ -468,14 +470,12 @@ void enemy::die(int _dir)
 
 void enemy::update_death()
 {
-    chr_x += chr_vx;
-    //apply_map();
-    //apply_gravity();
+    chr_vy += ENEMY_DEATH_UP_ACCEL;
+    chr_y += chr_vy;
 
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
     sprite->set_horizontal_flip(dir == DIR_LEFT);
-    actionWalk->update();
 
     if (deathTicks > 0)
         deathTicks--;
@@ -484,6 +484,11 @@ void enemy::update_death()
     {
         distrutto = true;
         sprite->set_visible(false);
+    }
+    else
+    {
+        bn::fixed scale = bn::fixed(deathTicks).division(ENEMY_DEATH_FRAMES);
+        sprite->set_scale(bn::max(scale, bn::fixed(0.1)));
     }
 }
 

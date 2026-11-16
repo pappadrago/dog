@@ -248,8 +248,6 @@ int main()
             int n_doors = 0;
             const door_def* doorDef = get_schema_doors(g_schema, n_doors);
             item* boss_key_drop = nullptr;
-            bool has_boss_exit = schema_has_boss(g_schema) && n_doors > 0;
-            uint8_t boss_exit_key_id = has_boss_exit ? doorDef[n_doors - 1].id : 0;
 
             bn::vector<door*, MAX_DOORS> doors;
             for (int i = 0; i < n_doors; ++i)
@@ -274,6 +272,9 @@ int main()
                 g_dog->chr_vy = ZERO;
                 g_dog->invulnerability = 60;   // i nemici nascono a caso: un attimo di respiro
             }
+
+            bool has_boss_exit = spawn_boss_schema(g_schema) && n_doors > 0;
+            uint8_t boss_exit_key_id = has_boss_exit ? doorDef[n_doors - 1].id : 0;
 
             // Spawn nemici
             {
@@ -388,7 +389,6 @@ int main()
             const door_def* used_door = nullptr;
 
 
-            spawn_boss_schema(g_schema);
             if (g_boss.has_value())
             {
                 if (g_healthbar->obj_target == &*g_boss)

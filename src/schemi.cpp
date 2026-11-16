@@ -240,43 +240,26 @@ const ground_friction_def* get_ground_friction_override(int schema, int tile_x, 
 }
 
 // Genera il boss dello schema indicato (coordinate in px mondo; il boss cade fino a terra).
-// Gli schemi senza boss lasciano g_boss vuoto. Da chiamare dopo aver caricato lo schema,
-// al posto del vecchio g_boss.emplace(...) in main.cpp.
-bool schema_has_boss(int schema)
+// Restituisce true se lo schema ha un boss.
+bool spawn_boss_schema(int schema)
 {
-    switch (schema)
-    {
-    case 4:
-    case 8:
-    case 12:
-    case 16:
-        return true;
-    default:
-        return false;
-    }
-}
-
-void spawn_boss_schema(int schema)
-{
-    // g_boss.emplace(400, 100, 10, enemy_attr::ATTR_FIREBALL | enemy_attr::ATTR_BASH | enemy_attr::ATTR_MELEE | enemy_attr::ATTR_SUMMON);
-    // g_boss.emplace(360, 400, 10, boss_tipo::FLYER);
     g_boss.reset();
 
     switch (schema)
     {
     case 4:    // Ghiaccio: terrazza bassa prima dell'uscita
         g_boss.emplace(172 * 16, 17 * 16, 10, boss_tipo::COWARD);
-        break;
+        return true;
     case 8:    // Castello: sala in basso a destra
         g_boss.emplace(165 * 16, 22 * 16, 12, boss_tipo::BOMBER);
-        break;
+        return true;
     case 12:   // Vulcano: ultima terrazza
         g_boss.emplace(166 * 16, 14 * 16, 14, boss_tipo::SUMMONER);
-        break;
+        return true;
     case 16:   // Torre finale: arena nel piano alto
         g_boss.emplace(165 * 16, 4 * 16, 16, boss_tipo::FLYER);
-        break;
+        return true;
     default:
-        break;
+        return false;
     }
 }

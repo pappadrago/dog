@@ -1,6 +1,7 @@
 #include "powerup_fx.h"
 #include "globals.h"
 #include "dog.h"
+#include "enemy.h"
 #include "schemi.h"
 #include "bn_core.h"
 #include "bn_colors.h"
@@ -189,14 +190,23 @@ void pause_game(bn::sprite_text_generator& text_generator)
         exit_y = map_coordinate(exit.y, collision.map_h, MAP_HEIGHT);
     }
 
+    auto map_x = [&](bn::fixed x)
+    {
+        return map_coordinate(x.integer(), collision.map_w, MAP_WIDTH);
+    };
+    auto map_y = [&](bn::fixed y)
+    {
+        return map_coordinate(y.integer(), collision.map_h, MAP_HEIGHT);
+    };
+
     constexpr bn::color minimap_colors[16] = {
-        bn::colors::black,
+        bn::colors::black,  // trasparente
         bn::color(0x2108),
         bn::color(0x6318),
-        bn::colors::green,
-        bn::colors::red,
-        bn::colors::black,
-        bn::colors::black,
+        bn::colors::blue,   // cane
+        bn::colors::green,  // uscita
+        bn::colors::red,    // nemici
+        bn::color(0x03FF),  // chiavi
         bn::colors::black,
         bn::colors::black,
         bn::colors::black,
@@ -240,6 +250,59 @@ void pause_game(bn::sprite_text_generator& text_generator)
             }
         }
 
+        auto draw_cross = [&](int x, int y, int color_index)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    if (dx != 0 && dy != 0)
+                        continue;
+
+                    int pixel_x = x + dx;
+                    int pixel_y = y + dy;
+                    int local_x = pixel_x - chunk * SPRITE_WIDTH;
+                    if (pixel_x < chunk * SPRITE_WIDTH || local_x >= SPRITE_WIDTH ||
+                        pixel_y < 0 || pixel_y >= MAP_HEIGHT)
+                        continue;
+
+                    int tile_index = (pixel_y / 8) * (SPRITE_WIDTH / 8) + local_x / 8;
+                    int tile_row = pixel_y % 8;
+                    int shift = (local_x % 8) * 4;
+                    uint32_t mask = 0xF << shift;
+                    uint32_t& row = tile_data[tile_index].data[tile_row];
+                    row = (row & ~mask) | (uint32_t(color_index) << shift);
+                }
+            }
+        };
+
+        if (exit_x >= 0)
+            draw_cross(exit_x, exit_y, 4);
+
+        if (g_items.has_value())
+        {
+            for (item* map_item : *g_items)
+            {
+                if (map_item->active && map_item->tipo == ITEM_TIPO_CHIAVE &&
+                    map_item->ticks2action == 0)
+                    draw_cross(map_x(map_item->chr_x), map_y(map_item->chr_y), 6);
+            }
+        }
+
+        if (g_enemies.has_value())
+        {
+            for (enemy* map_enemy : *g_enemies)
+            {
+                if (!map_enemy->is_dead() && !map_enemy->distrutto)
+                    draw_cross(map_x(map_enemy->chr_x), map_y(map_enemy->chr_y), 5);
+            }
+        }
+
+        if (g_boss.has_value() && !g_boss->distrutto)
+            draw_cross(map_x(g_boss->chr_x), map_y(g_boss->chr_y), 5);
+
+        draw_cross(dog_x, dog_y, 3);
+
         bn::sprite_ptr minimap = bn::sprite_ptr::create(
             bn::fixed(-64 + chunk * SPRITE_WIDTH), bn::fixed(48),
             bn::sprite_shape_size(SPRITE_WIDTH, MAP_HEIGHT),
@@ -248,11 +311,6 @@ void pause_game(bn::sprite_text_generator& text_generator)
         minimap.set_z_order(-64);
         minimap_sprites.push_back(bn::move(minimap));
     }
-
-    bn::vector<bn::sprite_ptr, 16> minimap_legend;
-    text_generator.set_center_alignment();
-    text_generator.generate(0, 72, "D DOG   E USCITA", minimap_legend);
-    text_generator.set_left_alignment();
 
     while (bn::keypad::start_held())
         bn::core::update();
@@ -265,6 +323,5 @@ void pause_game(bn::sprite_text_generator& text_generator)
         p.set_fade_intensity(0);
 
     txt.clear();
-    minimap_legend.clear();
     minimap_sprites.clear();
 }

@@ -64,8 +64,7 @@ enum enemy_attr : int16_t
 
 #define BASH_MAX_VX_REST bn::fixed(0.75)
 #define BASH_MAX_VX_ATTACK bn::fixed(2.0)
-#define ENEMY_DEATH_FRAMES 90
-#define ENEMY_DEATH_SHRINK 60   // ultimi frame in cui si rimpicciolisce
+#define ENEMY_DEATH_FRAMES 45
 
 
 // Definizione statica di un nemico posizionato in uno schema.
