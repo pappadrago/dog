@@ -203,7 +203,7 @@ void pause_game(bn::sprite_text_generator& text_generator)
         bn::colors::black,  // trasparente
         bn::color(0x2108),
         bn::color(0x6318),
-        bn::colors::blue,   // cane
+        bn::colors::white,   // cane
         bn::colors::green,  // uscita
         bn::colors::red,    // nemici
         bn::color(0x03FF),  // chiavi
