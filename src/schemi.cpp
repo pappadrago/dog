@@ -17,6 +17,7 @@
 #include "megadog_s14.h"
 #include "megadog_s15.h"
 #include "megadog_s16.h"
+#include "bn_log.h"
 
 static constexpr int MAX_COLLISION_CELLE = 192 * 32;   // in tile di gioco (16px), non hardware
 static uint8_t s_collision_runtime[MAX_COLLISION_CELLE];
@@ -63,6 +64,43 @@ static const schema_def& S(int schema)
     int i = schema - 1;
     if (i < 0 || i >= NUM_SCHEMI) i = 0;   // come il vecchio fallback
     return schemi[i];
+}
+
+static void controlla_intersezioni_piattaforme_lava()
+{
+    static bool eseguito = false;
+    if (eseguito)
+        return;
+    eseguito = true;
+
+    int intersezioni = 0;
+    for (int schema = 0; schema < NUM_SCHEMI; schema++)
+    {
+        const schema_def& definizioni = schemi[schema];
+        for (int p = 0; p < definizioni.piattaforme_count; p++)
+        {
+            const piattaforma_def& piattaforma = definizioni.piattaforme[p];
+            for (int l = 0; l < definizioni.lava_count; l++)
+            {
+                const lava_zona_def& lava = definizioni.lava[l];
+                bool si_intersecano =
+                    piattaforma.tile_x1 <= lava.tile_x2 && piattaforma.tile_x2 >= lava.tile_x1 &&
+                    piattaforma.tile_y1 <= lava.tile_y2 && piattaforma.tile_y2 >= lava.tile_y1;
+                if (si_intersecano)
+                {
+                    BN_LOG("Intersezione schema ", schema + 1, ", piattaforma ", p, ", lava ", l);
+                    BN_LOG("Piattaforma [x1,y1,x2,y2]: ", piattaforma.tile_x1,
+                           piattaforma.tile_y1, piattaforma.tile_x2, piattaforma.tile_y2);
+                    BN_LOG("Lava [x1,y1,x2,y2]: ", lava.tile_x1,
+                           lava.tile_y1, lava.tile_x2, lava.tile_y2);
+                    intersezioni++;
+                }
+            }
+        }
+    }
+
+    if (intersezioni > 0)
+        BN_LOG("Totale intersezioni piattaforma/lava: ", intersezioni);
 }
 
 const trampolino_def* get_schema_trampolini(int schema, int& count)
@@ -175,6 +213,8 @@ bn::regular_bg_ptr create_schema_foreground(int schema)
 
 void carica_collisione_schema(int schema)
 {
+    controlla_intersezioni_piattaforme_lava();
+
     const collision_map_info& originale = *S(schema).map_info;
     int celle = originale.columns * originale.rows;
 

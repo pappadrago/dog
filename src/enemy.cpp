@@ -21,7 +21,7 @@ namespace {
     constexpr bn::fixed ENEMY_CHASE_RANGE = bn::fixed(64);
     constexpr uint16_t ENEMY_JUMP_PERIOD = 90;
     constexpr uint16_t ENEMY_ATTACK_PERIOD = 120;
-    constexpr bn::fixed ENEMY_DEATH_UP_SPEED = bn::fixed(-1);
+    constexpr bn::fixed ENEMY_DEATH_UP_SPEED = bn::fixed(-4);
     constexpr bn::fixed ENEMY_DEATH_UP_ACCEL = bn::fixed(-0.15);
 }
 

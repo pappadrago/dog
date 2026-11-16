@@ -207,7 +207,7 @@ void pause_game(bn::sprite_text_generator& text_generator)
         bn::colors::green,  // uscita
         bn::colors::red,    // nemici
         bn::color(0x03FF),  // chiavi
-        bn::colors::black,
+        bn::color(0x021F),  // powerup
         bn::colors::black,
         bn::colors::black,
         bn::colors::black,
@@ -283,9 +283,13 @@ void pause_game(bn::sprite_text_generator& text_generator)
         {
             for (item* map_item : *g_items)
             {
-                if (map_item->active && map_item->tipo == ITEM_TIPO_CHIAVE &&
-                    map_item->ticks2action == 0)
-                    draw_cross(map_x(map_item->chr_x), map_y(map_item->chr_y), 6);
+                if (!map_item->active || map_item->ticks2action != 0)
+                    continue;
+
+                int color_index = map_item->tipo == ITEM_TIPO_CHIAVE ? 6 :
+                    map_item->tipo == ITEM_TIPO_POWERUP ? 7 : 0;
+                if (color_index != 0)
+                    draw_cross(map_x(map_item->chr_x), map_y(map_item->chr_y), color_index);
             }
         }
 
