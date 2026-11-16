@@ -180,7 +180,6 @@ int main()
         g_spikes.emplace();
         g_scale.emplace();
         g_wind_fx.emplace();
-        g_schema = 1;
         g_ostacoli_ticks = 0;
         // g_schema = 2; g_dog->run_acquisito = true;
 
