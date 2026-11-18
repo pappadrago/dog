@@ -64,7 +64,6 @@ enum enemy_attr : int16_t
 
 #define BASH_MAX_VX_REST bn::fixed(0.75)
 #define BASH_MAX_VX_ATTACK bn::fixed(2.0)
-#define ENEMY_DEATH_FRAMES 45
 
 
 // Definizione statica di un nemico posizionato in uno schema.
@@ -115,7 +114,7 @@ public:
     const enemy_def* def_origine = nullptr;   // != nullptr: nemico di tabella, rinasce dopo l'eliminazione
 
 
-    uint8_t deathTicks = 0;
+    bn::optional<bn::sprite_animate_action<9>> actionDeath;
 
     bool is_dead() const { return currentAction == ACTION_DEAD; }
     void die(int _dir);

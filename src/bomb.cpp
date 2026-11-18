@@ -33,11 +33,15 @@ bomb::bomb(const bomb_def& def)
     sprite->set_bg_priority(tipoProjec == BOMB_BOMB ? 1 : 0);
     sprite->set_camera(g_camera);
 
-    int B = 9;
     actionExplode = bn::create_sprite_animate_action_once(
-        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6, B + 7, B + 8);
+        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(),
+        BOMB_EXPLOSION_FIRST_TILE + 0, BOMB_EXPLOSION_FIRST_TILE + 1,
+        BOMB_EXPLOSION_FIRST_TILE + 2, BOMB_EXPLOSION_FIRST_TILE + 3,
+        BOMB_EXPLOSION_FIRST_TILE + 4, BOMB_EXPLOSION_FIRST_TILE + 5,
+        BOMB_EXPLOSION_FIRST_TILE + 6, BOMB_EXPLOSION_FIRST_TILE + 7,
+        BOMB_EXPLOSION_FIRST_TILE + 8);
 
-    B = 18;
+    int B = 18;
     actionFulmine = bn::create_sprite_animate_action_once(
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 1);
     B = 36;

@@ -13,6 +13,7 @@
 #define BOMB_MINA_FUSE_TICKS  30
 #define BOMB_EXPLOSION_FRAME_TICKS  3   // durata dell'esplosione (frame)
 #define BOMB_EXPLOSION_RADIUS 20   // raggio del danno (px)
+#define BOMB_EXPLOSION_FIRST_TILE 9
 #define BOMB_TILE_INDEX       11    // frame di bn::sprite_items::weapons usato per la bomba (da adattare)
 
 enum bomb_tipo : uint8_t

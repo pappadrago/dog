@@ -11,6 +11,7 @@
 #include "bn_sprite_items_weapons.h"
 #include "bn_sprite_items_enemies.h"
 #include "bn_sprite_items_enemies2.h"
+#include "bn_sprite_items_diecloud.h"
 #include "bn_math.h"
 #include "bn_log.h"
 #include <bn_sound_items.h>
@@ -21,8 +22,6 @@ namespace {
     constexpr bn::fixed ENEMY_CHASE_RANGE = bn::fixed(64);
     constexpr uint16_t ENEMY_JUMP_PERIOD = 90;
     constexpr uint16_t ENEMY_ATTACK_PERIOD = 120;
-    constexpr bn::fixed ENEMY_DEATH_UP_SPEED = bn::fixed(-4);
-    constexpr bn::fixed ENEMY_DEATH_UP_ACCEL = bn::fixed(-0.15);
 }
 
 // genera un nuovo bonus item e lo droppa nel mondo
@@ -102,7 +101,7 @@ void enemy::update()
 {
     if (is_dead())
     {
-        if (deathTicks > 0 || sprite->visible())
+        if (actionDeath && sprite->visible())
             update_death();
         return;
     }
@@ -454,15 +453,26 @@ void enemy::die(int _dir)
     if (is_dead()) return;
     vita_residua_ticks = 0;
     currentAction = ACTION_DEAD;
-    deathTicks = ENEMY_DEATH_FRAMES;
     invulnerability = 0;
     dir = g_dog->chr_x > chr_x ? DIR_LEFT : (g_dog->chr_x < chr_x ? DIR_RIGHT : -_dir);
     chr_accx = ZERO;
     chr_vx = ZERO;
-    chr_vy = ENEMY_DEATH_UP_SPEED;
+    chr_vy = ZERO;
 
-    sprite->set_visible(true);
-    sprite->set_scale(1);
+    actionStand.reset();
+    actionWalk.reset();
+    sprite = bn::sprite_items::diecloud.create_sprite(
+        chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, BOMB_EXPLOSION_FIRST_TILE);
+    sprite->set_bg_priority(1);
+    sprite->set_camera(g_camera);
+    actionDeath = bn::create_sprite_animate_action_once(
+        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(),
+        BOMB_EXPLOSION_FIRST_TILE + 0, BOMB_EXPLOSION_FIRST_TILE + 1,
+        BOMB_EXPLOSION_FIRST_TILE + 2, BOMB_EXPLOSION_FIRST_TILE + 3,
+        BOMB_EXPLOSION_FIRST_TILE + 4, BOMB_EXPLOSION_FIRST_TILE + 5,
+        BOMB_EXPLOSION_FIRST_TILE + 6, BOMB_EXPLOSION_FIRST_TILE + 7,
+        BOMB_EXPLOSION_FIRST_TILE + 8);
+    actionDeath->reset();
 
     if (g_rng.get_int(100) < ENEMY_DROP_CHANCE)
         spawn_drop(chr_x, chr_y - 8);
@@ -470,25 +480,13 @@ void enemy::die(int _dir)
 
 void enemy::update_death()
 {
-    chr_vy += ENEMY_DEATH_UP_ACCEL;
-    chr_y += chr_vy;
+    if (!actionDeath->done())
+        actionDeath->update();
 
-    sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H);
-    sprite->set_horizontal_flip(dir == DIR_LEFT);
-
-    if (deathTicks > 0)
-        deathTicks--;
-
-    if (deathTicks == 0)
+    if (actionDeath->done())
     {
         distrutto = true;
         sprite->set_visible(false);
-    }
-    else
-    {
-        bn::fixed scale = bn::fixed(deathTicks).division(ENEMY_DEATH_FRAMES);
-        sprite->set_scale(bn::max(scale, bn::fixed(0.1)));
     }
 }
 

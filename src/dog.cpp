@@ -662,7 +662,6 @@ void dog::update()
         polvere_sprite->set_y(chr_y - HALF_SCREEN_H);
     }
 
-
     if (wall_sliding && chr_vy > WALL_SLIDE_VY - GRAVITY)
         chr_vy = WALL_SLIDE_VY - GRAVITY;
 
