@@ -17,7 +17,7 @@ namespace
     // Dead zone orizzontale: il cane puo' muoversi di +/- DZ_X dal punto di riferimento senza scroll
     constexpr int DZ_X            = 12;
     // Look-ahead: il punto di riferimento si sposta di LOOK_AHEAD px nella direzione di marcia
-    constexpr int LOOK_AHEAD      = 20;
+    constexpr int LOOK_AHEAD      = 64;
     constexpr int LOOK_STEP       = 1;       // px/frame con cui l'offset insegue il target
     constexpr int CAM_X_MIN_STEP  = 3;       // velocita' minima di inseguimento in X (px/frame)
 
@@ -33,6 +33,7 @@ namespace
 
     inline int clamp_int(int v, int lo, int hi)
     {
+        if (lo > hi) return lo;
         if (v < lo) return lo;
         if (v > hi) return hi;
         return v;
@@ -69,8 +70,8 @@ void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
     if (s_schema != g_schema)
     {
         const collision_map_info& map = get_collision_map(g_schema);
-        s_max_x = map.map_w - 240;
-        s_max_y = map.map_h - 160;
+        s_max_x = (map.map_w > 240) ? map.map_w - 240 : 0;
+        s_max_y = (map.map_h > 160) ? map.map_h - 160 : 0;
 
         FG_OFF_X = -((map.map_w >> 1) + 120);
         FG_OFF_Y = -((map.map_h >> 1) + 80);
@@ -96,8 +97,10 @@ void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
         // ------------------------------------------------------------
         // Asse X: look-ahead + dead zone, inseguimento a velocita' limitata
         // ------------------------------------------------------------
-        const int vx_abs = abs_int(g_dog->chr_vx.integer());
-        if (vx_abs > 0 || g_dog->dash_ticks > 0)
+        // NB: chr_vx.integer() troncherebbe 0.92 a 0 (la friction gira prima della camera): confronto in fixed
+        const bool in_movimento = g_dog->chr_vx > bn::fixed(0.1) || g_dog->chr_vx < bn::fixed(-0.1)
+            || g_dog->dash_ticks > 0;
+        if (in_movimento)
         {
             const int target_look = g_dog->dir * LOOK_AHEAD;
             if (s_look < target_look)      s_look = (s_look + LOOK_STEP > target_look) ? target_look : s_look + LOOK_STEP;
@@ -105,7 +108,8 @@ void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
         }
 
         // Posizione a schermo che il cane deve occupare, +/- dead zone
-        const int ref_x    = CAM_HALF_W + s_look;
+        // il centro camera sta DAVANTI al cane: il cane appare dalla parte opposta alla marcia
+        const int ref_x    = CAM_HALF_W - s_look;
         const int left_x   = s_cam_x + ref_x - DZ_X;
         const int right_x  = s_cam_x + ref_x + DZ_X;
 
@@ -114,7 +118,7 @@ void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
         else if (dog_x > right_x) desired_x = dog_x - (ref_x + DZ_X);
 
         // velocita' massima: sempre sufficiente a non perdere il cane (dash incluso)
-        int max_step_x = abs_int(g_dog->chr_vx.integer()) + 2;
+        int max_step_x = (g_dog->chr_vx < ZERO ? -g_dog->chr_vx : g_dog->chr_vx).integer() + 2;
         if (max_step_x < CAM_X_MIN_STEP) max_step_x = CAM_X_MIN_STEP;
 
         s_cam_x += clamp_int(desired_x - s_cam_x, -max_step_x, max_step_x);
@@ -143,7 +147,7 @@ void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
             desired_y  = dog_y - bottom_y;
             max_step_y = (vy + 1 > CAM_Y_MIN_STEP) ? (vy + 1) : CAM_Y_MIN_STEP;
         }
-        else if (g_dog->onGround)
+        else if (g_dog->onGround && abs_int(dog_scr_y - CAM_HALF_H) > 3)
         {
             // fermo a terra dentro la fascia: riporta con calma il cane verso il centro
             desired_y = dog_y - CAM_HALF_H;
@@ -169,6 +173,9 @@ void update_camera(bn::regular_bg_ptr& bg0, bn::regular_bg_ptr& bg1,
         cy += ((g_shake_ticks >> 1) & 1) ? (amp >> 1) : -(amp >> 1);
         g_shake_ticks--;
     }
+
+    cx = clamp_int(cx, 0, s_max_x);
+    cy = clamp_int(cy, 0, s_max_y);
 
     // Aggiorna solo cio' che e' cambiato
     if (cx != s_last_x)
