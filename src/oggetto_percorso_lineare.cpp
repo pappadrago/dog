@@ -9,8 +9,9 @@ namespace
     constexpr uint32_t PAUSA_ESTREMO = 30;
 }
 
-oggetto_percorso_lineare::oggetto_percorso_lineare(const oggetto_percorso_lineare_def& def) :
-    _def(def), _tick_iniziale(g_ostacoli_ticks)
+oggetto_percorso_lineare::oggetto_percorso_lineare(
+    const oggetto_percorso_lineare_def& def, uint32_t sfasamento_ticks) :
+    _def(def), _tick_iniziale(g_ostacoli_ticks), _sfasamento_ticks(sfasamento_ticks)
 {
     if (_def.escursione < 1)
         _def.escursione = 1;
@@ -53,7 +54,8 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(const oggetto_percorso_linear
 void oggetto_percorso_lineare::punto()
 {
     const uint32_t durata_ciclo = (_durata_tratto + PAUSA_ESTREMO) * 2;
-    const uint32_t tempo = (g_ostacoli_ticks - _tick_iniziale) % durata_ciclo;
+    const uint32_t tempo = ((g_ostacoli_ticks - _tick_iniziale) % durata_ciclo +
+                            _sfasamento_ticks % durata_ciclo) % durata_ciclo;
     const uint32_t durata_fase = _durata_tratto + PAUSA_ESTREMO;
     const bool ritorno = tempo >= durata_fase;
     const uint32_t tempo_tratto = tempo % durata_fase;

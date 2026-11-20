@@ -8,4 +8,6 @@
 void powerup_freeze(bn::sprite_text_generator& text_generator);
 
 // Ferma il gioco e attende una nuova pressione di START.
-void pause_game(bn::sprite_text_generator& text_generator, const bn::vector<onda*, 8>& onde);
+void pause_game(bn::sprite_text_generator& text_generator,
+                const bn::vector<oggetto_percorso_lineare*, 8>& oggetti_percorso_lineare,
+                const bn::vector<onda*, 8>& onde);

@@ -36,8 +36,18 @@ onda::onda(const onda_def& def) : _def(def), _tick_iniziale(g_ostacoli_ticks)
         _def.sprite_size,
         _def.danno,
     };
-    for (int i = 0; i < _def.numero_oggetti; ++i)
-        _oggetti.push_back(new oggetto_percorso_lineare(componente));
+    if (_def.numero_oggetti > 0)
+    {
+        const uint32_t durata_oggetto_numeratore = uint32_t(_def.escursione) * 30;
+        const uint32_t durata_oggetto = (durata_oggetto_numeratore +
+                                         _def.velocita_oggetti_x10 - 1) /
+                                        _def.velocita_oggetti_x10;
+        const uint32_t periodo_oggetto = (durata_oggetto + PAUSA_ESTREMO) * 2;
+        const uint32_t sfasamento_ticks = periodo_oggetto / _def.numero_oggetti;
+        for (int i = 0; i < _def.numero_oggetti; ++i)
+            _oggetti.push_back(new oggetto_percorso_lineare(
+                componente, uint32_t(i) * sfasamento_ticks));
+    }
 
     aggiorna_centri(spostamento_centro());
 }

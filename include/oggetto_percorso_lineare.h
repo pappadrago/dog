@@ -21,7 +21,8 @@ struct oggetto_percorso_lineare_def
 class oggetto_percorso_lineare : public obj
 {
 public:
-    explicit oggetto_percorso_lineare(const oggetto_percorso_lineare_def& def);
+    explicit oggetto_percorso_lineare(const oggetto_percorso_lineare_def& def,
+                                      uint32_t sfasamento_ticks = 0);
     void sposta_centro(bn::fixed offset_x, bn::fixed offset_y);
     void update();
 
@@ -30,6 +31,7 @@ private:
     bn::optional<bn::sprite_animate_action<16>> _animazione;
     uint32_t _tick_iniziale;
     uint32_t _durata_tratto;
+    uint32_t _sfasamento_ticks;
     bn::fixed _centro_offset_x = ZERO;
     bn::fixed _centro_offset_y = ZERO;
 

@@ -567,7 +567,7 @@ int main()
                 if (!start_released && !bn::keypad::start_held())
                     start_released = true;
                 else if (start_released && bn::keypad::start_pressed())
-                    pause_game(text_generator, onde);
+                    pause_game(text_generator, oggetti_percorso_lineare, onde);
 
                 game_step();
                 if (g_powerup_pending)
