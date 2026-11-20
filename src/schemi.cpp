@@ -132,6 +132,18 @@ const oggetto_percorso_def* get_schema_oggetti_percorso(int schema, int& count)
     count = s.oggetti_percorso_count;
     return s.oggetti_percorso;
 }
+const oggetto_percorso_lineare_def* get_schema_oggetti_percorso_lineare(int schema, int& count)
+{
+    const schema_def& s = S(schema);
+    count = s.oggetti_percorso_lineare_count;
+    return s.oggetti_percorso_lineare;
+}
+const onda_def* get_schema_onde(int schema, int& count)
+{
+    const schema_def& s = S(schema);
+    count = s.onde_count;
+    return s.onde;
+}
 const enemy_def* get_schema_enemies(int schema, int& count)
 {
     const schema_def& s = S(schema);

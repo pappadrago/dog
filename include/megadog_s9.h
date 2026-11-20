@@ -14,6 +14,8 @@
 #include "schemi.h"
 #include "trampolino.h"
 #include "oggetto_percorso.h"
+#include "oggetto_percorso_lineare.h"
+#include "onda.h"
 #include "scala.h"
 #include "spike.h"
 #include "snake.h"
@@ -107,6 +109,15 @@ namespace megadog_s9 {
     };
     constexpr int oggetti_percorso_count = sizeof(oggetti_percorso) / sizeof(oggetti_percorso[0]);
     // ground_frictions: nessuno
+    constexpr oggetto_percorso_lineare_def oggetti_percorso_lineare[] = {
+        { 1064, 264, 48, PERCORSO_LINEARE_ORIZZONTALE, 18, PERCORSO_SPRITE_16, 12 },
+        { 2760, 280, 32, PERCORSO_LINEARE_VERTICALE, 18, PERCORSO_SPRITE_32, 12 },
+    };
+    constexpr int oggetti_percorso_lineare_count = sizeof(oggetti_percorso_lineare) / sizeof(oggetti_percorso_lineare[0]);
+    constexpr onda_def onde[] = {
+        { 1032, 232, 3, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_16, 40, 18, 48, 12, 12 },
+    };
+    constexpr int onde_count = sizeof(onde) / sizeof(onde[0]);
     constexpr uint8_t collision_map_columns = 192;
     constexpr uint8_t collision_map_rows = 32;
 
@@ -167,7 +178,9 @@ namespace megadog_s9 {
             snakes, snakes_count,
             spikes, spikes_count,
             oggetti_percorso, oggetti_percorso_count,
-            nullptr, 0
+            nullptr, 0,
+            oggetti_percorso_lineare, oggetti_percorso_lineare_count,
+            onde, onde_count
         };
     }
 }

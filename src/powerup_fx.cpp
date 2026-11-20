@@ -149,7 +149,7 @@ void powerup_freeze(bn::sprite_text_generator& text_generator)
         p.set_fade_intensity(0);
 }
 
-void pause_game(bn::sprite_text_generator& text_generator)
+void pause_game(bn::sprite_text_generator& text_generator, const bn::vector<onda*, 8>& onde)
 {
     bn::vector<bn::sprite_palette_ptr, 16> palettes = getPalettes();
     bn::fixed intensity = bn::fixed(0.55);   // 1.0 = nero totale
@@ -209,7 +209,7 @@ void pause_game(bn::sprite_text_generator& text_generator)
         bn::colors::red,    // nemici
         bn::color(0x03FF),  // chiavi
         bn::color(0x021F),  // powerup
-        bn::colors::black,
+        bn::color(0x7C1F),  // onde
         bn::colors::black,
         bn::colors::black,
         bn::colors::black,
@@ -305,6 +305,15 @@ void pause_game(bn::sprite_text_generator& text_generator)
 
         if (g_boss.has_value() && !g_boss->distrutto)
             draw_cross(map_x(g_boss->chr_x), map_y(g_boss->chr_y), 5);
+
+        for (const onda* gruppo : onde)
+        {
+            for (int i = 0; i < gruppo->componenti_count(); ++i)
+            {
+                const oggetto_percorso_lineare& oggetto = gruppo->componente(i);
+                draw_cross(map_x(oggetto.chr_x), map_y(oggetto.chr_y), 8);
+            }
+        }
 
         draw_cross(dog_x, dog_y, 3);
 

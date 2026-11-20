@@ -259,6 +259,20 @@ int main()
             for (int i = 0; i < n_oggetti_percorso; ++i)
                 oggetti_percorso.push_back(new oggetto_percorso(oggetti_percorso_def[i]));
 
+            int n_oggetti_percorso_lineare = 0;
+            const oggetto_percorso_lineare_def* oggetti_percorso_lineare_def =
+                get_schema_oggetti_percorso_lineare(g_schema, n_oggetti_percorso_lineare);
+            bn::vector<oggetto_percorso_lineare*, 8> oggetti_percorso_lineare;
+            for (int i = 0; i < n_oggetti_percorso_lineare; ++i)
+                oggetti_percorso_lineare.push_back(
+                    new oggetto_percorso_lineare(oggetti_percorso_lineare_def[i]));
+
+            int n_onde = 0;
+            const onda_def* onde_def = get_schema_onde(g_schema, n_onde);
+            bn::vector<onda*, 8> onde;
+            for (int i = 0; i < n_onde; ++i)
+                onde.push_back(new onda(onde_def[i]));
+
 
             bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
 
@@ -415,6 +429,10 @@ int main()
                     g_dog->update();
                     for (oggetto_percorso* oggetto : oggetti_percorso)
                         oggetto->update();
+                    for (oggetto_percorso_lineare* oggetto : oggetti_percorso_lineare)
+                        oggetto->update();
+                    for (onda* gruppo : onde)
+                        gruppo->update();
                     for (int i = g_bombs->size() - 1; i >= 0; --i)
                     {
                         bomb* projectile = (*g_bombs)[i];
@@ -549,7 +567,7 @@ int main()
                 if (!start_released && !bn::keypad::start_held())
                     start_released = true;
                 else if (start_released && bn::keypad::start_pressed())
-                    pause_game(text_generator);
+                    pause_game(text_generator, onde);
 
                 game_step();
                 if (g_powerup_pending)
@@ -582,6 +600,8 @@ int main()
                 *g_snakes,
                 doors,
                 oggetti_percorso,
+                oggetti_percorso_lineare,
+                onde,
                 *g_trampolini,
                 *g_casse,
                 *g_scale,

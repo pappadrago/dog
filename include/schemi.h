@@ -16,6 +16,8 @@
 #include "cassa.h"
 #include "trampolino.h"
 #include "oggetto_percorso.h"
+#include "oggetto_percorso_lineare.h"
+#include "onda.h"
 
 
 
@@ -61,6 +63,8 @@ const cassa_def* get_schema_casse(int schema, int& count);
 const scala_def* get_schema_scale(int schema, int& count);
 const spike_def* get_schema_spikes(int schema, int& count);
 const oggetto_percorso_def* get_schema_oggetti_percorso(int schema, int& count);
+const oggetto_percorso_lineare_def* get_schema_oggetti_percorso_lineare(int schema, int& count);
+const onda_def* get_schema_onde(int schema, int& count);
 
 struct wind_def { bn::fixed base, amp; };
 const wind_def& get_schema_wind(int schema);
@@ -92,6 +96,8 @@ struct schema_def
     const spike_def* spikes; int spikes_count;
     const oggetto_percorso_def* oggetti_percorso; int oggetti_percorso_count;
     const ground_friction_def* ground_frictions; int ground_frictions_count;
+    const oggetto_percorso_lineare_def* oggetti_percorso_lineare; int oggetti_percorso_lineare_count;
+    const onda_def* onde; int onde_count;
 };
 
 
