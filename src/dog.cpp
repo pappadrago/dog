@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "constanti_fisica.h"
 #include "dog.h"
+#include "scala.h"
 #include "bau.h"
 #include "enemy.h"
 #include "item.h"
@@ -211,6 +212,9 @@ void dog::update_animations() {
 void dog::dog_damage(int amount)
 {
     if (life > 0) {
+        if (su_scala())
+            scala_corrente->rilascia(*this, intent_scala);
+
         actionColpito->reset();
         colpito_anim_ticks = COLPITO_ANIM_TICKS;
         life -= amount;

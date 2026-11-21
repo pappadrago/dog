@@ -33,11 +33,11 @@ public:
     // Da chiamare ogni frame per OGNI live_obj che puo_scalare (dog e nemici ATTR_CLIMB),
     // dopo update() e prima/insieme a verifica_nuovo_aggancio() delle piattaforme mobili.
     void aggiorna(live_obj& o);
+    void rilascia(live_obj& o, int dir_uscita = 0);
 
 private:
     bool in_colonna(const live_obj& o) const;
     bool prova_aggancio(live_obj& o);   // o.intent_scala != 0, nei pressi della scala
     void muovi(live_obj& o);            // o è agganciato: sale/scende, gestisce cima e fondo
     bool appoggia_in_cima(live_obj& o); // piano one-way per SCALA_CON_PIANO
-    void rilascia(live_obj& o, int dir_uscita = 0);
 };
