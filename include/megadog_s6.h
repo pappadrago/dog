@@ -106,12 +106,12 @@ namespace megadog_s6 {
     };
     constexpr int ground_frictions_count = sizeof(ground_frictions) / sizeof(ground_frictions[0]);
     constexpr oggetto_percorso_lineare_def oggetti_percorso_lineare[] = {
-        { 2184, 424, 48, PERCORSO_LINEARE_ORIZZONTALE, 18, PERCORSO_SPRITE_16, 12 },
-        { 2904, 264, 48, PERCORSO_LINEARE_VERTICALE, 18, PERCORSO_SPRITE_32, 12 },
+        { 2184, 424, 48, PERCORSO_LINEARE_ORIZZONTALE, 30, 60, PERCORSO_SPRITE_16, 12 },
+        { 2904, 264, 48, PERCORSO_LINEARE_VERTICALE, 30, 60, PERCORSO_SPRITE_32, 12 },
     };
     constexpr int oggetti_percorso_lineare_count = sizeof(oggetti_percorso_lineare) / sizeof(oggetti_percorso_lineare[0]);
     constexpr onda_def onde[] = {
-        { 2200, 392, 3, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_32, 32, 18, 48, 12, 12 },
+        { 2200, 392, 3, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_32, 512, 30, 30, 12 },
     };
     constexpr int onde_count = sizeof(onde) / sizeof(onde[0]);
     constexpr uint8_t collision_map_columns = 192;

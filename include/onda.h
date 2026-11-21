@@ -12,9 +12,8 @@ struct onda_def
     uint8_t direzione;
     uint8_t sprite_size;
     int16_t escursione;
-    uint8_t velocita_oggetti_x10;
-    int16_t corsa_centro;
-    uint8_t velocita_centro_x10;
+    uint8_t durata_tratto;
+    uint8_t pausa_tratto;
     int16_t danno;
 };
 
@@ -33,6 +32,5 @@ private:
     uint32_t _tick_iniziale;
     uint32_t _durata_tratto;
 
-    bn::fixed spostamento_centro() const;
-    void aggiorna_centri(bn::fixed spostamento);
+    void aggiorna_centri();
 };

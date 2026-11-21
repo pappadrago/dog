@@ -6,7 +6,8 @@
 
 namespace
 {
-    constexpr uint32_t PAUSA_ESTREMO = 30;
+    constexpr int TREMOLIO_TICKS = 24;      // durata del tremolio, alla fine della pausa
+    constexpr int TREMOLIO_AMPIEZZA = 1;    // px
 }
 
 oggetto_percorso_lineare::oggetto_percorso_lineare(
@@ -17,28 +18,21 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(
         _def.escursione = 1;
     if (_def.direzione != PERCORSO_LINEARE_VERTICALE)
         _def.direzione = PERCORSO_LINEARE_ORIZZONTALE;
-    if (_def.velocita_x10 < 1)
-        _def.velocita_x10 = 1;
     if (_def.sprite_size != PERCORSO_SPRITE_32)
         _def.sprite_size = PERCORSO_SPRITE_16;
 
-    const uint32_t durata_numeratore = uint32_t(_def.escursione) * 30;
-    _durata_tratto = (durata_numeratore + _def.velocita_x10 - 1) / _def.velocita_x10;
-    if (_durata_tratto < 1)
-        _durata_tratto = 1;
+    _durata_tratto = _def.durata_tratto;   // --- DEBUG ---
 
     punto();
     if (_def.sprite_size == PERCORSO_SPRITE_32)
     {
-        sprite = bn::sprite_items::zombie.create_sprite(
-            chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 18);
+        sprite = bn::sprite_items::zombie.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 18);
         box_dim = bn::fixed(16);
         box_halfdim = bn::fixed(16);
     }
     else
     {
-        sprite = bn::sprite_items::items.create_sprite(
-            chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 19);
+        sprite = bn::sprite_items::items.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 19);
         box_dim = bn::fixed(8);
         box_halfdim = bn::fixed(8);
     }
@@ -48,28 +42,52 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(
 
 void oggetto_percorso_lineare::punto()
 {
-    const uint32_t durata_ciclo = (_durata_tratto + PAUSA_ESTREMO) * 2;
-    const uint32_t tempo = ((g_ostacoli_ticks - _tick_iniziale) % durata_ciclo +
-                            _sfasamento_ticks % durata_ciclo) % durata_ciclo;
-    const uint32_t durata_fase = _durata_tratto + PAUSA_ESTREMO;
-    const bool ritorno = tempo >= durata_fase;
-    const uint32_t tempo_tratto = tempo % durata_fase;
-    bn::fixed t = bn::fixed::from_data(int(
-        (uint64_t(tempo_tratto) * bn::fixed::scale()) / _durata_tratto));
-    if (t > 1)
-        t = 1;
+    const int durata_ciclo = int((_durata_tratto + _def.pausa_tratto) * 2);
+    const int durata_fase = int(_durata_tratto + _def.pausa_tratto);
+    const int tempo = int(((g_ostacoli_ticks - _tick_iniziale) % durata_ciclo +
+        _sfasamento_ticks % durata_ciclo) % durata_ciclo);
 
-    // Smoothstep parte e arriva a velocita' zero, con la massima velocita' al centro.
-    const bn::fixed progressione = t * t * (bn::fixed(3) - bn::fixed(2) * t);
-    const bn::fixed posizione = ritorno ? bn::fixed(1) - progressione : progressione;
-    const bn::fixed offset = (posizione * bn::fixed(2) - bn::fixed(1)) * bn::fixed(_def.escursione);
+    const bool ritorno = tempo >= durata_fase;
+    const int tt_raw = tempo % durata_fase;
+    const int durata = int(_durata_tratto);
+    const int tt = tt_raw > durata ? durata : tt_raw;   // pausa all'estremo
+
+    const int pos = ritorno ? durata - tt : tt;   // 0..durata
+
+    if (_def.sprite_size == PERCORSO_SPRITE_32 && sprite)
+        sprite->set_tiles(bn::sprite_items::zombie.tiles_item(), tt_raw >= _def.durata_tratto ? 19 : 18);
+
+    const int64_t num = int64_t(2 * pos - durata) * int64_t(_def.escursione) * 256;
+    const bn::fixed offset = bn::fixed::from_data(int(num / durata));
 
     chr_x = bn::fixed(_def.centro_x) + _centro_offset_x;
     chr_y = bn::fixed(_def.centro_y) + _centro_offset_y;
+
     if (_def.direzione == PERCORSO_LINEARE_VERTICALE)
         chr_y += offset;
     else
         chr_x += offset;
+
+    chr_x = bn::fixed(chr_x.round_integer());
+    chr_y = bn::fixed(chr_y.round_integer());
+
+    // Tremolio: solo negli ultimi tick della pausa, prima di ripartire.
+    // Se la pausa è più corta di TREMOLIO_TICKS, il tremolio occupa tutta la pausa.
+    const int pausa = int(_def.pausa_tratto);
+    const int durata_tremolio = pausa < TREMOLIO_TICKS ? pausa : TREMOLIO_TICKS;
+    const int tick_rimasti = durata_fase - tt_raw;   // alla ripartenza vale 0
+
+    if (durata_tremolio > 0 && tt_raw >= durata && tick_rimasti <= durata_tremolio)
+    {
+        // alterna ogni 2 tick: ogni tick a 60 fps sembrerebbe solo uno sfocato
+        const int s = ((g_ostacoli_ticks >> 1) & 1) ? TREMOLIO_AMPIEZZA : -TREMOLIO_AMPIEZZA;
+
+        // perpendicolare alla direzione di marcia
+        if (_def.direzione == PERCORSO_LINEARE_VERTICALE)
+            chr_x += s;
+        else
+            chr_y += s;
+    }
 }
 
 void oggetto_percorso_lineare::sposta_centro(bn::fixed offset_x, bn::fixed offset_y)

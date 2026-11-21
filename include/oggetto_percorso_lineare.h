@@ -13,7 +13,7 @@ struct oggetto_percorso_lineare_def
     int16_t centro_x, centro_y;
     int16_t escursione;
     uint8_t direzione;
-    uint8_t velocita_x10;   // velocita massima in px/frame x10
+    uint8_t durata_tratto, pausa_tratto;
     uint8_t sprite_size;    // PERCORSO_SPRITE_16 o PERCORSO_SPRITE_32
     int16_t danno;
 };
