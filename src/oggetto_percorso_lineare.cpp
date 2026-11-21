@@ -1,7 +1,7 @@
 #include "oggetto_percorso_lineare.h"
 #include "globals.h"
 #include "dog.h"
-#include "bn_sprite_items_weapons.h"
+#include "bn_sprite_items_items.h"
 #include "bn_sprite_items_zombie.h"
 
 namespace
@@ -31,19 +31,14 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(
     if (_def.sprite_size == PERCORSO_SPRITE_32)
     {
         sprite = bn::sprite_items::zombie.create_sprite(
-            chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
-        _animazione = bn::create_sprite_animate_action_forever(
-            *sprite, 10, bn::sprite_items::zombie.tiles_item(), 0, 1, 2, 3);
+            chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 18);
         box_dim = bn::fixed(16);
         box_halfdim = bn::fixed(16);
     }
     else
     {
-        sprite = bn::sprite_items::weapons.create_sprite(
-            chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
-        _animazione = bn::create_sprite_animate_action_forever(
-            *sprite, 6, bn::sprite_items::weapons.tiles_item(), 32, 33, 34, 35, 36, 37, 38, 39,
-            40, 41, 42, 43, 44, 45, 46, 47);
+        sprite = bn::sprite_items::items.create_sprite(
+            chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 19);
         box_dim = bn::fixed(8);
         box_halfdim = bn::fixed(8);
     }
@@ -95,7 +90,6 @@ void oggetto_percorso_lineare::update()
 
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
-    _animazione->update();
     controlla_cane();
 }
 
