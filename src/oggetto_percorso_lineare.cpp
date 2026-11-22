@@ -27,8 +27,8 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(
     if (_def.sprite_size == PERCORSO_SPRITE_32)
     {
         sprite = bn::sprite_items::zombie.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 18);
-        box_dim = bn::fixed(16);
-        box_halfdim = bn::fixed(16);
+        box_dim = bn::fixed(12);
+        box_halfdim = bn::fixed(12);
     }
     else
     {
@@ -108,10 +108,10 @@ void oggetto_percorso_lineare::sposta_centro(bn::fixed offset_x, bn::fixed offse
 
 void oggetto_percorso_lineare::update()
 {
-    punto();
     if (bn::abs(g_dog->chr_x - chr_x) > SCREEN_W ||
         bn::abs(g_dog->chr_y - chr_y) > SCREEN_H)
         return;
+    punto();
 
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);

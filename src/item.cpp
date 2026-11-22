@@ -101,8 +101,8 @@ void item::update_graphics() {
     bn::fixed dy = 0;
     bn::fixed dx = 0;
     if (tipo != ITEM_TIPO_INTERRUTTORE) {
-        dy = bn::degrees_lut_sin_safe(animAngle << 3) * 4 - 2;
-        dx = bn::degrees_lut_cos_safe(animAngle << 2) * 6 - 2;
+        dy = bn::degrees_lut_sin_safe(animAngle) * 3.2 - bn::fixed(1.6);
+        dx = bn::degrees_lut_cos_safe(animAngle << 2) * 3 - bn::fixed(1.5);
     }
     sprite->set_x(chr_x + dx - HALF_SCREEN_W);
     sprite->set_y(chr_y + dy - HALF_SCREEN_H);
