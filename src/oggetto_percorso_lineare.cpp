@@ -56,7 +56,8 @@ void oggetto_percorso_lineare::punto()
 
     if (_def.sprite_size == PERCORSO_SPRITE_32 && sprite)
         sprite->set_tiles(bn::sprite_items::zombie.tiles_item(), tt_raw >= _def.durata_tratto ? 19 : 18);
-
+    if (_def.sprite_size == PERCORSO_SPRITE_16 && sprite)
+        sprite->set_tiles(bn::sprite_items::items.tiles_item(), tt_raw >= _def.durata_tratto ? 20 : 19);
     // p in [0, scale], poi smoothstep e = p^2 * (3 - 2p), tutto in interi.
     // Passi intermedi: massimo ~5e7, ben dentro int32.
     constexpr int S = bn::fixed::scale();

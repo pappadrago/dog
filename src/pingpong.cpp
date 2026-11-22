@@ -4,6 +4,12 @@
 #include "bn_sprite_items_items.h"
 #include "bn_sprite_items_zombie.h"
 
+namespace
+{
+    constexpr int TREMOLIO_TICKS = 24;
+    constexpr int TREMOLIO_AMPIEZZA = 1;
+}
+
 pingpong::pingpong(
     const pingpong_def& def, uint32_t sfasamento_ticks) :
     _def(def), _tick_iniziale(g_ostacoli_ticks), _sfasamento_ticks(sfasamento_ticks)
@@ -62,8 +68,9 @@ void pingpong::punto()
         _sfasamento_ticks % durata_ciclo) % durata_ciclo);
 
     const bool ritorno = tempo >= durata_fase;
-    int tt = tempo % durata_fase;
-    const bool in_pausa = tempo >= _durata_volo;
+    const int tt_raw = tempo % durata_fase;
+    int tt = tt_raw;
+    const bool in_pausa = tt_raw >= _durata_volo;
     if (tt > _durata_volo)
         tt = _durata_volo;                 // fermo all'estremo durante la pausa
 
@@ -85,7 +92,19 @@ void pingpong::punto()
     chr_x = bn::fixed(chr_x.round_integer());
     chr_y = bn::fixed(chr_y.round_integer());
 
-        if (_def.sprite_size == PERCORSO_SPRITE_16 && sprite)
+    // Tremolio: solo negli ultimi tick della pausa, prima di ripartire.
+    // Se la pausa e' più corta di TREMOLIO_TICKS, occupa tutta la pausa.
+    const int pausa = int(_def.pausa);
+    const int durata_tremolio = pausa < TREMOLIO_TICKS ? pausa : TREMOLIO_TICKS;
+    const int tick_rimasti = durata_fase - tt_raw;
+
+    if (durata_tremolio > 0 && tt_raw >= _durata_volo && tick_rimasti <= durata_tremolio)
+    {
+        const int s = ((g_ostacoli_ticks >> 1) & 1) ? TREMOLIO_AMPIEZZA : -TREMOLIO_AMPIEZZA;
+        chr_y += s;
+    }
+
+    if (_def.sprite_size == PERCORSO_SPRITE_16 && sprite)
         sprite->set_tiles(bn::sprite_items::items.tiles_item(), in_pausa? 19 : 20);
 }
 
