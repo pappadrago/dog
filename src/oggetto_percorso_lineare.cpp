@@ -57,9 +57,16 @@ void oggetto_percorso_lineare::punto()
     if (_def.sprite_size == PERCORSO_SPRITE_32 && sprite)
         sprite->set_tiles(bn::sprite_items::zombie.tiles_item(), tt_raw >= _def.durata_tratto ? 19 : 18);
 
-    const int64_t num = int64_t(2 * pos - durata) * int64_t(_def.escursione) * 256;
-    const bn::fixed offset = bn::fixed::from_data(int(num / durata));
+    // p in [0, scale], poi smoothstep e = p^2 * (3 - 2p), tutto in interi.
+    // Passi intermedi: massimo ~5e7, ben dentro int32.
+    constexpr int S = bn::fixed::scale();
+    const int p = int((int64_t(pos) * S) / durata);
+    const int p2 = (p * p) / S;                 // p^2
+    const int e = (p2 * (3 * S - 2 * p)) / S;   // 0..S
 
+    // offset in [-escursione, +escursione], già in unità raw di fixed
+    const bn::fixed offset = bn::fixed::from_data((2 * e - S) * int(_def.escursione));
+    
     chr_x = bn::fixed(_def.centro_x) + _centro_offset_x;
     chr_y = bn::fixed(_def.centro_y) + _centro_offset_y;
 

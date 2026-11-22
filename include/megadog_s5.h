@@ -74,7 +74,7 @@ namespace megadog_s5 {
     };
     constexpr int doors_count = sizeof(doors) / sizeof(doors[0]);
     constexpr scala_def scale[] = {
-        { 20, 22, 30, SCALA_CON_PIANO },
+        { 20, 22, 30, SCALA_CON_PIANO },\
         { 108, 8, 21, SCALA_CON_PIANO },
     };
     constexpr int scale_count = sizeof(scale) / sizeof(scale[0]);
@@ -103,7 +103,7 @@ namespace megadog_s5 {
     };
     constexpr int oggetti_percorso_lineare_count = sizeof(oggetti_percorso_lineare) / sizeof(oggetti_percorso_lineare[0]);
     constexpr onda_def onde[] = {
-        { 1560, 296, 4, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_32, 512, 30, 30, 12 },
+        { 1560, 296, 4, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_32, 48, 30, 30, 12 },
     };
     constexpr int onde_count = sizeof(onde) / sizeof(onde[0]);
     constexpr uint8_t collision_map_columns = 192;

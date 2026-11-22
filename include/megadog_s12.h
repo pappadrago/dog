@@ -114,7 +114,7 @@ namespace megadog_s12 {
     };
     constexpr int oggetti_percorso_lineare_count = sizeof(oggetti_percorso_lineare) / sizeof(oggetti_percorso_lineare[0]);
     constexpr onda_def onde[] = {
-        { 808, 200, 3, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_16, 512, 30, 30, 12 },
+        { 808, 200, 3, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_16, 48, 30, 30, 12 },
     };
     constexpr int onde_count = sizeof(onde) / sizeof(onde[0]);
     constexpr uint8_t collision_map_columns = 192;
