@@ -46,6 +46,7 @@
 #include "piattaforma.h"
 #include "healthbar.h"
 #include "bomb.h"
+#include "pingpong.h"
 
 
 namespace
@@ -273,6 +274,13 @@ int main()
             for (int i = 0; i < n_onde; ++i)
                 onde.push_back(new onda(onde_def[i]));
 
+            int n_pingpong = 0;
+            const pingpong_def* pingpong_defs =
+                get_schema_pingpong(g_schema, n_pingpong);
+            bn::vector<pingpong*, 16> pingpong_objects;
+            for (int i = 0; i < n_pingpong; ++i)
+                pingpong_objects.push_back(new pingpong(pingpong_defs[i], i * 20));
+
 
             bn::vector<const enemy_def*, MAX_ENEMIES> da_rinascere;
 
@@ -433,6 +441,8 @@ int main()
                         oggetto->update();
                     for (onda* gruppo : onde)
                         gruppo->update();
+                    for (pingpong* oggetto : pingpong_objects)
+                        oggetto->update();
                     for (int i = g_bombs->size() - 1; i >= 0; --i)
                     {
                         bomb* projectile = (*g_bombs)[i];
@@ -602,6 +612,7 @@ int main()
                 oggetti_percorso,
                 oggetti_percorso_lineare,
                 onde,
+                pingpong_objects,
                 *g_trampolini,
                 *g_casse,
                 *g_scale,

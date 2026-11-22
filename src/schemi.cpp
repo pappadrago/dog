@@ -144,6 +144,12 @@ const onda_def* get_schema_onde(int schema, int& count)
     count = s.onde_count;
     return s.onde;
 }
+const pingpong_def* get_schema_pingpong(int schema, int& count)
+{
+    const schema_def& s = S(schema);
+    count = s.pingpong_count;
+    return s.pingpong;
+}
 const enemy_def* get_schema_enemies(int schema, int& count)
 {
     const schema_def& s = S(schema);

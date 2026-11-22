@@ -63,6 +63,7 @@ void pingpong::punto()
 
     const bool ritorno = tempo >= durata_fase;
     int tt = tempo % durata_fase;
+    const bool in_pausa = tempo >= _durata_volo;
     if (tt > _durata_volo)
         tt = _durata_volo;                 // fermo all'estremo durante la pausa
 
@@ -83,6 +84,9 @@ void pingpong::punto()
 
     chr_x = bn::fixed(chr_x.round_integer());
     chr_y = bn::fixed(chr_y.round_integer());
+
+        if (_def.sprite_size == PERCORSO_SPRITE_16 && sprite)
+        sprite->set_tiles(bn::sprite_items::items.tiles_item(), in_pausa? 19 : 20);
 }
 
 void pingpong::update()

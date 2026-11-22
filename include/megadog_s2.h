@@ -19,6 +19,7 @@
 #include "scala.h"
 #include "spike.h"
 #include "snake.h"
+#include "pingpong.h"
 #include "bn_regular_bg_items_megadog_s2.h"
 #include "bn_regular_bg_items_bg_s1.h"
 #include "bn_regular_bg_items_megadog_s2fg.h"
@@ -95,6 +96,11 @@ namespace megadog_s2 {
         { 1080, 248, 4, 32, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_16, 48, 30, 30, 12 },
     };
     constexpr int onde_count = sizeof(onde) / sizeof(onde[0]);
+    constexpr pingpong_def pingpong[] = {
+        { 800, 304, 300, 500, 15, 30, PERCORSO_SPRITE_16, 10 },
+        { 2200, 288, 300, 500, 15, 30, PERCORSO_SPRITE_16, 10 },
+    };
+    constexpr int pingpong_count = sizeof(pingpong) / sizeof(pingpong[0]);
     constexpr uint8_t collision_map_columns = 192;
     constexpr uint8_t collision_map_rows = 32;
 
@@ -157,7 +163,8 @@ namespace megadog_s2 {
             nullptr, 0,
             nullptr, 0,
             oggetti_percorso_lineare, oggetti_percorso_lineare_count,
-            onde, onde_count
+            onde, onde_count,
+            pingpong, pingpong_count
         };
     }
 }
