@@ -21,7 +21,7 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(
     if (_def.sprite_size != PERCORSO_SPRITE_32)
         _def.sprite_size = PERCORSO_SPRITE_16;
 
-    _durata_tratto = _def.durata_tratto;   // --- DEBUG ---
+    _durata_tratto = _def.durata_tratto;
 
     punto();
     if (_def.sprite_size == PERCORSO_SPRITE_32)
