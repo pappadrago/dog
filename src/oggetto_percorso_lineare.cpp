@@ -1,8 +1,7 @@
 #include "oggetto_percorso_lineare.h"
+#include "percorso_sprite.h"
 #include "globals.h"
 #include "dog.h"
-#include "bn_sprite_items_items.h"
-#include "bn_sprite_items_zombie.h"
 
 namespace
 {
@@ -54,19 +53,8 @@ void oggetto_percorso_lineare::punto()
 
     const bool in_pausa = tt_raw >= _def.durata_tratto;
 
-    // Il costruttore chiama punto() prima di creare lo sprite, da qui il controllo.
-    if (sprite) {
-        switch (_def.sprite_size)
-        {
-        case PERCORSO_SPRITE_16:
-            sprite->set_tiles(bn::sprite_items::items.tiles_item(), in_pausa ? 20 : 19);
-            break;
-        case PERCORSO_SPRITE_32:
-        default:
-            sprite->set_tiles(bn::sprite_items::zombie.tiles_item(), in_pausa ? 19 : 18);
-            break;
-        }
-    }
+    // Il costruttore chiama punto() prima di creare lo sprite.
+    aggiorna_sprite_percorso(sprite, _def.sprite_size, in_pausa);
     // p in [0, scale], poi smoothstep e = p^2 * (3 - 2p), tutto in interi.
     // Passi intermedi: massimo ~5e7, ben dentro int32.
     constexpr int S = bn::fixed::scale();

@@ -1,15 +1,13 @@
 #include "pingpong.h"
+#include "percorso_sprite.h"
 #include "globals.h"
 #include "dog.h"
-#include "bn_sprite_items_items.h"
-#include "bn_sprite_items_zombie.h"
 
 namespace
 {
     constexpr int TREMOLIO_TICKS = 24;
     constexpr int TREMOLIO_AMPIEZZA = 1;
     constexpr int TILE_PAUSA = 19;
-    constexpr int TILE_VOLO = 20;
 }
 
 pingpong::pingpong(const pingpong_def& def, uint32_t sfasamento_ticks) :
@@ -116,19 +114,8 @@ void pingpong::punto()
     if (t >= _inizio_tremolio)
         chr_y += ((g_ostacoli_ticks >> 1) & 1) ? TREMOLIO_AMPIEZZA : -TREMOLIO_AMPIEZZA;
 
-    // Il costruttore chiama punto() prima di creare lo sprite, da qui il controllo.
-    if (sprite) {
-        switch (_def.sprite_size)
-        {
-        case PERCORSO_SPRITE_16:
-            sprite->set_tiles(bn::sprite_items::items.tiles_item(), in_pausa ? TILE_PAUSA : TILE_VOLO);
-            break;
-        case PERCORSO_SPRITE_32:
-        default:
-            sprite->set_tiles(bn::sprite_items::zombie.tiles_item(), in_pausa ? 19 : 18);
-            break;
-        }
-    }
+    // Il costruttore chiama punto() prima di creare lo sprite.
+    aggiorna_sprite_percorso(sprite, _def.sprite_size, in_pausa);
 }
 
 void pingpong::update()
