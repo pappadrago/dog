@@ -21,8 +21,6 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(
     if (_def.sprite_size != PERCORSO_SPRITE_32)
         _def.sprite_size = PERCORSO_SPRITE_16;
 
-    _durata_tratto = _def.durata_tratto;
-
     punto();
     if (_def.sprite_size == PERCORSO_SPRITE_32)
     {
@@ -42,22 +40,33 @@ oggetto_percorso_lineare::oggetto_percorso_lineare(
 
 void oggetto_percorso_lineare::punto()
 {
-    const int durata_ciclo = int((_durata_tratto + _def.pausa_tratto) * 2);
-    const int durata_fase = int(_durata_tratto + _def.pausa_tratto);
+    const int durata_ciclo = ((_def.durata_tratto + _def.pausa_tratto) * 2);
+    const int durata_fase = (_def.durata_tratto + _def.pausa_tratto);
     const int tempo = int(((g_ostacoli_ticks - _tick_iniziale) % durata_ciclo +
         _sfasamento_ticks % durata_ciclo) % durata_ciclo);
 
     const bool ritorno = tempo >= durata_fase;
     const int tt_raw = tempo % durata_fase;
-    const int durata = int(_durata_tratto);
+    const int durata = int(_def.durata_tratto);
     const int tt = tt_raw > durata ? durata : tt_raw;   // pausa all'estremo
 
     const int pos = ritorno ? durata - tt : tt;   // 0..durata
 
-    if (_def.sprite_size == PERCORSO_SPRITE_32 && sprite)
-        sprite->set_tiles(bn::sprite_items::zombie.tiles_item(), tt_raw >= _def.durata_tratto ? 19 : 18);
-    if (_def.sprite_size == PERCORSO_SPRITE_16 && sprite)
-        sprite->set_tiles(bn::sprite_items::items.tiles_item(), tt_raw >= _def.durata_tratto ? 20 : 19);
+    const bool in_pausa = tt_raw >= _def.durata_tratto;
+
+    // Il costruttore chiama punto() prima di creare lo sprite, da qui il controllo.
+    if (sprite) {
+        switch (_def.sprite_size)
+        {
+        case PERCORSO_SPRITE_16:
+            sprite->set_tiles(bn::sprite_items::items.tiles_item(), in_pausa ? 20 : 19);
+            break;
+        case PERCORSO_SPRITE_32:
+        default:
+            sprite->set_tiles(bn::sprite_items::zombie.tiles_item(), in_pausa ? 19 : 18);
+            break;
+        }
+    }
     // p in [0, scale], poi smoothstep e = p^2 * (3 - 2p), tutto in interi.
     // Passi intermedi: massimo ~5e7, ben dentro int32.
     constexpr int S = bn::fixed::scale();
@@ -67,7 +76,7 @@ void oggetto_percorso_lineare::punto()
 
     // offset in [-escursione, +escursione], già in unità raw di fixed
     const bn::fixed offset = bn::fixed::from_data((2 * e - S) * int(_def.escursione));
-    
+
     chr_x = bn::fixed(_def.centro_x) + _centro_offset_x;
     chr_y = bn::fixed(_def.centro_y) + _centro_offset_y;
 

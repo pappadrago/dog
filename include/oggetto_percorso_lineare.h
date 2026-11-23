@@ -30,7 +30,6 @@ private:
     oggetto_percorso_lineare_def _def;
     bn::optional<bn::sprite_animate_action<16>> _animazione;
     uint32_t _tick_iniziale;
-    uint32_t _durata_tratto;
     uint32_t _sfasamento_ticks;
     bn::fixed _centro_offset_x = ZERO;
     bn::fixed _centro_offset_y = ZERO;

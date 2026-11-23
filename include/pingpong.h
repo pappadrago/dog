@@ -18,7 +18,7 @@ class pingpong : public obj
 {
 public:
     explicit pingpong(const pingpong_def& def,
-                                       uint32_t sfasamento_ticks = 0);
+        uint32_t sfasamento_ticks = 0);
     void update();
 
 private:
@@ -28,7 +28,9 @@ private:
     int _durata_volo;       // tick per un volo completo
     int _altezza_raw;       // altezza massima, in unità raw di bn::fixed
     int _semigittata_raw;   // metà dello spostamento orizzontale, in unità raw
-
+    int _durata_fase = 0;      // _durata_volo + pausa
+    int _durata_ciclo = 0;     // 2 * _durata_fase
+    int _inizio_tremolio = 0;  // tick (dentro la fase) da cui inizia il tremolio
     void punto();
     void controlla_cane();
 };
