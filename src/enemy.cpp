@@ -12,6 +12,7 @@
 #include "bn_sprite_items_enemies.h"
 #include "bn_sprite_items_enemies2.h"
 #include "bn_sprite_items_diecloud.h"
+#include "bn_sprite_items_zombie.h"
 #include "bn_math.h"
 #include "bn_log.h"
 #include <bn_sound_items.h>
@@ -71,21 +72,44 @@ enemy::enemy(const enemy_def& def)
         spr_itm = bn::sprite_items::enemies2;
         N = 2 * 3;
         break;
+    case enemy_tipo::MOVE_TURRET:
+        spr_itm = bn::sprite_items::zombie;   // placeholder 32x32
+        break;        
     default:
         break;
     }
 
     sprite = spr_itm.create_sprite(chr_x, chr_y, 0);
-    actionStand = bn::create_sprite_animate_action_forever(
-        *sprite, 6, spr_itm.tiles_item(), N + 1, N + 1);
-    actionWalk = bn::create_sprite_animate_action_forever(
-        *sprite, 3, spr_itm.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+    if (tipo == enemy_tipo::MOVE_TURRET)
+    {
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 8, spr_itm.tiles_item(),
+            enemy_config::TURRET_TILE_A, enemy_config::TURRET_TILE_B,
+            enemy_config::TURRET_TILE_C, enemy_config::TURRET_TILE_D);
+        actionWalk = bn::create_sprite_animate_action_forever(   // usata solo finché cade al primo frame
+            *sprite, 8, spr_itm.tiles_item(),
+            enemy_config::TURRET_TILE_A, enemy_config::TURRET_TILE_B,
+            enemy_config::TURRET_TILE_C, enemy_config::TURRET_TILE_D);
+    }
+    else
+    {
+        actionStand = bn::create_sprite_animate_action_forever(
+            *sprite, 6, spr_itm.tiles_item(), N + 1, N + 1);
+        actionWalk = bn::create_sprite_animate_action_forever(
+            *sprite, 3, spr_itm.tiles_item(), N + 0, N + 1, N + 2, N + 1);
+    }
     sprite->set_bg_priority(1);
     sprite->set_camera(g_camera);
 
     init(def);
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
+    if (tipo == enemy_tipo::MOVE_TURRET)
+    {
+        box_dim = bn::fixed(16);       // mezza altezza: chr_y è il centro dello sprite
+        box_halfdim = bn::fixed(12);
+        attack_cd = def.delay;         // ritardo del primo colpo
+    }
 }
 
 void enemy::init(const enemy_def& def)
@@ -148,7 +172,8 @@ void enemy::update_graphics()
 {
     sprite->set_x(chr_x - HALF_SCREEN_W);
     sprite->set_y(chr_y - HALF_SCREEN_H);
-    sprite->set_horizontal_flip(dir == DIR_LEFT);
+    sprite->set_horizontal_flip(
+        dir == (tipo==MOVE_TURRET?DIR_RIGHT:DIR_LEFT));
 
     if (onGround && chr_vx.integer() == 0) actionStand->update();
     else                                   actionWalk->update();
@@ -172,6 +197,7 @@ void enemy::update_movement()
     case MOVE_GHOST:        move_ghost();       break;
     case MOVE_GHOST_SHY:    move_ghost_shy();   break;
     case MOVE_MELEE:        move_melee();       break;
+    case MOVE_TURRET:       move_turret();      break;
     default: break;
     }
 }
@@ -274,6 +300,14 @@ void enemy::move_melee()
         chr_accx = 0; // in range: si pianta e lascia fare ad update_attack()
 }
 
+void enemy::move_turret()
+{
+    chr_accx = 0;
+    chr_vx = 0;
+    if (dist_to_dog() < SCREEN_W)
+        face_dog();      // l'asset deve guardare a DESTRA: update_graphics() flippa con DIR_LEFT
+}
+
 void enemy::update_attack()
 {
     if (attack_cd > 0) { attack_cd--; return; }
@@ -304,7 +338,7 @@ void enemy::update_attack()
     else {
         fire(pick_projectile());
     }
-    attack_cd = ENEMY_ATTACK_PERIOD;
+        attack_cd = (tipo == MOVE_TURRET) ? enemy_config::TURRET_FIRE_PERIOD : ENEMY_ATTACK_PERIOD;
 }
 
 void enemy::takeDamage(int damage) {
@@ -318,6 +352,14 @@ void enemy::takeDamage(int damage) {
 
 void enemy::beHitByBark(int _dir, bn::fixed power)
 {
+
+        if (tipo == MOVE_TURRET)
+    {
+        takeDamage((BAU_DAMAGE + power.multiplication(BAU_DAMAGE)).integer());
+        invulnerability = 30;   // senza, un bau carico la colpirebbe a ogni frame
+        return;
+    }
+
     chr_vy = ENEMY_MEDIUM_JUMP_VY - power.multiplication(bn::fixed(1.5));
     chr_vx = (SMALL_VX_R + power.multiplication(SMALL_VX_R)).multiplication(_dir);
 
@@ -333,6 +375,8 @@ void enemy::beHitByBark(int _dir, bn::fixed power)
 
 void enemy::beHitByDog()
 {
+    if (tipo == MOVE_TURRET) return;   // il contatto non la sposta né la danneggia (dog subisce comunque danno)
+    
     // questo è il contatto fisico con il cane, non un colpo di arma: il nemico viene respinto e stordito
     chr_vy = ENEMY_MEDIUM_JUMP_VY;
     chr_vx = g_dog->chr_vx > 0 ? SMALL_VX_R : SMALL_VX_L;
@@ -404,6 +448,15 @@ void enemy::throw_fireball()
         /*ignoreGravity=*/true, /*ignoreWalls=*/true,
         enemy_config::FIREBALL_SPEED);
 }
+
+void enemy::throw_bullet(){
+    bn::sound_items::fire_lighting.play();
+    throw_aimed_projectile(BOMB_BULLET, enemy_config::BULLET_TILE_INDEX,
+        /*ignoreGravity=*/true, /*ignoreWalls=*/true,
+        enemy_config::BULLET_SPEED);
+}
+
+
 void enemy::throw_fulmine()
 {
 
@@ -438,6 +491,8 @@ void enemy::melee()
 
 void enemy::beHitByShockwave(int _dir)
 {
+     if (tipo == MOVE_TURRET) { takeDamage(5); invulnerability = ONDA_URTO_STUN_TICKS; return; }
+    
     chr_vy = ENEMY_MEDIUM_JUMP_VY;                          // saltello
     chr_vx = SMALL_VX_R.multiplication(bn::fixed(_dir));    // lontano dal cane
     chr_accx = bn::fixed(0);
@@ -519,20 +574,21 @@ bool enemy::blocks_bark(int from_dir) const
 
 
 // ---------------------------------------------------------------
-int16_t enemy::pick_projectile() const
+int32_t enemy::pick_projectile() const
 {
     // se più bit sono accesi, scegli a caso tra quelli disponibili
-    int16_t avail[5]; int n = 0;
+    int32_t avail[5]; int n = 0;
     if (has(ATTR_ARROW))    avail[n++] = ATTR_ARROW;
     if (has(ATTR_BOMB))     avail[n++] = ATTR_BOMB;
     if (has(ATTR_SHELL))    avail[n++] = ATTR_SHELL;
     if (has(ATTR_FIREBALL)) avail[n++] = ATTR_FIREBALL;
+    if (has(ATTR_BULLET)) avail[n++] = ATTR_BULLET;
     if (has(ATTR_GRAVITY_ARROW)) avail[n++] = ATTR_GRAVITY_ARROW;
     if (has(ATTR_LIGHTNING)) avail[n++] = ATTR_LIGHTNING;
     return n ? avail[g_rng.get_int(n)] : 0;
 }
 
-void enemy::fire(int16_t type)
+void enemy::fire(int32_t type)
 {
     switch (type) {
     case ATTR_BOMB:
@@ -550,6 +606,9 @@ void enemy::fire(int16_t type)
     case ATTR_FIREBALL:
         throw_fireball();
         return;
+    case ATTR_BULLET:
+        throw_bullet();
+        return;
     case ATTR_LIGHTNING:
         throw_fulmine();
         return;
@@ -561,6 +620,8 @@ void enemy::fire(int16_t type)
 
 void enemy::beHitByCassa(int damage)
 {
+    if (tipo == MOVE_TURRET) { takeDamage(damage); return; }
+    
     // colpo in testa: il nemico si ferma stordito sul posto, senza essere respinto
     chr_vx = ZERO;
     chr_accx = ZERO;

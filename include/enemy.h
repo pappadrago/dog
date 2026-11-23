@@ -22,11 +22,12 @@ enum enemy_tipo : uint8_t
     MOVE_CHASE_SHY,        // insegue solo se dog NON lo guarda
     MOVE_MELEE,            // si avvicina fino a melee_range, poi si ferma e attacca
     MOVE_GHOST,            // si avvicina passando attraverso i muri
-    MOVE_GHOST_SHY         // si avvicina passando attraverso i muri solo se dog NON lo guarda
+    MOVE_GHOST_SHY,         // si avvicina passando attraverso i muri solo se dog NON lo guarda
+    MOVE_TURRET         // fermo, spara proiettili a intervalli regolari
 };
 
 // ---------- ATTRIBUTO = bitmask attacco/difese ----------
-enum enemy_attr : int16_t
+enum enemy_attr : int32_t
 {
     ATTR_NONE = 0,
     ATTR_CONTACT = 1 << 0,   // danno per scontro fisico (nessuna arma)
@@ -44,7 +45,8 @@ enum enemy_attr : int16_t
     ATTR_GRAVITY_ARROW = 1 << 12,
     ATTR_MINA = 1 << 13,
     ATTR_LIGHTNING = 1 << 14,
-    ATTR_PROJ_MASK = ATTR_ARROW |ATTR_GRAVITY_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL | ATTR_MINA | ATTR_LIGHTNING,   // maschera per proiettili
+    ATTR_BULLET = 1 << 15,
+    ATTR_PROJ_MASK = ATTR_ARROW | ATTR_GRAVITY_ARROW | ATTR_BOMB | ATTR_SHELL | ATTR_FIREBALL | ATTR_MINA| ATTR_BULLET | ATTR_LIGHTNING,   // maschera per proiettili
     // bit 15 = segno di int16_t: usa solo bit 0..14
 };
 
@@ -86,6 +88,7 @@ public:
     void throw_mina();
     void throw_gravity_arrow();
     void throw_fireball();
+    void throw_bullet();
     void throw_fulmine();
     void melee();
 
@@ -141,6 +144,7 @@ private:
     void move_melee();
     void move_ghost();
     void move_ghost_shy();
+    void move_turret();
     // helper
     bool  dog_in_sight() const;
     bool  dog_is_looking_at_me() const;
@@ -148,20 +152,33 @@ private:
     bn::fixed disty_to_dog() const;
     void  face_dog();
     void  walk_towards(int d, bn::fixed accel);
-    void  fire(int16_t proj_type);
-    int16_t pick_projectile() const;
+    void  fire(int32_t proj_type);
+    int32_t pick_projectile() const;
     void throw_aimed_projectile(uint8_t tipoProjec, uint8_t tileIndex,
-                            bool ignoreGravity, bool ignoreWalls,
-                            bn::fixed speed);
+        bool ignoreGravity, bool ignoreWalls,
+        bn::fixed speed);
 };
 
 namespace enemy_config {
     constexpr int ARROW_TILE_INDEX = 9;
     constexpr int GRAVITY_ARROW_TILE_INDEX = 24;
     constexpr int FIREBALL_TILE_INDEX = 23;
+
+    constexpr int BULLET_TILE_INDEX = 8;
+    constexpr bn::fixed BULLET_SPEED = bn::fixed(2.0);
+
     constexpr int MINA_TILE_INDEX = 25;
     constexpr bn::fixed ARROW_SPEED = bn::fixed(2.0);
     constexpr bn::fixed FIREBALL_SPEED = bn::fixed(1.5);
     // Offset verticale di spawn rispetto al nemico (centro del sprite).
     constexpr bn::fixed SPAWN_Y_OFFSET = bn::fixed(-4);
+
+        // --- TURRET ---
+    constexpr int TURRET_FIRE_PERIOD = 90;          // frame tra due colpi
+    constexpr bn::fixed TURRET_MUZZLE_X = bn::fixed(14);  // distanza della bocca dal centro, nel verso di dir
+    // placeholder: sostituisci con gli indici reali dello spritesheet
+    constexpr int TURRET_TILE_A = 20;
+    constexpr int TURRET_TILE_B = 21;
+    constexpr int TURRET_TILE_C = 22;
+    constexpr int TURRET_TILE_D = 23;
 }

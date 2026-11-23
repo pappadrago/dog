@@ -18,6 +18,7 @@ BN_CODE_IWRAM void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t til
     bn::fixed speed)
 {
     bn::fixed dx = g_dog->chr_x - chr_x;
+
     if (bn::abs(dx) > SCREEN_W) return;      // cane troppo lontano
 
     dir = (dx > 0) ? DIR_RIGHT : DIR_LEFT;
@@ -44,10 +45,10 @@ BN_CODE_IWRAM void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t til
     }
 
     // L'angolo di rotazione del sprite segue la traiettoria:
-    //   0° = rivolto a destra, quindi rotazione = -90° - angle.
+    // 0° = rivolto a destra, quindi rotazione = -90° - angle.
     bomb_def def;
     def.tipoProjec = tipoProjec;
-    def.x = chr_x;
+    def.x = chr_x + ((tipo == MOVE_TURRET) ? bn::fixed(dir) * enemy_config::TURRET_MUZZLE_X : ZERO);
     def.y = chr_y + enemy_config::SPAWN_Y_OFFSET;
     def.vx = vx;
     def.vy = vy;
