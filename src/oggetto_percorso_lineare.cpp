@@ -1,7 +1,7 @@
 #include "oggetto_percorso_lineare.h"
 #include "percorso_sprite.h"
+#include "percorso_update.h"
 #include "globals.h"
-#include "dog.h"
 
 namespace
 {
@@ -106,24 +106,5 @@ void oggetto_percorso_lineare::sposta_centro(bn::fixed offset_x, bn::fixed offse
 
 void oggetto_percorso_lineare::update()
 {
-    if (bn::abs(g_dog->chr_x - chr_x) > SCREEN_W ||
-        bn::abs(g_dog->chr_y - chr_y) > SCREEN_H)
-        return;
-    punto();
-
-    sprite->set_x(chr_x - HALF_SCREEN_W);
-    sprite->set_y(chr_y - HALF_SCREEN_H);
-    controlla_cane();
-}
-
-void oggetto_percorso_lineare::controlla_cane()
-{
-    if (g_dog->invulnerability > 0)
-        return;
-
-    if (bn::abs(g_dog->chr_x - chr_x) < g_dog->box_halfdim + box_halfdim &&
-        bn::abs(g_dog->chr_y - chr_y) < g_dog->box_dim + box_dim)
-    {
-        g_dog->dog_damage_and_jump(_def.danno, g_dog->chr_x < chr_x);
-    }
+    aggiorna_percorso(*this, _def.danno, [this] { punto(); });
 }

@@ -32,5 +32,4 @@ private:
     int _durata_ciclo = 0;     // 2 * _durata_fase
     int _inizio_tremolio = 0;  // tick (dentro la fase) da cui inizia il tremolio
     void punto();
-    void controlla_cane();
 };

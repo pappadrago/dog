@@ -35,5 +35,4 @@ private:
     bn::fixed _centro_offset_y = ZERO;
 
     void punto();
-    void controlla_cane();
 };
