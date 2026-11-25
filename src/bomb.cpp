@@ -21,10 +21,22 @@ bomb::bomb(const bomb_def& def)
     box_dim = bn::fixed(8);
     box_halfdim = bn::fixed(4);
 
-    if (tipoProjec == BOMB_MINA || tipoProjec == BOMB_BOMB || tipoProjec == BOMB_FULMINE)
+    if (tipoProjec == BOMB_MINA || tipoProjec == BOMB_BOMB || tipoProjec == BOMB_FULMINE) {
         sprite = bn::sprite_items::diecloud.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, 0);
-    else
+        actionExplode = bn::create_sprite_animate_action_once(
+            *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(),
+            BOMB_EXPLOSION_FIRST_TILE + 0, BOMB_EXPLOSION_FIRST_TILE + 1,
+            BOMB_EXPLOSION_FIRST_TILE + 2, BOMB_EXPLOSION_FIRST_TILE + 3,
+            BOMB_EXPLOSION_FIRST_TILE + 4, BOMB_EXPLOSION_FIRST_TILE + 5,
+            BOMB_EXPLOSION_FIRST_TILE + 6, BOMB_EXPLOSION_FIRST_TILE + 7,
+            BOMB_EXPLOSION_FIRST_TILE + 8);
+
+    }
+    else {
         sprite = bn::sprite_items::weapons.create_sprite(chr_x - HALF_SCREEN_W, chr_y - HALF_SCREEN_H, def.tileIndex);
+        actionExplode = bn::create_sprite_animate_action_once(
+            *sprite, 1, bn::sprite_items::weapons.tiles_item(), 32, 33, 34, 35);
+    }
 
     if (def.angle != 0)
         sprite->set_rotation_angle_safe(def.angle);
@@ -33,13 +45,6 @@ bomb::bomb(const bomb_def& def)
     sprite->set_bg_priority(tipoProjec == BOMB_BOMB ? 1 : 0);
     sprite->set_camera(g_camera);
 
-    actionExplode = bn::create_sprite_animate_action_once(
-        *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(),
-        BOMB_EXPLOSION_FIRST_TILE + 0, BOMB_EXPLOSION_FIRST_TILE + 1,
-        BOMB_EXPLOSION_FIRST_TILE + 2, BOMB_EXPLOSION_FIRST_TILE + 3,
-        BOMB_EXPLOSION_FIRST_TILE + 4, BOMB_EXPLOSION_FIRST_TILE + 5,
-        BOMB_EXPLOSION_FIRST_TILE + 6, BOMB_EXPLOSION_FIRST_TILE + 7,
-        BOMB_EXPLOSION_FIRST_TILE + 8);
 
     int B = 18;
     actionFulmine = bn::create_sprite_animate_action_once(
@@ -54,8 +59,8 @@ bomb::bomb(const bomb_def& def)
         actionBullet = bn::create_sprite_animate_action_forever(
             *sprite, 4, bn::sprite_items::weapons.tiles_item(), 12, 13, 14, 15);
 
-        actionStartBullet   = bn::create_sprite_animate_action_once(
-            *sprite, 1, bn::sprite_items::weapons.tiles_item(), 31, 32, 33, 34);
+        actionStartBullet = bn::create_sprite_animate_action_once(
+            *sprite, 1, bn::sprite_items::weapons.tiles_item(), 28, 29, 30, 31);
 
     }
 

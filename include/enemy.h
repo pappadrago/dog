@@ -176,6 +176,7 @@ namespace enemy_config {
         // --- TURRET ---
     constexpr int TURRET_FIRE_PERIOD = 90;          // frame tra due colpi
     constexpr bn::fixed TURRET_MUZZLE_X = bn::fixed(14);  // distanza della bocca dal centro, nel verso di dir
+    constexpr bn::fixed TURRET_MUZZLE_Y = bn::fixed(4);   // distanza della bocca dal centro, in verticale
     // placeholder: sostituisci con gli indici reali dello spritesheet
     constexpr int TURRET_TILE_A = 20;
     constexpr int TURRET_TILE_B = 21;

@@ -108,6 +108,10 @@ BN_CODE_IWRAM void bomb::update()
             explode(); // dopo l'animazione di esplosione, si nasconderà da solo
             g_dog->dog_damage_and_jump(15, g_dog->chr_x < chr_x);
             break;
+        case BOMB_BULLET:
+            explode(); // dopo l'animazione di esplosione, si nasconderà da solo
+            g_dog->dog_damage_and_jump(5, g_dog->chr_x < chr_x);
+            break;
         default:
             g_dog->dog_damage_and_jump(3, g_dog->chr_x < chr_x);
             if (tipoProjec != BOMB_DAGGER) { // se non è una spada, nascondi
