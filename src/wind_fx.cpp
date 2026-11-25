@@ -78,8 +78,8 @@ void wind_fx::update()
         const particle& p = _particles[k + offset];
         bn::sprite_ptr& s = _sprites[k];
 
-        bn::fixed wobble = bn::degrees_lut_sin_safe(
-            bn::fixed((p.phase + _ticks * 4) % 360)).multiplication(2);
+        // bn::fixed wobble = bn::degrees_lut_sin_safe(
+        //     bn::fixed((p.phase + _ticks * 4) % 360)).multiplication(2);
 
         s.set_position(p.x, p.y /*+ wobble*/);
         s.set_horizontal_flip(w < 0);

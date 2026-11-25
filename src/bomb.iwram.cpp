@@ -25,6 +25,7 @@ BN_CODE_IWRAM void bomb::update()
         break;
     case BOMB_ARROW:
     case BOMB_FIREBALL:
+    case BOMB_BULLET:
         lifetime = BOMB_PROJECTILE_LIFETIME;
         break;
     case BOMB_MINA:
@@ -138,6 +139,13 @@ BN_CODE_IWRAM void bomb::update()
         else actionFulmine->reset();
     }
 
+    if (tipoProjec == BOMB_BULLET) {
+        if (actionStartBullet.has_value() && !actionStartBullet->done()) {
+            actionStartBullet->update();
+        }
+        else if (actionBullet.has_value())
+            actionBullet->update();
+    }
 
     // dopo l'ultimo rimbalzo la bomba lampeggia (miccia accesa)
     int remaining_lifetime = lifetime - ticks2action;

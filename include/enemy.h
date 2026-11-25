@@ -123,7 +123,7 @@ public:
     void die(int _dir);
     void update_death();
 
-    bool has(int16_t a) const { return (attributo & a) != 0; }
+    bool has(int32_t a) const { return (attributo & a) != 0; }
     bool blocks_bark(int from_dir) const;     // hook per bau::update()
 private:
     void init(const enemy_def& def);
@@ -164,7 +164,7 @@ namespace enemy_config {
     constexpr int GRAVITY_ARROW_TILE_INDEX = 24;
     constexpr int FIREBALL_TILE_INDEX = 23;
 
-    constexpr int BULLET_TILE_INDEX = 8;
+    constexpr int BULLET_TILE_INDEX = 11;
     constexpr bn::fixed BULLET_SPEED = bn::fixed(2.0);
 
     constexpr int MINA_TILE_INDEX = 25;

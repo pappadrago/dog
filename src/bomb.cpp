@@ -48,7 +48,18 @@ bomb::bomb(const bomb_def& def)
     actionThunder = bn::create_sprite_animate_action_once(
         *sprite, BOMB_EXPLOSION_FRAME_TICKS, bn::sprite_items::diecloud.tiles_item(), B + 0, B + 1, B + 2, B + 3, B + 4, B + 5, B + 6);
 
-    if(tipoProjec == BOMB_FULMINE)
+
+    if (tipoProjec == BOMB_BULLET) {
+
+        actionBullet = bn::create_sprite_animate_action_forever(
+            *sprite, 4, bn::sprite_items::weapons.tiles_item(), 12, 13, 14, 15);
+
+        actionStartBullet   = bn::create_sprite_animate_action_once(
+            *sprite, 1, bn::sprite_items::weapons.tiles_item(), 31, 32, 33, 34);
+
+    }
+
+    if (tipoProjec == BOMB_FULMINE)
         max_fall = bn::fixed(2.0);
 }
 

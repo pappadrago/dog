@@ -49,7 +49,7 @@ BN_CODE_IWRAM void enemy::throw_aimed_projectile(uint8_t tipoProjec, uint8_t til
     bomb_def def;
     def.tipoProjec = tipoProjec;
     def.x = chr_x + ((tipo == MOVE_TURRET) ? bn::fixed(dir) * enemy_config::TURRET_MUZZLE_X : ZERO);
-    def.y = chr_y + enemy_config::SPAWN_Y_OFFSET;
+    def.y = chr_y + ((tipo == MOVE_TURRET) ? 4 : enemy_config::SPAWN_Y_OFFSET);
     def.vx = vx;
     def.vy = vy;
 

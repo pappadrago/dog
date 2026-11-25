@@ -49,6 +49,8 @@ public:
     bn::optional<bn::sprite_animate_action<9>> actionExplode;
     bn::optional<bn::sprite_animate_action<16>> actionThunder;
     bn::optional<bn::sprite_animate_action<16>> actionFulmine;
+    bn::optional<bn::sprite_animate_action<4>> actionBullet;
+    bn::optional<bn::sprite_animate_action<8>> actionStartBullet;
     void update();
 
 private:
