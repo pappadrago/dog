@@ -93,7 +93,17 @@ BN_CODE_IWRAM void bomb::update()
             }
         }
     }
+    if (tipoProjec == BOMB_ORB)
+    {
+        // spostamento laterale = derivata di un seno, perpendicolare al moto: (-vy, vx)
+        bn::fixed onda = bn::degrees_lut_cos_safe(bn::fixed(ticks2action * BOMB_ORB_WAVE_STEP))
+            .multiplication(BOMB_ORB_WAVE_K);
+        if (max_bounces & 1)
+            onda = -onda;
+        chr_x -= chr_vy.multiplication(onda);
+        chr_y += chr_vx.multiplication(onda);
 
+    }
 
     bool hit = check_collision_16(*this);
     if (hit)

@@ -15,6 +15,8 @@
 #define BOMB_EXPLOSION_RADIUS 20   // raggio del danno (px)
 #define BOMB_EXPLOSION_FIRST_TILE 9
 #define BOMB_TILE_INDEX       11    // frame di bn::sprite_items::weapons usato per la bomba (da adattare)
+#define BOMB_ORB_WAVE_STEP 8              // gradi di fase per frame (periodo = 360/8 = 45 frame)
+#define BOMB_ORB_WAVE_K    bn::fixed(0.6) // ampiezza: più alto = onda più larga
 
 enum bomb_tipo : uint8_t
 {

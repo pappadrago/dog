@@ -122,7 +122,7 @@ boss::boss(bn::fixed x, bn::fixed y, int num_colpi, boss_tipo _tipo, bn::fixed _
         ticks_prossimo_attacco = 60;
     }
 
-        inizializza_stato(x, y);
+    inizializza_stato(x, y);
 }
 
 void boss::update_runner()
@@ -620,7 +620,7 @@ void boss::update_flyer()
         if (flyer_move_delay == 0)
         {
             flyer_start_x = chr_x.integer();
-            flyer_start_y = chr_y.integer() ;
+            flyer_start_y = chr_y.integer();
             flyer_target_x = target_x.integer();
             flyer_target_y = target_y.integer();
             flyer_move_ticks = 0;
@@ -979,8 +979,8 @@ void boss::update_stregone()
 
     if (stato == SR_PATTUGLIA)
     {
-        bn::fixed patrol_left = bn::fixed(patrol_origin_x)  - PATROL_HALF_RANGE;
-        bn::fixed patrol_right = bn::fixed(patrol_origin_x)  + PATROL_HALF_RANGE;
+        bn::fixed patrol_left = bn::fixed(patrol_origin_x) - PATROL_HALF_RANGE;
+        bn::fixed patrol_right = bn::fixed(patrol_origin_x) + PATROL_HALF_RANGE;
 
         if ((dir == DIR_RIGHT && chr_x >= patrol_right) ||
             (dir == DIR_LEFT && chr_x <= patrol_left) ||
@@ -1302,7 +1302,7 @@ void boss::spara_anello(int n)
         def.vy = bn::degrees_lut_sin_safe(angolo).multiplication(enemy_config::FIREBALL_SPEED);
         def.ignoreGravity = true;
         def.ignoreWalls = true;
-        def.max_bounces = 0;
+        def.max_bounces = i & 1;   // 1 = onda invertita
         def.tileIndex = enemy_config::ORB_TILE_INDEX;
         def.angle = ZERO;
         spawn_bomb(def);   // se il pool è pieno, il colpo salta
