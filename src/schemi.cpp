@@ -307,7 +307,7 @@ bool spawn_boss_schema(int schema)
     {
 
     case 1:
-        g_boss.emplace(2300, 17 * 8, 12, boss_tipo::SPIRALE);
+        g_boss.emplace(2300, 17 * 8, 12, boss_tipo::SUMMONER);
         return true;
     case 2:
         g_boss.emplace(100 * 16, 17 * 8, 14, boss_tipo::TELEPORTER);
@@ -329,6 +329,9 @@ bool spawn_boss_schema(int schema)
         return true;        
     case 8:    // Castello: sala in basso a destra
         g_boss.emplace(165 * 16, 22 * 16, 12, boss_tipo::BOMBER);
+        return true;
+            case 10:
+        g_boss.emplace(2300, 17 * 8, 12, boss_tipo::SPIRALE);
         return true;
     case 12:   // Vulcano: ultima terrazza
         g_boss.emplace(166 * 16, 14 * 16, 14, boss_tipo::SUMMONER);

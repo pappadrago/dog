@@ -88,7 +88,7 @@ namespace megadog_s2 {
     // oggetti_percorso: nessuno
     // ground_frictions: nessuno
     constexpr oggetto_percorso_lineare_def oggetti_percorso_lineare[] = {
-        { 1128, 280, 48, PERCORSO_LINEARE_ORIZZONTALE, 30, 60, PERCORSO_SPRITE_16, 12 },
+        { 1080, 280, 48, PERCORSO_LINEARE_ORIZZONTALE, 30, 60, PERCORSO_SPRITE_16, 12 },
         { 2568, 248, 32, PERCORSO_LINEARE_VERTICALE, 30, 60, PERCORSO_SPRITE_32, 12 },
     };
     constexpr int oggetti_percorso_lineare_count = sizeof(oggetti_percorso_lineare) / sizeof(oggetti_percorso_lineare[0]);
