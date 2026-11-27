@@ -90,9 +90,9 @@ static void controlla_intersezioni_piattaforme_lava()
                 {
                     BN_LOG("Intersezione schema ", schema + 1, ", piattaforma ", p, ", lava ", l);
                     BN_LOG("Piattaforma [x1,y1,x2,y2]: ", piattaforma.tile_x1,
-                           piattaforma.tile_y1, piattaforma.tile_x2, piattaforma.tile_y2);
+                        piattaforma.tile_y1, piattaforma.tile_x2, piattaforma.tile_y2);
                     BN_LOG("Lava [x1,y1,x2,y2]: ", lava.tile_x1,
-                           lava.tile_y1, lava.tile_x2, lava.tile_y2);
+                        lava.tile_y1, lava.tile_x2, lava.tile_y2);
                     intersezioni++;
                 }
             }
@@ -305,9 +305,28 @@ bool spawn_boss_schema(int schema)
 
     switch (schema)
     {
+
+    case 1:
+        g_boss.emplace(2300, 17 * 8, 12, boss_tipo::SPIRALE);
+        return true;
+    case 2:
+        g_boss.emplace(100 * 16, 17 * 8, 14, boss_tipo::TELEPORTER);
+        return true;
+    case 3:
+        g_boss.emplace(100 * 16, 17 * 8, 12, boss_tipo::CHARGER);
+        return true;
     case 4:    // Ghiaccio: terrazza bassa prima dell'uscita
         g_boss.emplace(172 * 16, 17 * 16, 10, boss_tipo::COWARD);
         return true;
+    case 5:
+        g_boss.emplace(100 * 16, 17 * 8, 12, boss_tipo::STREGONE);
+        return true;
+    case 6:
+        g_boss.emplace(100 * 16, 17 * 8, 14, boss_tipo::SLAMMER);
+        return true;
+    case 7:
+        g_boss.emplace(100 * 16, 17 * 8, 12, boss_tipo::CHARGER);
+        return true;        
     case 8:    // Castello: sala in basso a destra
         g_boss.emplace(165 * 16, 22 * 16, 12, boss_tipo::BOMBER);
         return true;

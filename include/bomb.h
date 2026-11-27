@@ -24,7 +24,8 @@ enum bomb_tipo : uint8_t
     BOMB_BULLET,
     BOMB_ARROW,
     BOMB_MINA,
-    BOMB_FULMINE
+    BOMB_FULMINE,
+    BOMB_ORB
 };
 
 

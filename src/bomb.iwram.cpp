@@ -26,6 +26,7 @@ BN_CODE_IWRAM void bomb::update()
     case BOMB_ARROW:
     case BOMB_FIREBALL:
     case BOMB_BULLET:
+    case BOMB_ORB:
         lifetime = BOMB_PROJECTILE_LIFETIME;
         break;
     case BOMB_MINA:

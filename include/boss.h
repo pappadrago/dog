@@ -14,30 +14,36 @@ enum class boss_tipo : uint8_t
     FLYER,
     SUMMONER,
     SKELETON,
-    COWARD
+    COWARD,
+    CHARGER,
+    STREGONE,
+    SLAMMER,
+    TELEPORTER,   // nuovo
+    GUARDIANO,    // nuovo
+    SPIRALE       // nuovo
 };
+
 
 class boss : public live_obj
 {
 public:
-    int colpi_rimasti;
-    int colpi_totali;
-    bn::fixed dimensione;   // lato dello sprite (o del bounding box), non più una macro fissa
+    int16_t colpi_rimasti;
+    int16_t colpi_totali;
+    bn::fixed dimensione;   // lato dello sprite (o del bounding box)
 
-    uint8_t attributo = enemy_attr::ATTR_NONE;    // enemy_attr::ATTR_BASH, enemy_attr::ATTR_MELEE (bitmask)
+    uint16_t attributo = enemy_attr::ATTR_NONE;   // era uint8_t: vedi nota in fondo
     uint8_t currentAction = ACTION_MOVE;
 
     bn::optional<bn::sprite_animate_action<10>> actionMelee;
 
-    int meleeTicks = 0;
-    int ticks_attacco_melee = 0;
-    int ticks_prossimo_attacco = 90;
-    int ticks_prossimo_saltello = 60;
-    int ticks2dir = 0;
+    // usati anche da dog.cpp / collision.iwram.cpp: nomi e visibilità invariati
+    int16_t meleeTicks = 0;
+    int16_t ticks_attacco_melee = 0;
+    int16_t melee_damage = 0;       // 0 = niente attacco melee configurato
+    int16_t contact_damage = 2;
 
-    int contact_damage = 2;
-    int melee_damage = 0;   // 0 = niente attacco melee configurato
-    int deathTicks = 0;
+    int16_t ticks_prossimo_attacco = 90;   // condiviso da quasi tutti i pattern
+    int16_t deathTicks = 0;
     bool distrutto = false;
 
     boss(bn::fixed x, bn::fixed y, int num_colpi, uint8_t attributo = enemy_attr::ATTR_NONE, bn::fixed dimensione = 32);
@@ -49,9 +55,6 @@ public:
     bool dog_in_melee_range() const;
     bool dog_in_bash_range() const;
 
-    bool in_summon = false;
-    int  summon_ticks = 0;
-    int  ticks_prossimo_summon = 150;
     bn::optional<bn::sprite_animate_action<12>> actionSummon;
 
     void avvia_summon();
@@ -59,28 +62,60 @@ public:
     void completa_summon();
 
 private:
-    bool bomber_mode = false;
-    bool baller_mode = false;
-    bool flyer_mode = false;
-    bool summoner_mode = false;
-
     boss_tipo tipo;
 
-    bn::fixed patrol_origin_x = ZERO;
-    int bomber_ticks_to_jump = 180;
-    int bomber_ticks_to_throw = 60;
-    int bomber_shots_in_burst = 0;
-    int bomber_throw_animation_ticks = 0;
-    int flyer_ticks_to_bomb = 120;
-    int flyer_ticks_to_fireball = 420;
-    bool flyer_fireball_pending = false;
-    bn::fixed flyer_target_x = ZERO;
-    bn::fixed flyer_target_y = ZERO;
-    bn::fixed flyer_start_x = ZERO;
-    bn::fixed flyer_start_y = ZERO;
-    int flyer_move_delay = 30;
-    int flyer_move_ticks = 0;
-    bool flyer_moving = false;
+    // Stato specifico del pattern: un boss usa UN solo blocco, quindi condividono la memoria.
+    // Le struct anonime sono un'estensione GNU (con -Wpedantic dà un warning, non un errore).
+    // Ogni blocco va inizializzato per intero in inizializza_stato().
+    __extension__ union
+    {
+        struct   // BOMBER
+        {
+            int16_t bomber_ticks_to_jump;
+            int16_t bomber_ticks_to_throw;
+            int16_t bomber_shots_in_burst;
+            int16_t bomber_throw_animation_ticks;
+        };
+        struct   // FLYER (il più grande: dimensiona la union)
+        {
+            int16_t flyer_ticks_to_bomb;
+            int16_t flyer_ticks_to_fireball;
+            int16_t flyer_move_delay;
+            int16_t flyer_move_ticks;
+            int16_t flyer_start_x, flyer_start_y;     // pixel interi
+            int16_t flyer_target_x, flyer_target_y;
+            bool flyer_fireball_pending;
+            bool flyer_moving;
+        };
+        struct   // COWARD
+        {
+            int16_t runner_ticks_to_throw;
+            int16_t runner_evade_ticks;
+        };
+        struct   // SUMMONER / SKELETON
+        {
+            int16_t summon_ticks;
+            int16_t ticks_prossimo_summon;
+            int16_t ticks_prossimo_saltello;
+            int16_t ticks2dir;
+            bool in_summon;
+        };
+        struct   // BALLER e tutti i boss a stati/fasi
+        {
+            int16_t stato;
+            int16_t stato_ticks;
+            int16_t contatore;        // carica doppia, eco, doppio salto
+            int16_t angolo_raggi;     // SPIRALE
+            int16_t patrol_origin_x;  // pixel interi
+            int16_t salto_vx_data;    // bn::fixed::data(): vedi salto_vx()
+            uint8_t fase_boss;
+        };
+    };
+
+    bn::fixed salto_vx() const { return bn::fixed::from_data(salto_vx_data); }
+    void set_salto_vx(bn::fixed v) { salto_vx_data = int16_t(v.data()); }   // |v| < 8
+
+    void inizializza_stato(bn::fixed x, bn::fixed y);
 
     void update_bomber();
     bool throw_bomber_bomb();
@@ -90,10 +125,22 @@ private:
     void update_summoner();
     bool throw_flyer_bomb();
     bool throw_flyer_fireball();
-
-    int runner_ticks_to_throw = 90;
-    int runner_evade_ticks = 0;     // > 0: sta sorpassando dog perché messo all'angolo
-
     void update_runner();
     bool throw_runner_bomb();
+
+    void update_charger();
+    void update_stregone();
+    void update_slammer();
+    void update_teleporter();
+    void update_guardiano();
+    void update_spirale();
+    void spawn_fulmini(int quanti);
+    void spara_anello(int n);
+    void aggiorna_grafica(int anim, int x_offset = 0);
+    void contatto_cane(int danno);
+
+    // solo se hai applicato la versione a tre fasi:
+    int calcola_fase() const;
+    bool entra_in_nuova_fase(int& fase);
+    void onde_radenti(bn::fixed velocita = bn::fixed(2));
 };

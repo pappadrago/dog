@@ -37,8 +37,11 @@ bomb::bomb(const bomb_def& def)
         actionExplode = bn::create_sprite_animate_action_once(
             *sprite, 1, bn::sprite_items::weapons.tiles_item(), 32, 33, 34, 35);
     }
-
-    if (def.angle != 0)
+    if (tipoProjec == BOMB_ORB)
+    {
+        // niente rotazione né flip: lo sprite è rotondo e così non si usa una matrice affine
+    }
+    else if (def.angle != 0)
         sprite->set_rotation_angle_safe(def.angle);
     else if (tipoProjec != BOMB_BOMB)
         sprite->set_horizontal_flip(chr_vx < 0);

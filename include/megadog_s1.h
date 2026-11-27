@@ -26,12 +26,13 @@
 
 namespace megadog_s1 {
     constexpr cassa_def casse[] = {
-        { CASSA_SCATOLA, 856, 208, false },  // col 53
-        { CASSA_SCATOLA, 2664, 152, false },  // platformize
+        { CASSA_SCATOLA, 856, 208, false },  
+        { CASSA_SCATOLA, 2664, 152, false },  
     };
     constexpr int casse_count = sizeof(casse) / sizeof(casse[0]);
     constexpr trampolino_def trampolini[] = {
-        { 992, 216 },  // col 62: deviazione facoltativa
+        { 2200, 216 },  
+        { 2900, 216 },  
     };
     constexpr int trampolini_count = sizeof(trampolini) / sizeof(trampolini[0]);
     constexpr lava_zona_def lava[] = {
@@ -71,7 +72,7 @@ namespace megadog_s1 {
         // freccia dritta
         { enemy_tipo::MOVE_TURRET, enemy_attr::ATTR_BULLET  , 400, 100, 60 },
         // fireball con mira
-        { enemy_tipo::MOVE_TURRET, enemy_attr::ATTR_BULLET | ATTR_AIM, 800, 100, 60 },
+        { enemy_tipo::MOVE_TURRET, enemy_attr::ATTR_BULLET , 874, 100, 60 },
 
     };
     constexpr int enemies_count = sizeof(enemies) / sizeof(enemies[0]);
@@ -97,12 +98,11 @@ namespace megadog_s1 {
     // oggetti_percorso: nessuno
     // ground_frictions: nessuno
     constexpr oggetto_percorso_lineare_def oggetti_percorso_lineare[] = {
-        { 1448, 200, 48, PERCORSO_LINEARE_ORIZZONTALE, 30, 60, PERCORSO_SPRITE_16, 12 },
-        { 232, 152, 48, PERCORSO_LINEARE_VERTICALE, 30, 60, PERCORSO_SPRITE_32, 12 },
+        { 160, 52, 32, PERCORSO_LINEARE_VERTICALE, 30, 120, PERCORSO_SPRITE_32, 12 },
     };
     constexpr int oggetti_percorso_lineare_count = sizeof(oggetti_percorso_lineare) / sizeof(oggetti_percorso_lineare[0]);
     constexpr onda_def onde[] = {
-        { 1560, 160, 8, 48, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_32, 48, 30, 30, 12 },
+        { 1360, 160, 6, 64, PERCORSO_LINEARE_VERTICALE, PERCORSO_SPRITE_32, 48, 30, 30, 12 },
     };
     constexpr int onde_count = sizeof(onde) / sizeof(onde[0]);
     constexpr pingpong_def pingpong[] = {
