@@ -163,6 +163,7 @@ namespace enemy_config {
     constexpr int ARROW_TILE_INDEX = 9;
     constexpr int GRAVITY_ARROW_TILE_INDEX = 24;
     constexpr int FIREBALL_TILE_INDEX = 23;
+    constexpr int ORB_TILE_INDEX = 22;
 
     constexpr int BULLET_TILE_INDEX = 11;
     constexpr bn::fixed BULLET_SPEED = bn::fixed(2.0);

@@ -1303,7 +1303,7 @@ void boss::spara_anello(int n)
         def.ignoreGravity = true;
         def.ignoreWalls = true;
         def.max_bounces = 0;
-        def.tileIndex = enemy_config::FIREBALL_TILE_INDEX;
+        def.tileIndex = enemy_config::ORB_TILE_INDEX;
         def.angle = ZERO;
         spawn_bomb(def);   // se il pool è pieno, il colpo salta
     }
